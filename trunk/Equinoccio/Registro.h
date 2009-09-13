@@ -20,7 +20,13 @@ private:
 	  uint32_t documento;
 	  uint32_t frecuencia;
      };
-     list<Punteros> punteros;	/**< Lista de punteros */
+     std::list<Punteros> punteros;	/**< Lista de punteros */
+
+     /** 
+      * Constructor privado. No inicializa nada.
+      * 
+      */
+     Registro(){};
      
      
 public:
