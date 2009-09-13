@@ -15,7 +15,7 @@ private:
      uint32_t frecuencia;	/**< Cantidad de documentos en los que
 				 * aparece el término*/
 
-     struct Punteros{		/**< Estructura auxiliar pàra manejar
+     struct Punteros{		/**< Estructura auxiliar para manejar
 				 * pares (documento,frecuencia) */
 	  uint32_t documento;
 	  uint32_t frecuencia;
@@ -81,7 +81,7 @@ public:
       * @param registro El registro a combinar.
       * 
       * @return Devuelve 1 si pudo combinar los registros, 0 si no
-      * pudo (por ejemplo, los terminos son diferentes.
+      * pudo (por ejemplo, los terminos son diferentes).
       */
      int unir(const Registro& registro);
 };

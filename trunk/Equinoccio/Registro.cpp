@@ -69,6 +69,50 @@ std::string Registro::obtenerTermino(){
 }
 
 int Registro::unir(const Registro& registro){
-#warning "OJO, falta definir.\n"
-     return 0;
+     std::list<Registro::Punteros> final;
+     std::list<Registro::Punteros>::const_iterator it1, it2;
+
+     if(termino != registro.termino)
+	  return 0;
+
+     if(punteros.size() == 0)
+	  return 0;
+
+     if(registro.punteros.size() == 0)
+	  return 0;
+     
+     it1 = punteros.begin();
+     it2 = registro.punteros.begin();
+     
+     while(it1!= punteros.end() && it2 != registro.punteros.end()){
+	  if((*it1).documento < (*it2).documento){
+	       final.push_back(*it1);
+	       it1++;
+	  }
+	  else if((*it1).documento > (*it2).documento){
+	       final.push_back(*it2);
+	       it2++;
+	  }
+	  else{
+	       Registro::Punteros p;
+	       p.documento = (*it1).documento;
+	       p.frecuencia = (*it1).frecuencia + (*it2).frecuencia ;
+	       final.push_back(p);
+	       it1++;
+	       it2++;
+	  }
+     }
+     
+     while(it1!= punteros.end()){
+	  final.push_back(*it1);
+	  it1++;
+     }
+     while(it2!= registro.punteros.end()){
+	  final.push_back(*it2);
+	  it2++;
+     }
+
+     punteros = final;
+     
+     return 1;
 }
