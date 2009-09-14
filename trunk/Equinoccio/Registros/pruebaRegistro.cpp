@@ -5,7 +5,7 @@
 int main(int argc, char** argv){
      if(argc<2){
 	  std::cout << "La sintaxis es: " << argv[0] << " <archivo>\n";
-	  exit(-1);
+	  return(-1);
      }
      std::ifstream archivo(argv[1], std::fstream::in);
 
