@@ -9,18 +9,19 @@ Registro::Registro(std::string termino, uint32_t documento){
      punteros.push_back(puntero);
 }
 
-Registro Registro::leer(std::ifstream archivo, int compresion){
+Registro Registro::leer(std::ifstream &archivo, int compresion){
      Registro r;
      char c=-1;
-     while(archivo.good() && c != 0){
-	  c = archivo.get();
+     while(archivo.good() && (c = archivo.get()) != 0){
 	  r.termino += c;
      }
 
      if(archivo.good())
 	  archivo.read((char*)&(r.frecuencia), sizeof(r.frecuencia));
-     else
+     else{
+	  r.termino.clear();
 	  return r;
+     }
 
      uint32_t contador = r.frecuencia;
      Registro::Punteros p;
@@ -32,14 +33,14 @@ Registro Registro::leer(std::ifstream archivo, int compresion){
 	       contador--;
 	  }
 	  else{
-
+	       #warning "Falta implementar Gamma."
 	  }
      }
 
      return r;
 }
 
-int Registro::escribir(std::ofstream archivo, int compresion){
+int Registro::escribir(std::ofstream &archivo, int compresion){
      if(!archivo.good())
 	  return 0;
      if(punteros.size() == 0)
@@ -58,13 +59,13 @@ int Registro::escribir(std::ofstream archivo, int compresion){
 	  }
      }
      else{
-
+	       #warning "Falta implementar Gamma."
      }
 
      return 1;
 }
 
-std::string Registro::obtenerTermino(){
+const std::string& Registro::obtenerTermino(){
      return termino;
 }
 

@@ -14,7 +14,12 @@ private:
      std::string termino;	/**< Término almacenado */
      uint32_t frecuencia;	/**< Cantidad de documentos en los que
 				 * aparece el término*/
+     /** 
+      * Constructor privado. No inicializa nada.
+      */
+     Registro(){};
 
+public:
      struct Punteros{		/**< Estructura auxiliar para manejar
 				 * pares (documento,frecuencia) */
 	  uint32_t documento;
@@ -22,14 +27,6 @@ private:
      };
      std::list<Punteros> punteros;	/**< Lista de punteros */
 
-     /** 
-      * Constructor privado. No inicializa nada.
-      * 
-      */
-     Registro(){};
-     
-     
-public:
      /** 
       * Crea un nuevo registro, asociando el termino con el documento
       * dados.
@@ -52,7 +49,7 @@ public:
       * @return El registro leído del archivo o un registro vacío si
       * no pudo leer.
       */
-     static Registro leer(std::ifstream archivo, int compresion);
+     static Registro leer(std::ifstream &archivo, int compresion);
 
      /** 
       * Escribe un registro en un archivo.
@@ -65,14 +62,14 @@ public:
       * 
       * @return Devuelve 1 si pudo escribir y 0 si no pudo.
       */
-     int escribir(std::ofstream archivo, int compresion);
+     int escribir(std::ofstream &archivo, int compresion);
 
      /** 
       * Devuelve el termino asociado al registro.
       * 
       * @return El termino asociado.
       */
-     std::string obtenerTermino();
+     const std::string& obtenerTermino();
 
      /** 
       * Toma los punteros del registro dado y los combina con los del
@@ -84,6 +81,15 @@ public:
       * pudo (por ejemplo, los terminos son diferentes).
       */
      int unir(const Registro& registro);
+
+     /** 
+      * Devuelve la lista de pares (documento,frecuencia) del
+      * registro.
+      * 
+      * 
+      * @return La lista de punteros.
+      */
+     const std::list<Punteros>& getPunteros(){ return punteros;};
 };
 
 #endif //REGISTRO_H_INCLUDED
