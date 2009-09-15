@@ -6,15 +6,16 @@ std::string ParserAudio::parsear(std::string nombre, uint32_t documento) {
 	EXTRACTOR_ExtractorList *extractors =EXTRACTOR_loadDefaultLibraries();
   EXTRACTOR_KeywordList *keywords= EXTRACTOR_getKeywords(extractors, nombre.c_str());
   
-  //Ruta dump
   std::string nombre_dump;
-	nombre_dump+= nombre;
-	nombre_dump+= PATH_DUMP;
-	std::ofstream dump(nombre_dump.c_str(), std::fstream::out);
-  
-  bool audio= true;
   
   if(keywords) {
+		
+		bool audio= true;
+
+	  //Ruta dump
+		nombre_dump+= nombre;
+		nombre_dump+= PATH_DUMP;
+		std::ofstream dump(nombre_dump.c_str(), std::fstream::out);
 	  
 	  do {
 			int type= keywords->keywordType;
@@ -66,12 +67,10 @@ std::string ParserAudio::parsear(std::string nombre, uint32_t documento) {
 					guardarEnDump(dump, (*it), documento);
 			}
 		}
-  }
-  
-  dump.close();
-  
-  if(!audio)
-  	nombre_dump= "";
+		dump.close();
+		
+  } else
+  	nombre_dump= "";;
    
   return nombre_dump;
 }
