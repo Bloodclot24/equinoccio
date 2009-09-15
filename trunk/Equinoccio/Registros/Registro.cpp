@@ -46,7 +46,7 @@ int Registro::escribir(std::ofstream &archivo, int compresion){
      if(punteros.size() == 0)
 	  return 0;
 
-     archivo.write(termino.c_str(), termino.length());
+     archivo.write(termino.c_str(), termino.length()+1); //+1 para que escriba el \0
      archivo.write((char*)&frecuencia, sizeof(frecuencia));
 
      std::list<Registro::Punteros>::iterator it;
