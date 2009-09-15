@@ -2,12 +2,23 @@
 #define PARSER_H_INCLUDED
 
 #include <string>
+#include <string.h>
+#include <iostream>
+#include "../Registros/Registro.h"
 
 /** 
  * Interfaz a implementar por cada uno de los parsers del programa.
  * 
  */
+
+#define PATH_DUMP "_dump" 
+ 
 class Parser{
+
+protected:
+	void sacarAcentuacion(std::string& palabra);
+	void filtrarPalabra(std::string& palabra);
+
 public:
      /** El método intenta abrir el archivo con el nombre dado e
       * intena parsearlo. Si no puede, devuelve un string vacío. Si
@@ -20,9 +31,11 @@ public:
       * string vacío si no puede parsear el archivo o el nombre del
       * archivo con los registros resultantes.
       *
+      * @param documento El numero de documento.
+      * 
       * @see Registro
       */
-     std::string parsear(std::string nombre)=0;	
+     virtual std::string parsear(std::string nombre, uint32_t documento)=0;	
 
 };
 
