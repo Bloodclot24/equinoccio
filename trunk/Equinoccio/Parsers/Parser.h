@@ -16,7 +16,7 @@
 class Parser{
 
 protected:
-	void sacarAcentuacion(std::string& palabra);
+	void minusculaNoAcentuado(std::string& palabra);
 	void filtrarPalabra(std::string& palabra);
 
 public:

@@ -14,15 +14,17 @@ int main(int argc, char** argv) {
 	if(nombre_dump.compare("") != 0) {
 		std::ifstream dump(nombre_dump.c_str(), std::fstream::in);
 		
-	  while(!dump.eof()) {
-			Registro reg= Registro::leer(dump,0);
-		  if(reg.obtenerTermino().size() != 0){
-	
-		    std::cout << "Termino: " << reg.obtenerTermino() << std::endl;
-		    std::cout << "Documento: " << 0 << std::endl;
-				std::cout << std::endl;	       
-			}
-	  }
+		//TODO: el archivo se crea bien, esto esta mal :p
+//	  while(!dump.eof()) {
+//			Registro reg= Registro::leer(dump,0);
+//		  
+//		  if(reg.obtenerTermino().size() != 0){
+//	
+//		    std::cout << "Termino: " << reg.obtenerTermino() << std::endl;
+//		    std::cout << "Documento: " << 0 << std::endl;
+//				std::cout << std::endl;	       
+//			}
+//	  }
 	} else
 		std::cerr << "No se pudo parsear el archivo" << std::endl;
 	

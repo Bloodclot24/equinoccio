@@ -17,13 +17,17 @@ std::string ParserAudio::parsear(std::string nombre, uint32_t documento) {
   EXTRACTOR_KeywordList *keywords= EXTRACTOR_getKeywords(extractors, nombre.c_str());
   //EXTRACTOR_printKeywords(stdout, keywords);
   
-  std::string nombre_dump("");
+  //Ruta dump
+  std::string nombre_dump;
+	nombre_dump+= nombre;
+	nombre_dump+= PATH_DUMP;
+	std::ofstream dump(nombre_dump.c_str(), std::fstream::out);
+  
+  bool audio= true;
   
   if(keywords) {
 	  
-	  bool audio= true;
-	  
-		do {
+	  do {
 			int type= keywords->keywordType;
 			
 			if(type == FILENAME || type == MIMETYPE || type == TITLE || 
@@ -37,14 +41,20 @@ std::string ParserAudio::parsear(std::string nombre, uint32_t documento) {
 	  			//y se guarga la extension.
 	  			//En otro caso, se debe parsear las palabras y se agregan
 	  			//una a una. 
-	  			if(type == DATE || type == YEAR || type == TRACK_NUMBER)
-	  				lista.push_back(keywords->keyword);
-	  			else if(type == MIMETYPE) {
+	  			if(type == DATE || type == YEAR || type == TRACK_NUMBER) {
+	  				guardarEnDump(dump, keywords->keyword, documento);
+			  		std::cout << "Palabra a escribir: " << keywords->keyword << std::endl;
+	  			} else if(type == MIMETYPE) {
+
 	  				if(strcmp(MIME_TYPE_MP3, keywords->keyword) != 0 && 
 	  				   strcmp(MIME_TYPE_OGG, keywords->keyword) != 0)
 	  					audio= false;
-	  				else
-	  					guardarExtension(keywords->keyword);	
+	  				else {
+	  					std::string extension= obtenerExtension(keywords->keyword); 
+	  					guardarEnDump(dump, extension, documento);
+	  					std::cout << "Palabra a escribir: " << extension << std::endl;
+	  				}	
+
 	  			} else
 	  				guardarPalabras(keywords->keyword);
 			}
@@ -56,39 +66,47 @@ std::string ParserAudio::parsear(std::string nombre, uint32_t documento) {
 		EXTRACTOR_removeAll(extractors);
 	  
 	  if(audio) {
-		  			
-			//Ruta dump
-			nombre_dump+= nombre;
-			nombre_dump+= PATH_DUMP;
-			std::ofstream dump(nombre_dump.c_str(), std::fstream::out);
 		
 			//Guardo en el archivo dump
 			std::list<std::string>::iterator it;
 			for(it= lista.begin(); it != lista.end(); it++) {
+
 				//TODO: FALTA CHECKEO STOP WORD Y CARACTERES INVALIDOS
-				if(strcspn((*it).c_str(), "0123456789~!@#$%^&*()_+{}|:?><<>[],.-") == (*it).length()) {  	
-		  		//std::cout << "Palabra a filtrar: " << *it << std::endl;
-		  		//filtrarPalabra(*it);
-		  		Registro reg(*it, documento);
-		  		std::cout << "Palabra a escribir: " << reg.obtenerTermino() << std::endl;
-		  		reg.escribir(dump, 0);
-				}
+				//if(strcspn((*it).c_str(), "0123456789") == (*it).length()) {  	
+		  		std::cout << "Palabra: " << *it << std::endl;
+		  		minusculaNoAcentuado(*it);
+		  		filtrarPalabra(*it);
+		  		std::cout << "Palabra agregar: " << *it << std::endl;
+		  		guardarEnDump(dump, *it, documento);
+				//}
 			}	
-			
-			dump.close();
 		}
   }
+  
+  dump.close();
+  
+  if(!audio)
+  	nombre_dump= "";
    
   return nombre_dump;
 }
 
 /*--------------------------------------------------------------------------*/
-void ParserAudio::guardarExtension(char* extension) {
+void ParserAudio::guardarEnDump(std::ofstream& dump, 
+																std::string palabra, uint32_t documento) {
+	
+	Registro reg(palabra, documento);
+	reg.escribir(dump, 0);
+}
+
+/*--------------------------------------------------------------------------*/
+std::string ParserAudio::obtenerExtension(char* extension) {
 
 	std::string strAparsear(extension); 
 	size_t found= strAparsear.find("/", 0);
-	std::string palabraAgregar(strAparsear, found+1);
-	lista.push_back(palabraAgregar);	
+	std::string palabraExtension(strAparsear, found+1);
+
+	return palabraExtension;	
 }
 
 /*--------------------------------------------------------------------------*/

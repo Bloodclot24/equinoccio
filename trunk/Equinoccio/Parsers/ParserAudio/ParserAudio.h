@@ -36,7 +36,8 @@ class ParserAudio: public Parser {
 	private:
 		std::list<std::string>	lista;
 
-		void guardarExtension(char* extension);
+		void guardarEnDump(std::ofstream& dump, std::string palabra, uint32_t documento);
+		std::string obtenerExtension(char* extension);
 		void guardarPalabras(char* palabras);
 	
 	public: 
