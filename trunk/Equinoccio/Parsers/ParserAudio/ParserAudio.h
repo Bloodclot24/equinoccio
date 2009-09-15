@@ -1,10 +1,8 @@
 #ifndef PARSERAUDIO_H_
 #define PARSERAUDIO_H_
 
-#include <iostream>
 #include <stdio.h>
 #include <list>
-#include <string.h>
 #include <extractor.h>
 #include <fstream>
 #include <sstream>
@@ -34,11 +32,8 @@ enum KeywordType {
 class ParserAudio: public Parser {
 	
 	private:
-		std::list<std::string>	lista;
-
 		void guardarEnDump(std::ofstream& dump, std::string palabra, uint32_t documento);
 		std::string obtenerExtension(char* extension);
-		void guardarPalabras(char* palabras);
 	
 	public: 
 		virtual std::string parsear(std::string nombre, uint32_t documento);	

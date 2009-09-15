@@ -4,18 +4,7 @@
 std::string ParserAudio::parsear(std::string nombre, uint32_t documento) {
 	
 	EXTRACTOR_ExtractorList *extractors =EXTRACTOR_loadDefaultLibraries();
-  
-  //Funcion de la libreria extractor que guarda todos los contenidos
-  //de lo diferentes campos en una estructura
-  /*
-   * typedef struct EXTRACTOR_Keywords {
-   *	char* keyword;
-   *	EXTRACTOR_KeywordType keywordType;
-   *	struct EXTRACTOR_Keywords* next;
-   * } EXTRACTOR_KeywordList;
-   */
   EXTRACTOR_KeywordList *keywords= EXTRACTOR_getKeywords(extractors, nombre.c_str());
-  //EXTRACTOR_printKeywords(stdout, keywords);
   
   //Ruta dump
   std::string nombre_dump;
@@ -36,14 +25,15 @@ std::string ParserAudio::parsear(std::string nombre, uint32_t documento) {
 				 || type == TRACK_NUMBER || type == 6) {
 	  			
 	  			//Si se trata del anio o el numero de cancion lo agregamos a
-	  			//la lista. 
+	  			//la lista directamente. 
 	  			//Si se trata del tipo de archivo, se checkea que sea de audio
 	  			//y se guarga la extension.
 	  			//En otro caso, se debe parsear las palabras y se agregan
 	  			//una a una. 
 	  			if(type == DATE || type == YEAR || type == TRACK_NUMBER) {
 	  				guardarEnDump(dump, keywords->keyword, documento);
-			  		std::cout << "Palabra a escribir: " << keywords->keyword << std::endl;
+			  		//TODO: /*PRUEBA*/
+			  		std::cout << "Palabra A Guardar: " << keywords->keyword << std::endl;
 	  			} else if(type == MIMETYPE) {
 
 	  				if(strcmp(MIME_TYPE_MP3, keywords->keyword) != 0 && 
@@ -52,11 +42,12 @@ std::string ParserAudio::parsear(std::string nombre, uint32_t documento) {
 	  				else {
 	  					std::string extension= obtenerExtension(keywords->keyword); 
 	  					guardarEnDump(dump, extension, documento);
-	  					std::cout << "Palabra a escribir: " << extension << std::endl;
+				  		//TODO: /*PRUEBA*/
+	  					std::cout << "Palabra A Guardar: " << extension << std::endl;
 	  				}	
 
 	  			} else
-	  				guardarPalabras(keywords->keyword);
+							guardarPalabras(aMinuscSinInvalidos(keywords->keyword));
 			}
 	  	
 	  	keywords= keywords->next;
@@ -66,20 +57,14 @@ std::string ParserAudio::parsear(std::string nombre, uint32_t documento) {
 		EXTRACTOR_removeAll(extractors);
 	  
 	  if(audio) {
-		
 			//Guardo en el archivo dump
 			std::list<std::string>::iterator it;
 			for(it= lista.begin(); it != lista.end(); it++) {
-
-				//TODO: FALTA CHECKEO STOP WORD Y CARACTERES INVALIDOS
-				//if(strcspn((*it).c_str(), "0123456789") == (*it).length()) {  	
-		  		std::cout << "Palabra: " << *it << std::endl;
-		  		minusculaNoAcentuado(*it);
-		  		filtrarPalabra(*it);
-		  		std::cout << "Palabra agregar: " << *it << std::endl;
-		  		guardarEnDump(dump, *it, documento);
-				//}
-			}	
+					//TODO: FALTA CHECKEAR ANTES DE QUE NO SEA STOP WORD
+		  		//TODO: /*PRUEBA*/
+					std::cout << "Palabra A Guardar: " << *it << std::endl;
+					guardarEnDump(dump, (*it), documento);
+			}
 		}
   }
   
@@ -107,21 +92,6 @@ std::string ParserAudio::obtenerExtension(char* extension) {
 	std::string palabraExtension(strAparsear, found+1);
 
 	return palabraExtension;	
-}
-
-/*--------------------------------------------------------------------------*/
-void ParserAudio::guardarPalabras(char* palabras) {
-	
-	std::string strAparsear(palabras); 
-	size_t found, pos= 0;
-	
-	do {
-		found= strAparsear.find(" ", pos);
-		std::string palabraAgregar(strAparsear, pos, found-pos);
-		lista.push_back(palabraAgregar);	
-		pos= found+1;
-	
-	} while(found != std::string::npos);
 }
 
 /****************************************************************************/

@@ -1,23 +1,43 @@
 #include "Parser.h"
 
 /****************************************************************************/
-void Parser::minusculaNoAcentuado(std::string& palabra) {
+std::string Parser::aMinuscSinInvalidos(std::string informacion) {
+	
+	//TODO: /*PRUEBA*/
+	std::cout << "Palabra Cruda: " << informacion << std::endl;
+	
+	std::string invalidos("!#$%&'()*+,-.0123456789:;<=>?@[]^_`{|}~");
+	std::string palabraFiltrada;
+	for(size_t c=0; c<informacion.size(); c++) {
+		
+		size_t pos= invalidos.find(informacion[c], 0);
+		
+		if(pos == std::string::npos)
+			palabraFiltrada+= tolower(informacion[c]);
+		else
+			palabraFiltrada+= " "; 
+	}
 
-	//Suspenso	
+	//TODO: /*PRUEBA*/
+	std::cout << "Palabra Filtrada: " << palabraFiltrada << std::endl;
+	
+	return palabraFiltrada;
 }
 
 /*--------------------------------------------------------------------------*/
-//TODO: esto tiene problemas con los acentos....
-void Parser::filtrarPalabra(std::string& palabra) {
+void Parser::guardarPalabras(std::string palabras) {
 	
-	for(size_t i=0; i<palabra.size(); i++) {
-		
-		int ascii= (int) palabra[i];
+	std::string strAparsear(palabras); 
+	size_t found, pos= 0;
 	
-		if(!(ascii >= 65 && ascii <= 90) && !(ascii >= 97 && ascii <= 122) &&
-		   ascii != 164 && ascii != 165)
-				palabra.replace(i, 1, " ");
-	}	
+	do {
+		found= strAparsear.find(" ", pos);
+		std::string palabraAgregar(strAparsear, pos, found-pos);
+		if(palabraAgregar.compare("") != 0)
+			lista.push_back(palabraAgregar);	
+		pos= found+1;
+	} while(found != std::string::npos);
+	
 }
 
 /****************************************************************************/

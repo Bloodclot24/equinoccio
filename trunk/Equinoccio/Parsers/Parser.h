@@ -16,8 +16,22 @@
 class Parser{
 
 protected:
-	void minusculaNoAcentuado(std::string& palabra);
-	void filtrarPalabra(std::string& palabra);
+
+	std::list<std::string> lista;
+	
+	/**
+	 	* La funcion devuelve una cadena en minuscula, sin caracteres invalidos;
+	  * Notar que los caracteres invalidos son convertidos en espacios, por lo
+	  * que puede devolverse una cadena con mas de una palabra o una cadena 
+	  * vacia.
+	 	*/ 
+		std::string aMinuscSinInvalidos(std::string informacion);
+		
+	/**
+	 	* La funcion toma una cadena, filtra los espacios y guarda palabra a
+	 	* palabra.
+	 	*/ 
+		void guardarPalabras(std::string palabras);
 
 public:
      /** El método intenta abrir el archivo con el nombre dado e
