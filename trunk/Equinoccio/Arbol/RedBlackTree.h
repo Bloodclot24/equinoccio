@@ -427,8 +427,8 @@ RedBlackTreeNode<N> * RedBlackTree<N>::GetPredecessorOf(RedBlackTreeNode<N> * x)
 template <class N>
 void RedBlackTreeNode<N>::Print(RedBlackTreeNode<N> * nil,
 				RedBlackTreeNode<N> * root) const {
-  printf("%i",key);
-  printf("[label=\"%i\" ",key);
+  printf("%s",key.print().c_str());
+  printf("[label=\"%s\" ",key.print().c_str());
   if(red == 1)
     printf("fillcolor=red",red);
   else
@@ -437,17 +437,17 @@ void RedBlackTreeNode<N>::Print(RedBlackTreeNode<N> * nil,
 
 
   if( left != nil) 
-    printf("%i -> %i \n", key, left->key);
+    printf("%s -> %s \n", key.print().c_str(), left->key.print().c_str());
   else{
-    printf("l%i[label=\"NIL\" fillcolor=black fontcolor=white]\n", key);
-    printf("%i -> l%i\n", key,key);
+    printf("l%s[label=\"NIL\" fillcolor=black fontcolor=white]\n", key.print().c_str());
+    printf("%s -> l%s\n", key.print().c_str(),key.print().c_str());
   }
 
   if( right != nil) 
-    printf("%i -> %i \n", key, right->key);
+    printf("%s -> %s \n", key.print().c_str(), right->key.print().c_str());
   else{
-    printf("r%i[label=\"NIL\" fillcolor=black fontcolor=white]\n", key);
-    printf("%i -> r%i\n", key,key);
+    printf("r%s[label=\"NIL\" fillcolor=black fontcolor=white]\n", key.print().c_str());
+    printf("%s -> r%s\n", key.print().c_str(),key.print().c_str());
   }
 
   
