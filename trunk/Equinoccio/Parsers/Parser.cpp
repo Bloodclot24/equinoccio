@@ -40,4 +40,9 @@ void Parser::guardarPalabras(std::string palabras) {
 	
 }
 
+/*--------------------------------------------------------------------------*/
+uint32_t Parser::getCantArchivosParseados() {
+	
+	return archivos;
+}
 /****************************************************************************/

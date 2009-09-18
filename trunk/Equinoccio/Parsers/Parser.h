@@ -11,12 +11,11 @@
  * 
  */
 
-#define PATH_DUMP "_dump" 
- 
 class Parser{
 
 protected:
 
+	uint32_t archivos;
 	std::list<std::string> lista;
 	
 	/**
@@ -34,6 +33,10 @@ protected:
 		void guardarPalabras(std::string palabras);
 
 public:
+		 /** 
+    	*/
+		 Parser(uint32_t cantMaxReg);
+		
      /** El método intenta abrir el archivo con el nombre dado e
       * intena parsearlo. Si no puede, devuelve un string vacío. Si
       * puede, lo hace y vuelca los registros resultantes en el
@@ -49,8 +52,11 @@ public:
       * 
       * @see Registro
       */
-     virtual std::string parsear(std::string nombre, uint32_t documento)=0;	
+     virtual std::string parsear(std::string nombre, uint32_t documento)=0;
 
+		 /** 
+    	*/     
+     uint32_t getCantArchivosParseados();		
 };
 
 #endif //PARSER_H_INCLUDED
