@@ -71,7 +71,7 @@ protected:
   RedBlackTreeNode<N> * nil;
   void LeftRotate(RedBlackTreeNode<N> *);
   void RightRotate(RedBlackTreeNode<N> *);
-  void TreeInsertHelp(RedBlackTreeNode<N> *);
+  int TreeInsertHelp(RedBlackTreeNode<N> *);
   void TreePrintHelper(RedBlackTreeNode<N> *) const;
   void FixUpMaxHigh(RedBlackTreeNode<N> *);
   void DeleteFixUp(RedBlackTreeNode<N> *);
@@ -239,7 +239,7 @@ void RedBlackTree<N>::RightRotate(RedBlackTreeNode<N>* y) {
 /***********************************************************************/
 
 template <class N>
-void RedBlackTree<N>::TreeInsertHelp(RedBlackTreeNode<N>* z) {
+int RedBlackTree<N>::TreeInsertHelp(RedBlackTreeNode<N>* z) {
   /*  This function should only be called by RedBlackTree::Insert */
   RedBlackTreeNode<N>* x;
   RedBlackTreeNode<N>* y;
@@ -251,8 +251,12 @@ void RedBlackTree<N>::TreeInsertHelp(RedBlackTreeNode<N>* z) {
     y=x;
     if ( x->key > z->key) { 
       x=x->left;
-    } else { /* x->key <= z->key */
+    } else if (x->key < z->key){ 
       x=x->right;
+    }
+    else{ /* x->key == z->key */
+	 x->key.merge(z->key);
+	 return 1;
     }
   }
   z->parent=y;
@@ -266,6 +270,8 @@ void RedBlackTree<N>::TreeInsertHelp(RedBlackTreeNode<N>* z) {
 #if defined(DEBUG_ASSERT)
   Assert(!nil->red,"nil not red in RedBlackTree::TreeInsertHelp");
 #endif
+
+  return 0;
 }
 
 /*  Before calling InsertNode  the node x should have its key set */
@@ -294,7 +300,10 @@ RedBlackTreeNode<N> * RedBlackTree<N>::Insert(N newEntry)
   RedBlackTreeNode<N> * newNode;
 
   x = new RedBlackTreeNode<N>(newEntry);
-  TreeInsertHelp(x);
+  if(TreeInsertHelp(x)){
+       delete x;
+       return NULL;
+  }
   newNode = x;
   x->red=1;
   while(x->parent->red) { /* use sentinel instead of checking for root */
@@ -427,27 +436,27 @@ RedBlackTreeNode<N> * RedBlackTree<N>::GetPredecessorOf(RedBlackTreeNode<N> * x)
 template <class N>
 void RedBlackTreeNode<N>::Print(RedBlackTreeNode<N> * nil,
 				RedBlackTreeNode<N> * root) const {
-  printf("%s",key.print().c_str());
+  printf("\"%s\"",key.print().c_str());
   printf("[label=\"%s\" ",key.print().c_str());
   if(red == 1)
-    printf("fillcolor=red",red);
+    printf("fillcolor=red");
   else
-    printf("fillcolor=black fontcolor=white",red);
+    printf("fillcolor=black fontcolor=white");
   printf("]\n");
 
 
   if( left != nil) 
-    printf("%s -> %s \n", key.print().c_str(), left->key.print().c_str());
+    printf("\"%s\" -> \"%s\" \n", key.print().c_str(), left->key.print().c_str());
   else{
-    printf("l%s[label=\"NIL\" fillcolor=black fontcolor=white]\n", key.print().c_str());
-    printf("%s -> l%s\n", key.print().c_str(),key.print().c_str());
+    printf("\"l%s\"[label=\"NIL\" fillcolor=black fontcolor=white]\n", key.print().c_str());
+    printf("\"%s\" -> \"l%s\"\n", key.print().c_str(),key.print().c_str());
   }
 
   if( right != nil) 
-    printf("%s -> %s \n", key.print().c_str(), right->key.print().c_str());
+    printf("\"%s\" -> \"%s\" \n", key.print().c_str(), right->key.print().c_str());
   else{
-    printf("r%s[label=\"NIL\" fillcolor=black fontcolor=white]\n", key.print().c_str());
-    printf("%s -> r%s\n", key.print().c_str(),key.print().c_str());
+    printf("\"r%s\"[label=\"NIL\" fillcolor=black fontcolor=white]\n", key.print().c_str());
+    printf("\"%s\" -> \"r%s\"\n", key.print().c_str(),key.print().c_str());
   }
 
   

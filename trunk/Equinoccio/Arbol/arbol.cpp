@@ -1,28 +1,45 @@
 #include <stdlib.h>
 #include <sys/time.h>
 #include <string>
+#include <sstream>
 
 class entradaTexto{
 private:
      std::string texto;
+     int cantidad;
      
 public:
      entradaTexto(std::string texto){
 	  this->texto = texto;
+	  cantidad = 1;
      }
      entradaTexto(){}
      bool operator>(const entradaTexto& b){
 	  return texto.compare(b.texto)>0?1:0;
      }
+     bool operator<(const entradaTexto& b){
+	  return texto.compare(b.texto)<0?1:0;
+     }
+     void merge(const entradaTexto& otro){
+	  cantidad++;
+     }
      const std::string print() const{
-	  return texto;
+	  if(cantidad==1)
+	       return texto;
+	  else{
+	       std::string s;
+	       std::stringstream z;
+	       z << texto << "(" << cantidad << ")";
+	       z >> s;
+	       return s;
+	  }
      }
 };
 
 #include "RedBlackTree.h"
 
 
-#define CARACTERES 5
+#define CARACTERES 1
 
 int main(int argc, char**argv){
      
@@ -42,7 +59,8 @@ int main(int argc, char**argv){
 	  for(int j=0;j<CARACTERES;j++){
 	       inicial += rand()%26+'A';
 	  }
-	  arbol.Insert(entradaTexto(inicial));
+	  if(arbol.Insert(entradaTexto(inicial)) == NULL)
+	       std::cerr << "OJO, la clave " << inicial << " esta repetida.\n";
      }
 
      arbol.Print();
