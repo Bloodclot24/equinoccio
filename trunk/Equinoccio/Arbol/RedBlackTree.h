@@ -54,6 +54,7 @@ public:
   ~RedBlackTree();
   void Print() const;
   N DeleteNode(RedBlackTreeNode<N> *);
+  N RemoverMayorIgual(const N&);
   RedBlackTreeNode<N> * Insert(N);
   RedBlackTreeNode<N> * GetPredecessorOf(RedBlackTreeNode<N> *) const;
   RedBlackTreeNode<N> * GetSuccessorOf(RedBlackTreeNode<N> *) const;

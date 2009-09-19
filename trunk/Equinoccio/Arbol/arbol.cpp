@@ -63,7 +63,36 @@ int main(int argc, char**argv){
 	       std::cerr << "OJO, la clave " << inicial << " esta repetida.\n";
      }
 
-     arbol.Print();
+     std::cout << "Removiendo 5 elementos >= 'M':\n";
+     for(int i=0;i<5;i++){
+	  std::cout << arbol.RemoverMayorIgual(entradaTexto("M")).print()<<std::endl;
+     }
 
      return 0;
+}
+
+template <class N>
+N RedBlackTree<N>::RemoverMayorIgual(const N& referencia){
+     RedBlackTreeNode<N> *x=root;
+     RedBlackTreeNode<N> *y=root->left;
+     RedBlackTreeNode<N> *ultimo_izquierda=NULL;
+     
+     while(y != nil){
+	  x=y;
+	  if(y->key < referencia){
+	       y=y->right;
+	  }
+	  else if(y->key > referencia){
+	       ultimo_izquierda = y;
+	       y=y->left;
+	  }
+	  else{
+	       ultimo_izquierda=y;
+	       break;
+	  }
+     }
+     
+     if(ultimo_izquierda == NULL)
+	  return N();
+     return DeleteNode(ultimo_izquierda);
 }
