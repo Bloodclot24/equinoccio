@@ -25,6 +25,12 @@ std::string Parser::aMinuscSinInvalidos(std::string informacion) {
 }
 
 /*--------------------------------------------------------------------------*/
+Parser::Parser(uint32_t cantMaxReg) {
+	
+	this->archivos= cantMaxReg;
+}
+
+/*--------------------------------------------------------------------------*/
 void Parser::guardarPalabras(std::string palabras) {
 	
 	std::string strAparsear(palabras); 

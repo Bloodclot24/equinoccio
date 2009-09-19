@@ -1,7 +1,12 @@
 #include "ParserAudio.h"
 
 /****************************************************************************/
+ParserAudio::ParserAudio(uint32_t cantMaxReg): Parser::Parser(cantMaxReg) { }; 
+		
+/*--------------------------------------------------------------------------*/
 std::string ParserAudio::parsear(std::string nombre, uint32_t documento) {
+	
+	std::cout << "Probando 23: " << Util::intToString(23) << std::endl;
 	
 	EXTRACTOR_ExtractorList *extractors =EXTRACTOR_loadDefaultLibraries();
   EXTRACTOR_KeywordList *keywords= EXTRACTOR_getKeywords(extractors, nombre.c_str());
@@ -14,7 +19,7 @@ std::string ParserAudio::parsear(std::string nombre, uint32_t documento) {
 
 	  //Ruta dump
 		nombre_dump+= nombre;
-		nombre_dump+= PATH_DUMP;
+		//nombre_dump+= PATH_DUMP;
 		std::ofstream dump(nombre_dump.c_str(), std::fstream::out);
 	  
 	  do {

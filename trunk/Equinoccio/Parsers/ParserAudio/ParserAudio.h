@@ -5,7 +5,6 @@
 #include <list>
 #include <extractor.h>
 #include <fstream>
-#include <sstream>
 #include "../Parser.h"
 
 // Los campos de los archivos de audio que se van a tener en cuenta
@@ -36,6 +35,7 @@ class ParserAudio: public Parser {
 		std::string obtenerExtension(char* extension);
 	
 	public: 
+		ParserAudio(uint32_t cantMaxReg);
 		virtual std::string parsear(std::string nombre, uint32_t documento);	
 };
 

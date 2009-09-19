@@ -5,10 +5,10 @@
 #include <string.h>
 #include <iostream>
 #include "../Registros/Registro.h"
+#include "../Util/Util.h"
 
 /** 
  * Interfaz a implementar por cada uno de los parsers del programa.
- * 
  */
 
 class Parser{
@@ -33,8 +33,12 @@ protected:
 		void guardarPalabras(std::string palabras);
 
 public:
-		 /** 
-    	*/
+     /** 
+      * Crea un nuevo Parser, con un numero maximo de registros
+      * por archivo.
+      * 
+      * @param cantMaxReg La cantidad maxima de registros por archivo.
+      */
 		 Parser(uint32_t cantMaxReg);
 		
      /** El método intenta abrir el archivo con el nombre dado e
@@ -55,6 +59,7 @@ public:
      virtual std::string parsear(std::string nombre, uint32_t documento)=0;
 
 		 /** 
+		  * Devuelve la cantidad de archivos que genero parseando.
     	*/     
      uint32_t getCantArchivosParseados();		
 };

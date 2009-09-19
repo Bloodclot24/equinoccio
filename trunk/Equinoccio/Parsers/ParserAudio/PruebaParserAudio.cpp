@@ -2,7 +2,7 @@
 
 int main(int argc, char** argv) {
 	
-	ParserAudio parser;
+	ParserAudio parser(40);
 	
 	if(argc != 2) {
 		std::cerr << "Indique ruta de un archivo de audio" << std::endl;
