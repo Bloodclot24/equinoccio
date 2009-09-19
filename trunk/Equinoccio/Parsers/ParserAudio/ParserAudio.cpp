@@ -1,26 +1,34 @@
 #include "ParserAudio.h"
 
 /****************************************************************************/
-ParserAudio::ParserAudio(uint32_t cantMaxReg): Parser::Parser(cantMaxReg) { }; 
+ParserAudio::ParserAudio(uint32_t cantMaxReg): Parser::Parser(cantMaxReg) { 
+	
+	//TODO: carga arbol con stop word audio
+}; 
 		
 /*--------------------------------------------------------------------------*/
-std::string ParserAudio::parsear(std::string nombre, uint32_t documento) {
-	
-	std::cout << "Probando 23: " << Util::intToString(23) << std::endl;
+bool ParserAudio::parsear(std::string nombre, uint32_t documento) {
 	
 	EXTRACTOR_ExtractorList *extractors =EXTRACTOR_loadDefaultLibraries();
   EXTRACTOR_KeywordList *keywords= EXTRACTOR_getKeywords(extractors, nombre.c_str());
   
   std::string nombre_dump;
   
+  bool audio= false;
+  
   if(keywords) {
 		
-		bool audio= true;
+		audio= true;
 
 	  //Ruta dump
-		nombre_dump+= nombre;
-		//nombre_dump+= PATH_DUMP;
-		std::ofstream dump(nombre_dump.c_str(), std::fstream::out);
+		nombre_dump+= PATH_DUMP_AUDIO;
+		nombre_dump+= Util::intToString(archivos);
+		std::ofstream dump;
+		dump.open(nombre_dump.c_str(), std::fstream::out);
+
+//		//TODO: /*PRUEBA*/
+//		std::cout << "Ruta Dump: " << nombre_dump << std::endl;
+
 	  
 	  do {
 			int type= keywords->keywordType;
@@ -38,8 +46,8 @@ std::string ParserAudio::parsear(std::string nombre, uint32_t documento) {
 	  			//una a una. 
 	  			if(type == DATE || type == YEAR || type == TRACK_NUMBER) {
 	  				guardarEnDump(dump, keywords->keyword, documento);
-			  		//TODO: /*PRUEBA*/
-			  		std::cout << "Palabra A Guardar: " << keywords->keyword << std::endl;
+//			  		//TODO: /*PRUEBA*/
+//			  		std::cout << "Palabra A Guardar: " << keywords->keyword << std::endl;
 	  			} else if(type == MIMETYPE) {
 
 	  				if(strcmp(MIME_TYPE_MP3, keywords->keyword) != 0 && 
@@ -48,8 +56,8 @@ std::string ParserAudio::parsear(std::string nombre, uint32_t documento) {
 	  				else {
 	  					std::string extension= obtenerExtension(keywords->keyword); 
 	  					guardarEnDump(dump, extension, documento);
-				  		//TODO: /*PRUEBA*/
-	  					std::cout << "Palabra A Guardar: " << extension << std::endl;
+				  		////TODO: /*PRUEBA*/
+	  					//std::cout << "Palabra A Guardar: " << extension << std::endl;
 	  				}	
 
 	  			} else
@@ -59,25 +67,43 @@ std::string ParserAudio::parsear(std::string nombre, uint32_t documento) {
 	  	keywords= keywords->next;
 		} while(keywords != NULL);
 	  
-	  EXTRACTOR_freeKeywords(keywords);
-		EXTRACTOR_removeAll(extractors);
-	  
 	  if(audio) {
 			//Guardo en el archivo dump
 			std::list<std::string>::iterator it;
 			for(it= lista.begin(); it != lista.end(); it++) {
 					//TODO: FALTA CHECKEAR ANTES DE QUE NO SEA STOP WORD
 		  		//TODO: /*PRUEBA*/
-					std::cout << "Palabra A Guardar: " << *it << std::endl;
-					guardarEnDump(dump, (*it), documento);
+					if(cantReg != cantMaxReg) {
+//						std::cout << "Palabra A Guardar: " << *it << std::endl;
+						guardarEnDump(dump, (*it), documento);
+						cantReg++;
+					} else {
+						dump.close();
+						archivos++;
+						nombre_dump.clear();
+						nombre_dump+= PATH_DUMP_AUDIO;
+						nombre_dump+= Util::intToString(archivos);
+						dump.open(nombre_dump.c_str(), std::fstream::out);
+						cantReg= 1;
+//						//TODO: /*PRUEBA*/
+//						std::cout << "-- Nuevo archivo dump --" << std::endl;
+//						std::cout << "Ruta Dump: " << nombre_dump << std::endl;
+//						std::cout << "Palabra A Guardar: " << *it << std::endl;
+						guardarEnDump(dump, (*it), documento);
+					}
 			}
 		}
 		dump.close();
-		
-  } else
-  	nombre_dump= "";;
-   
-  return nombre_dump;
+  }
+  
+//  std::cout << "Cant Archivos: " << archivos << std::endl;
+//  std::cout << "Cant registros ultimo archivo: " << cantReg << std::endl;
+  
+ 	EXTRACTOR_freeKeywords(keywords);
+	EXTRACTOR_removeAll(extractors);
+  lista.clear();
+  
+	return audio;
 }
 
 /*--------------------------------------------------------------------------*/

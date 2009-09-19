@@ -23,9 +23,10 @@ enum KeywordType {
   TRACK_NUMBER = 132,
 };
 
-#define PATH_STOP_WORDS "stopword"
+#define PATH_DUMP_AUDIO "dump_audio_"
 #define MIME_TYPE_MP3 "audio/mpeg"
 #define MIME_TYPE_OGG "application/ogg"
+#define PATH_STOP_WORD "stop_word_audio"
 
 /****************************************************************************/
 class ParserAudio: public Parser {
@@ -36,7 +37,7 @@ class ParserAudio: public Parser {
 	
 	public: 
 		ParserAudio(uint32_t cantMaxReg);
-		virtual std::string parsear(std::string nombre, uint32_t documento);	
+		virtual bool parsear(std::string nombre, uint32_t documento);	
 };
 
 /****************************************************************************/

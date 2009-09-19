@@ -1,10 +1,18 @@
 #include "Parser.h"
 
 /****************************************************************************/
+Parser::Parser(uint32_t cantMaxReg) {
+	
+	this->archivos= 0;
+	this->cantMaxReg= cantMaxReg;
+	this->cantReg= 0;
+}
+
+/*--------------------------------------------------------------------------*/
 std::string Parser::aMinuscSinInvalidos(std::string informacion) {
 	
-	//TODO: /*PRUEBA*/
-	std::cout << "Palabra Cruda: " << informacion << std::endl;
+//	//TODO: /*PRUEBA*/
+//	std::cout << "Palabra Cruda: " << informacion << std::endl;
 	
 	std::string invalidos("!#$%&'()*+,-.0123456789:;<=>?@[]^_`{|}~");
 	std::string palabraFiltrada;
@@ -18,16 +26,10 @@ std::string Parser::aMinuscSinInvalidos(std::string informacion) {
 			palabraFiltrada+= " "; 
 	}
 
-	//TODO: /*PRUEBA*/
-	std::cout << "Palabra Filtrada: " << palabraFiltrada << std::endl;
+//	//TODO: /*PRUEBA*/
+//	std::cout << "Palabra Filtrada: " << palabraFiltrada << std::endl;
 	
 	return palabraFiltrada;
-}
-
-/*--------------------------------------------------------------------------*/
-Parser::Parser(uint32_t cantMaxReg) {
-	
-	this->archivos= cantMaxReg;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -51,4 +53,11 @@ uint32_t Parser::getCantArchivosParseados() {
 	
 	return archivos;
 }
+
+/*--------------------------------------------------------------------------*/
+uint32_t Parser::getCantReg() {
+	
+	return cantReg;
+}		
+
 /****************************************************************************/
