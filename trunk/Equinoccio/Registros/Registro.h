@@ -4,6 +4,7 @@
 #include <list>
 #include <string>
 #include <fstream>
+#include <sstream>
 
 /** 
  * Clase que se encarga de abstraer el manejo de las estructuras de
@@ -91,6 +92,31 @@ public:
       * @return La lista de punteros.
       */
      const std::list<Punteros>& getPunteros(){ return punteros;};
+
+     bool operator>(const Registro& b) const {
+	  return termino.compare(b.termino)>0?1:0;
+     }
+     bool operator<(const Registro& b) const {
+	  return termino.compare(b.termino)<0?1:0;
+     }
+
+     std::string print() const{
+	  if(punteros.size() < 1)
+	       return termino;
+	  else{
+	       std::stringstream ss;
+	       ss << termino;
+	       std::list<Punteros>::const_iterator it=punteros.begin();
+	       while(it != punteros.end()){
+		    ss << '/' << (*it).documento;
+		    it++;
+	       }
+	       std::string salida;
+	       ss >> salida;
+	       return salida;
+	  }
+     }
+
 
 };
 

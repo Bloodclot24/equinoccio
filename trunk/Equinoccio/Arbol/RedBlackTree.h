@@ -258,7 +258,7 @@ int RedBlackTree<N>::TreeInsertHelp(RedBlackTreeNode<N>* z) {
       x=x->right;
     }
     else{ /* x->key == z->key */
-	 x->key->merge(*(z->key));
+	 x->key->unir(*(z->key));
 	 return 1;
     }
   }
@@ -723,6 +723,33 @@ void RedBlackTree<N>::CheckAssumptions() const {
  // VERIFY(root->storedEntry == NULL);
  // VERIFY(nil->red == 0);
  // VERIFY(root->red == 0);
+}
+
+
+template <class N>
+N* RedBlackTree<N>::RemoverMayorIgual(const N& referencia){
+     RedBlackTreeNode<N> *x=root;
+     RedBlackTreeNode<N> *y=root->left;
+     RedBlackTreeNode<N> *ultimo_izquierda=NULL;
+     
+     while(y != nil){
+	  x=y;
+	  if(*(y->key) < referencia){
+	       y=y->right;
+	  }
+	  else if(*(y->key) > referencia){
+	       ultimo_izquierda = y;
+	       y=y->left;
+	  }
+	  else{
+	       ultimo_izquierda=y;
+	       break;
+	  }
+     }
+     
+     if(ultimo_izquierda == NULL)
+	  return NULL;
+     return DeleteNode(ultimo_izquierda);
 }
 
 #endif
