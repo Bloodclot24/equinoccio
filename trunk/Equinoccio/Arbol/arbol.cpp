@@ -66,6 +66,11 @@ int main(int argc, char**argv){
      entradaTexto *E;
      while( (E = arbol.RemoverMayorIgual(entradaTexto("I"))) ){
 	       std::cout << E->print()<<std::endl;
+	       delete E;
+     }
+
+     while( (E = arbol.RemoverMayorIgual(entradaTexto(""))) ){
+	       delete E;
      }
 
      return 0;

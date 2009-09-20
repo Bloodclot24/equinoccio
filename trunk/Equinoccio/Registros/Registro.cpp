@@ -9,27 +9,27 @@ Registro::Registro(std::string termino, uint32_t documento){
      punteros.push_back(puntero);
 }
 
-Registro Registro::leer(std::ifstream &archivo, int compresion){
-     Registro r;
+Registro* Registro::leer(std::ifstream &archivo, int compresion){
+     Registro* r= new Registro();;
      char c=-1;
      while(archivo.good() && (c = archivo.get()) != 0){
-	  r.termino += c;
+	  r->termino += c;
      }
 
      if(archivo.good())
-	  archivo.read((char*)&(r.frecuencia), sizeof(r.frecuencia));
+	  archivo.read((char*)&(r->frecuencia), sizeof(r->frecuencia));
      else{
-	  r.termino.clear();
-	  return r;
+	  delete r;
+	  return NULL;
      }
 
-     uint32_t contador = r.frecuencia;
+     uint32_t contador = r->frecuencia;
      Registro::Punteros p;
      while(archivo.good() && contador > 0){
 	  if(!compresion){
 	       archivo.read((char*)&(p.documento), sizeof(p.documento));
 	       archivo.read((char*)&(p.frecuencia), sizeof(p.frecuencia));
-	       r.punteros.push_back(p);
+	       r->punteros.push_back(p);
 	       contador--;
 	  }
 	  else{

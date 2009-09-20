@@ -19,6 +19,8 @@ private:
       */
      Registro(){};
 
+     
+
 public:
      struct Punteros{		/**< Estructura auxiliar para manejar
 				 * pares (documento,frecuencia) */
@@ -46,10 +48,9 @@ public:
       * comresion, si es 1 se asume que las distancias estan
       * codificadas en gamma.
       * 
-      * @return El registro leído del archivo o un registro vacío si
-      * no pudo leer.
+      * @return El registro leído del archivo o NULL si no pudo leer.
       */
-     static Registro leer(std::ifstream &archivo, int compresion);
+     static Registro* leer(std::ifstream &archivo, int compresion);
 
      /** 
       * Escribe un registro en un archivo.
@@ -90,6 +91,7 @@ public:
       * @return La lista de punteros.
       */
      const std::list<Punteros>& getPunteros(){ return punteros;};
+
 };
 
 #endif //REGISTRO_H_INCLUDED
