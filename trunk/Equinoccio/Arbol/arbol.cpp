@@ -39,7 +39,7 @@ public:
 #include "RedBlackTree.h"
 
 
-#define CARACTERES 1
+#define CARACTERES 8
 
 int main(int argc, char**argv){
      
@@ -59,30 +59,30 @@ int main(int argc, char**argv){
 	  for(int j=0;j<CARACTERES;j++){
 	       inicial += rand()%26+'A';
 	  }
-	  if(arbol.Insert(entradaTexto(inicial)) == NULL)
-	       std::cerr << "OJO, la clave " << inicial << " esta repetida.\n";
+	  arbol.Insert(new entradaTexto(inicial));
      }
 
-     std::cout << "Removiendo 5 elementos >= 'M':\n";
-     for(int i=0;i<5;i++){
-	  std::cout << arbol.RemoverMayorIgual(entradaTexto("M")).print()<<std::endl;
+     std::cout << "Removiendo elementos >= 'I':\n";
+     entradaTexto *E;
+     while( (E = arbol.RemoverMayorIgual(entradaTexto("I"))) ){
+	       std::cout << E->print()<<std::endl;
      }
 
      return 0;
 }
 
 template <class N>
-N RedBlackTree<N>::RemoverMayorIgual(const N& referencia){
+N* RedBlackTree<N>::RemoverMayorIgual(const N& referencia){
      RedBlackTreeNode<N> *x=root;
      RedBlackTreeNode<N> *y=root->left;
      RedBlackTreeNode<N> *ultimo_izquierda=NULL;
      
      while(y != nil){
 	  x=y;
-	  if(y->key < referencia){
+	  if(*(y->key) < referencia){
 	       y=y->right;
 	  }
-	  else if(y->key > referencia){
+	  else if(*(y->key) > referencia){
 	       ultimo_izquierda = y;
 	       y=y->left;
 	  }
@@ -93,6 +93,6 @@ N RedBlackTree<N>::RemoverMayorIgual(const N& referencia){
      }
      
      if(ultimo_izquierda == NULL)
-	  return N();
+	  return NULL;
      return DeleteNode(ultimo_izquierda);
 }

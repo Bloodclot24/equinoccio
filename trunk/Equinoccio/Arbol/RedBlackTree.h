@@ -37,10 +37,10 @@ public:
   void Print(RedBlackTreeNode<N>*,
 	     RedBlackTreeNode<N>*) const;
   RedBlackTreeNode();
-  RedBlackTreeNode(N);
+  RedBlackTreeNode(N*);
   ~RedBlackTreeNode();
 protected:
-  N key;
+  N* key;
   int red; /* if red=0 then the node is black */
   RedBlackTreeNode<N> * left;
   RedBlackTreeNode<N> * right;
@@ -53,12 +53,12 @@ public:
   RedBlackTree();
   ~RedBlackTree();
   void Print() const;
-  N DeleteNode(RedBlackTreeNode<N> *);
-  N RemoverMayorIgual(const N&);
-  RedBlackTreeNode<N> * Insert(N);
+  N* DeleteNode(RedBlackTreeNode<N> *);
+  N* RemoverMayorIgual(const N&);
+  RedBlackTreeNode<N> * Insert(N*);
   RedBlackTreeNode<N> * GetPredecessorOf(RedBlackTreeNode<N> *) const;
   RedBlackTreeNode<N> * GetSuccessorOf(RedBlackTreeNode<N> *) const;
-  RedBlackTreeNode<N> * Search(N);
+  RedBlackTreeNode<N> * Search(const N&);
   std::deque<RedBlackTreeNode<N> *> * Enumerate(int low, int high) ;
   void CheckAssumptions() const;
 protected:
@@ -96,7 +96,7 @@ RedBlackTreeNode<N>::RedBlackTreeNode(){
 };
 
 template <class N>
-RedBlackTreeNode<N>::RedBlackTreeNode(N newEntry)
+RedBlackTreeNode<N>::RedBlackTreeNode(N *newEntry)
   : key(newEntry) {
 };
 
@@ -110,10 +110,12 @@ RedBlackTree<N>::RedBlackTree()
   nil = new RedBlackTreeNode<N>;
   nil->left = nil->right = nil->parent = nil;
   nil->red = 0;
+  nil->key = NULL;
 
   root = new RedBlackTreeNode<N>;
   root->parent = root->left = root->right = nil;
   root->red=0;
+  root->key = NULL;
 }
 
 /***********************************************************************/
@@ -250,19 +252,19 @@ int RedBlackTree<N>::TreeInsertHelp(RedBlackTreeNode<N>* z) {
   x=root->left;
   while( x != nil) {
     y=x;
-    if ( x->key > z->key) { 
+    if ( *(x->key) > *(z->key)) { 
       x=x->left;
-    } else if (x->key < z->key){ 
+    } else if (*(x->key) < *(z->key)){ 
       x=x->right;
     }
     else{ /* x->key == z->key */
-	 x->key.merge(z->key);
+	 x->key->merge(*(z->key));
 	 return 1;
     }
   }
   z->parent=y;
   if ( (y == root) ||
-       (y->key > z->key) ) { 
+       (*(y->key) > *(z->key)) ) { 
     y->left=z;
   } else {
     y->right=z;
@@ -294,7 +296,7 @@ int RedBlackTree<N>::TreeInsertHelp(RedBlackTreeNode<N>* z) {
 /*            info pointers and inserts it into the tree. */
 /***********************************************************************/
 template <class N>
-RedBlackTreeNode<N> * RedBlackTree<N>::Insert(N newEntry)
+RedBlackTreeNode<N> * RedBlackTree<N>::Insert(N* newEntry)
 {
   RedBlackTreeNode<N> * y;
   RedBlackTreeNode<N> * x;
@@ -437,8 +439,8 @@ RedBlackTreeNode<N> * RedBlackTree<N>::GetPredecessorOf(RedBlackTreeNode<N> * x)
 template <class N>
 void RedBlackTreeNode<N>::Print(RedBlackTreeNode<N> * nil,
 				RedBlackTreeNode<N> * root) const {
-  printf("\"%s\"",key.print().c_str());
-  printf("[label=\"%s\" ",key.print().c_str());
+  printf("\"%s\"",key->print().c_str());
+  printf("[label=\"%s\" ",key->print().c_str());
   if(red == 1)
     printf("fillcolor=red");
   else
@@ -447,17 +449,17 @@ void RedBlackTreeNode<N>::Print(RedBlackTreeNode<N> * nil,
 
 
   if( left != nil) 
-    printf("\"%s\" -> \"%s\" \n", key.print().c_str(), left->key.print().c_str());
+    printf("\"%s\" -> \"%s\" \n", key->print().c_str(), left->key->print().c_str());
   else{
-    printf("\"l%s\"[label=\"NIL\" fillcolor=black fontcolor=white]\n", key.print().c_str());
-    printf("\"%s\" -> \"l%s\"\n", key.print().c_str(),key.print().c_str());
+    printf("\"l%s\"[label=\"NIL\" fillcolor=black fontcolor=white]\n", key->print().c_str());
+    printf("\"%s\" -> \"l%s\"\n", key->print().c_str(),key->print().c_str());
   }
 
   if( right != nil) 
-    printf("\"%s\" -> \"%s\" \n", key.print().c_str(), right->key.print().c_str());
+    printf("\"%s\" -> \"%s\" \n", key->print().c_str(), right->key->print().c_str());
   else{
-    printf("\"r%s\"[label=\"NIL\" fillcolor=black fontcolor=white]\n", key.print().c_str());
-    printf("\"%s\" -> \"r%s\"\n", key.print().c_str(),key.print().c_str());
+    printf("\"r%s\"[label=\"NIL\" fillcolor=black fontcolor=white]\n", key->print().c_str());
+    printf("\"%s\" -> \"r%s\"\n", key->print().c_str(),key->print().c_str());
   }
 
   
@@ -619,10 +621,10 @@ void RedBlackTree<N>::DeleteFixUp(RedBlackTreeNode<N>* x) {
 /*    The algorithm from this function is from _Introduction_To_Algorithms_ */
 /***********************************************************************/
 template <class N>
-N RedBlackTree<N>::DeleteNode(RedBlackTreeNode<N> * z){
+N* RedBlackTree<N>::DeleteNode(RedBlackTreeNode<N> * z){
   RedBlackTreeNode<N>* y;
   RedBlackTreeNode<N>* x;
-  N returnValue = z->key;
+  N* returnValue = z->key;
 
   y= ((z->left == nil) || (z->right == nil)) ? z : GetSuccessorOf(z);
   x= (y->left == nil) ? y->right : y->left;
@@ -699,7 +701,7 @@ std::deque<RedBlackTreeNode<N> *> * RedBlackTree<N>::Enumerate(int low,
   RedBlackTreeNode<N>* lastBest=NULL;
 
   while(nil != x) {
-    if ( x->key > high ) {
+       if ( *(x->key) > high ) {
       x=x->left;
     } else {
       lastBest=x;
