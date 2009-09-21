@@ -2,7 +2,7 @@
 #include <sys/time.h>
 #include <string>
 #include <sstream>
-#include "Registros/Registro.h"
+#include "../Registros/Registro.h"
 
 #include "RedBlackTree.h"
 
