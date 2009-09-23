@@ -4,6 +4,7 @@
 #include <string>
 #include <string.h>
 #include <iostream>
+#include <fstream>
 #include "../Registros/Registro.h"
 #include "../Util/Util.h"
 #include "../Arbol/RedBlackTree.h"
@@ -20,6 +21,14 @@ protected:
 	uint32_t cantMaxReg;
 	uint32_t cantReg;
 	std::list<std::string> lista;
+	RedBlackTree<std::string> arbol;
+	
+	/**
+		* La funcion se encarga de cargar el arbol con los stop word.
+		* 
+    * @param nombreStopWord El archivo donde estan los stop word.
+	 	*/ 
+		void cargarStopWord(std::string nombreStopWord);
 	
 	/**
 	 	* La funcion devuelve una cadena en minuscula, sin caracteres invalidos;

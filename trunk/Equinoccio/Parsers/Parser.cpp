@@ -9,6 +9,30 @@ Parser::Parser(uint32_t cantMaxReg) {
 }
 
 /*--------------------------------------------------------------------------*/
+void Parser::cargarStopWord(std::string nombreStopWord) {
+	
+		std::fstream archivo(nombreStopWord.c_str(), std::fstream::in);
+		
+		archivo.seekg(0, std::ios::end);
+  	std::streampos	length= archivo.tellg();
+  	archivo.seekg(0, std::ios::beg);
+		
+		char buffer[512];
+
+		if(archivo.is_open()) {
+			while(archivo.tellg() != length) {
+				archivo.getline(buffer, 512);
+				
+				//TODO: cargar el arbolito :p
+				
+				//std::cout << buffer << std::endl;
+			}
+		}
+		
+		archivo.close();
+}
+
+/*--------------------------------------------------------------------------*/
 std::string Parser::aMinuscSinInvalidos(std::string informacion) {
 	
 //	//TODO: /*PRUEBA*/

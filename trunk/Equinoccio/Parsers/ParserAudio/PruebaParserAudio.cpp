@@ -15,7 +15,8 @@ int main(int argc, char** argv) {
 		std::cout << "El archivo pudo ser parseado" << std::endl;
 	else
 		std::cerr << "No se pudo parsear el archivo" << std::endl;
-
+	
+	std::cout << std::endl;
 	//Archivo 2
 	std::cout << "------------------------------------------" << std::endl;
 	std::cout << "Intentando Parsear: " << argv[2] << std::endl;

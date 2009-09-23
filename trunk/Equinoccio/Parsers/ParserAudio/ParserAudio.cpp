@@ -3,7 +3,7 @@
 /****************************************************************************/
 ParserAudio::ParserAudio(uint32_t cantMaxReg): Parser::Parser(cantMaxReg) { 
 	
-	//TODO: carga arbol con stop word audio
+	cargarStopWord(PATH_STOP_WORD);
 }; 
 		
 /*--------------------------------------------------------------------------*/

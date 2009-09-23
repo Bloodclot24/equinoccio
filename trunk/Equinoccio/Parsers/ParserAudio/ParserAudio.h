@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <list>
 #include <extractor.h>
-#include <fstream>
 #include "../Parser.h"
 
 // Los campos de los archivos de audio que se van a tener en cuenta
@@ -26,7 +25,7 @@ enum KeywordType {
 #define PATH_DUMP_AUDIO "dump_audio_"
 #define MIME_TYPE_MP3 "audio/mpeg"
 #define MIME_TYPE_OGG "application/ogg"
-#define PATH_STOP_WORD "stop_word_audio"
+#define PATH_STOP_WORD "Parsers/ParserAudio/stop_word_audio"
 
 /****************************************************************************/
 class ParserAudio: public Parser {
