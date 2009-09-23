@@ -31,8 +31,19 @@ int main(int argc, char**argv){
 	  arbol.Insert(new Registro(inicial, rand()%100));
      }
 
-     std::cout << "Removiendo registros >= 'I':\n";
      Registro *E;
+     char clave[2];
+     clave[1]=0;
+     for(char c='A';c<='Z';c++){
+	  clave[0]=c;
+	  if(arbol.Search(Registro(clave,0)))
+	       std::cout << "Clave " << c << " encontrada.\n";
+	  else
+	       std::cout << "Clave " << c << " NO encontrada.\n";
+     }
+
+     std::cout << "Removiendo registros >= 'I':\n";
+
      while( (E = arbol.RemoverMayorIgual(Registro("I",0))) ){
 	       std::cout << E->print()<<std::endl;
 	       delete E;

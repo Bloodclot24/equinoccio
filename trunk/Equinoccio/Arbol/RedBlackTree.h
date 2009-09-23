@@ -30,6 +30,11 @@
 template <class N>
 class RedBlackTree;
 
+
+/** 
+ * Clase que representa los nodos a insertar en el arbol rojo-negro.
+ * @see RedBlackTree
+ */
 template <class N>
 class RedBlackTreeNode {
   friend class RedBlackTree<N>;
@@ -47,19 +52,51 @@ protected:
   RedBlackTreeNode<N> * parent;
 };
 
+/** 
+ * Implementacion de arbol rojo-negro.  El parametro N especifica la
+ * clase a utilizar como clave para el ordenamiento del arbol. Dicha
+ * clase debe tener definidos los siguientes metodos: operator>,
+ * operator<, unir(const N&), std::string print().  Los primeros dos
+ * se utilizan para posicionar la clave en el arbol. La tercera es
+ * invocada en caso de que la clave ya estuviese en el arbol. En ese
+ * caso, no se inserta, y se intentan unir las claves para que
+ * compartan el mismo nodo. El ultimo metodo es opcional, y se utiliza
+ * para imprimir por salida estandar un grafo dirigido con el formato
+ * 'dot' de GraphViz cuando se invoca al metodo Print del arbol.
+ */
 template <class N>
 class RedBlackTree {
 public:
   RedBlackTree();
   ~RedBlackTree();
+
+  /** 
+   * Imprime por salida estandar la representacion del arbol como un
+   * grafo dirigido con el formato 'dot' de GraphViz
+   */
   void Print() const;
   N* DeleteNode(RedBlackTreeNode<N> *);
+
+  /** 
+   * Dado una clave de referencia, remueve del arbol la menor clave
+   * mayor o igual a la dada.
+   * 
+   * @return La clave encontrada o NULL si ninguna cumple el criterio
+   * de busqueda.
+   */
   N* RemoverMayorIgual(const N&);
+  
+  /** 
+   * Inserta una clave en el arbol. Si la clave esta repetida, intenta
+   * unirlos invocando al metodo unir del objeto clave y no lo inserta.
+   * 
+   * @return El nodo insertado o NULL si la clave ya existia.
+   */
   RedBlackTreeNode<N> * Insert(N*);
   RedBlackTreeNode<N> * GetPredecessorOf(RedBlackTreeNode<N> *) const;
   RedBlackTreeNode<N> * GetSuccessorOf(RedBlackTreeNode<N> *) const;
-  RedBlackTreeNode<N> * Search(const N&);
-  std::deque<RedBlackTreeNode<N> *> * Enumerate(int low, int high) ;
+  bool Search(const N&);
+  std::deque<RedBlackTreeNode<N> *> * Enumerate(int low, int high);
   void CheckAssumptions() const;
 protected:
   /*  A sentinel is used for root and for nil.  These sentinels are */
@@ -750,6 +787,23 @@ N* RedBlackTree<N>::RemoverMayorIgual(const N& referencia){
      if(ultimo_izquierda == NULL)
 	  return NULL;
      return DeleteNode(ultimo_izquierda);
+}
+
+template <class N>
+bool RedBlackTree<N>::Search(const N& buscado){
+     bool encontrado=false;
+     RedBlackTreeNode<N> *x=root->left;
+
+     while(x != nil && !encontrado){
+	  if(*(x->key) > buscado)
+	       x=x->left;
+	  else if(*(x->key) < buscado)
+	       x=x->right;
+	  else
+	       encontrado=true;
+     }
+
+     return encontrado;
 }
 
 #endif

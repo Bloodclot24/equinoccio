@@ -93,13 +93,37 @@ public:
       */
      const std::list<Punteros>& getPunteros(){ return punteros;};
 
+     /** 
+      * Comparador.
+      * 
+      * @param b Objeto a comparar.
+      * 
+      * @return 1 si esta instancia es mayor que el parametro, 0 en
+      * otro caso.
+      */
      bool operator>(const Registro& b) const {
 	  return termino.compare(b.termino)>0?1:0;
      }
+
+     /** 
+      * Comparador.
+      * 
+      * @param b Objeto a comparar.
+      * 
+      * @return 1 si esta instancia es menor que el parametro, 0 en
+      * otro caso.
+      */
      bool operator<(const Registro& b) const {
 	  return termino.compare(b.termino)<0?1:0;
      }
 
+     /** 
+      * Devuelve el contenido del registro en forma de texto. Es una
+      * funcion auxiliar que utiliza la implementacion de arbol
+      * utilizado.
+      * 
+      * @return Un string con la descripcion del registro.
+      */
      std::string print() const{
 	  if(punteros.size() < 1)
 	       return termino;
@@ -116,7 +140,6 @@ public:
 	       return salida;
 	  }
      }
-
 
 };
 
