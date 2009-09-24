@@ -25,7 +25,7 @@ enum KeywordType {
 #define PATH_DUMP_AUDIO "dump_audio_"
 #define MIME_TYPE_MP3 "audio/mpeg"
 #define MIME_TYPE_OGG "application/ogg"
-#define PATH_STOP_WORD "Parsers/ParserAudio/stop_word_audio"
+#define PATH_STOP_WORD "Parsers/ParserAudio/stop_words_audio"
 
 /****************************************************************************/
 class ParserAudio: public Parser {

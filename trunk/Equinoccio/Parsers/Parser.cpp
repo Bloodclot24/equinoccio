@@ -22,13 +22,11 @@ void Parser::cargarStopWord(std::string nombreStopWord) {
 		if(archivo.is_open()) {
 			while(archivo.tellg() != length) {
 				archivo.getline(buffer, 512);
-				
-				//TODO: cargar el arbolito :p
-				
-				//std::cout << buffer << std::endl;
+				std::string palabra(buffer);
+				arbol.Insert(new StopWord(palabra));
 			}
 		}
-		
+
 		archivo.close();
 }
 

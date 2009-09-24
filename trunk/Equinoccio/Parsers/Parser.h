@@ -14,14 +14,47 @@
  */
 
 class Parser{
-
+	
 protected:
+
+	class StopWord{
+	private:
+	     std::string texto;
+	     int cantidad;
+	     
+	public:
+	     StopWord(std::string texto){
+		  		this->texto = texto;
+		  		cantidad = 1;
+	     }
+	     StopWord(){}
+	     bool operator>(const StopWord& b){
+		  return texto.compare(b.texto)>0?1:0;
+	     }
+	     bool operator<(const StopWord& b){
+		  return texto.compare(b.texto)<0?1:0;
+	     }
+	     void unir(const StopWord& otro){
+		  cantidad++;
+	     }
+	     const std::string print() const{
+		  if(cantidad==1)
+		       return texto;
+		  else{
+		       std::string s;
+		       std::stringstream z;
+		       z << texto << "(" << cantidad << ")";
+		       z >> s;
+		       return s;
+		  }
+	     }
+	};
 
 	uint32_t archivos;
 	uint32_t cantMaxReg;
 	uint32_t cantReg;
 	std::list<std::string> lista;
-	RedBlackTree<std::string> arbol;
+	RedBlackTree<StopWord> arbol;
 	
 	/**
 		* La funcion se encarga de cargar el arbol con los stop word.

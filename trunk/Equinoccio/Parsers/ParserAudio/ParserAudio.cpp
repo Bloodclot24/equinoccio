@@ -71,10 +71,9 @@ bool ParserAudio::parsear(std::string nombre, uint32_t documento) {
 			//Guardo en el archivo dump
 			std::list<std::string>::iterator it;
 			for(it= lista.begin(); it != lista.end(); it++) {
-					//TODO: FALTA CHECKEAR ANTES DE QUE NO SEA STOP WORD
-		  		//TODO: /*PRUEBA*/
+					//TODO: /*PRUEBA*/
 					if(cantReg != cantMaxReg) {
-//						std::cout << "Palabra A Guardar: " << *it << std::endl;
+						//std::cout << "Palabra A Guardar: " << *it << std::endl;
 						guardarEnDump(dump, (*it), documento);
 						cantReg++;
 					} else {
@@ -85,10 +84,10 @@ bool ParserAudio::parsear(std::string nombre, uint32_t documento) {
 						nombre_dump+= Util::intToString(archivos);
 						dump.open(nombre_dump.c_str(), std::fstream::out);
 						cantReg= 1;
-//						//TODO: /*PRUEBA*/
-//						std::cout << "-- Nuevo archivo dump --" << std::endl;
-//						std::cout << "Ruta Dump: " << nombre_dump << std::endl;
-//						std::cout << "Palabra A Guardar: " << *it << std::endl;
+						//TODO: /*PRUEBA*/
+						//std::cout << "-- Nuevo archivo dump --" << std::endl;
+						//std::cout << "Ruta Dump: " << nombre_dump << std::endl;
+						//std::cout << "Palabra A Guardar: " << *it << std::endl;
 						guardarEnDump(dump, (*it), documento);
 					}
 			}
@@ -110,8 +109,10 @@ bool ParserAudio::parsear(std::string nombre, uint32_t documento) {
 void ParserAudio::guardarEnDump(std::ofstream& dump, 
 																std::string palabra, uint32_t documento) {
 	
-	Registro reg(palabra, documento);
-	reg.escribir(dump, 0);
+	if(!arbol.Search(StopWord(palabra))) {
+		Registro reg(palabra, documento);
+		reg.escribir(dump, 0);
+	}
 }
 
 /*--------------------------------------------------------------------------*/
