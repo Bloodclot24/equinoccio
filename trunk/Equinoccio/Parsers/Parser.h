@@ -15,7 +15,7 @@
 
 class Parser{
 	
-protected:
+private:	
 
 	class StopWord{
 	private:
@@ -50,18 +50,29 @@ protected:
 	     }
 	};
 
+	RedBlackTree<StopWord> arbol;
+
+protected:
 	uint32_t archivos;
 	uint32_t cantMaxReg;
 	uint32_t cantReg;
 	std::list<std::string> lista;
-	RedBlackTree<StopWord> arbol;
-	
+
 	/**
-		* La funcion se encarga de cargar el arbol con los stop word.
+		* La funcion se encarga de cargar el arbol con los stop words.
 		* 
-    * @param nombreStopWord El archivo donde estan los stop word.
+    * @param nombreStopWord El archivo donde estan los stop words.
 	 	*/ 
 		void cargarStopWord(std::string nombreStopWord);
+
+	/**
+		* La funcion se encarga de decir si la palabra pasada por
+		* parametro es o no stop word. Devuelve TRUE si es stop word,
+		* FALSE caso contrario.
+		* 
+    * @param palabra La palabra a saber si es o no stop word.
+	 	*/ 
+		bool esStopWord(std::string palabra);
 	
 	/**
 	 	* La funcion devuelve una cadena en minuscula, sin caracteres invalidos;

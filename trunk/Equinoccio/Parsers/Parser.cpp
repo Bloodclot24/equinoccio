@@ -31,6 +31,12 @@ void Parser::cargarStopWord(std::string nombreStopWord) {
 }
 
 /*--------------------------------------------------------------------------*/
+bool Parser::esStopWord(std::string palabra) {
+	
+	return(arbol.Search(StopWord(palabra)));
+}
+
+/*--------------------------------------------------------------------------*/
 std::string Parser::aMinuscSinInvalidos(std::string informacion) {
 	
 //	//TODO: /*PRUEBA*/

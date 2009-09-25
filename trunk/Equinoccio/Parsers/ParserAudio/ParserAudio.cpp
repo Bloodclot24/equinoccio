@@ -109,7 +109,7 @@ bool ParserAudio::parsear(std::string nombre, uint32_t documento) {
 void ParserAudio::guardarEnDump(std::ofstream& dump, 
 																std::string palabra, uint32_t documento) {
 	
-	if(!arbol.Search(StopWord(palabra))) {
+	if(!esStopWord(palabra)) {
 		Registro reg(palabra, documento);
 		reg.escribir(dump, 0);
 	}
