@@ -28,7 +28,9 @@ int main(int argc, char**argv){
 	  for(int j=0;j<CARACTERES;j++){
 	       inicial += rand()%26+'A';
 	  }
-	  arbol.Insert(new Registro(inicial, rand()%100));
+	  Registro* R = new Registro(inicial, rand()%100);
+	  if(arbol.Insert(R) == NULL)
+	       delete R;
      }
 
      Registro *E;
@@ -49,9 +51,7 @@ int main(int argc, char**argv){
 	       delete E;
      }
 
-     while( (E = arbol.RemoverMayorIgual(Registro("",0))) ){
-	       delete E;
-     }
+     arbol.LiberarTodo(true);
 
      return 0;
 }

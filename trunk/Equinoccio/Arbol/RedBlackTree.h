@@ -81,23 +81,42 @@ public:
    * Dado una clave de referencia, remueve del arbol la menor clave
    * mayor o igual a la dada.
    * 
+   * @param referencia Clave contra la cual se compara.
+   *
    * @return La clave encontrada o NULL si ninguna cumple el criterio
    * de busqueda.
    */
-  N* RemoverMayorIgual(const N&);
+  N* RemoverMayorIgual(const N& referencia);
   
   /** 
    * Inserta una clave en el arbol. Si la clave esta repetida, intenta
    * unirlos invocando al metodo unir del objeto clave y no lo inserta.
    * 
+   * @param newEntry La clave a insertar.
+   *
    * @return El nodo insertado o NULL si la clave ya existia.
    */
-  RedBlackTreeNode<N> * Insert(N*);
+  RedBlackTreeNode<N> * Insert(N* newEntry);
   RedBlackTreeNode<N> * GetPredecessorOf(RedBlackTreeNode<N> *) const;
   RedBlackTreeNode<N> * GetSuccessorOf(RedBlackTreeNode<N> *) const;
-  bool Search(const N&);
+
+  /** 
+   * Busca una clave en el arbol.
+   * 
+   * @param referencia La clave a buscar.
+   *
+   * @return True si encontro la clave.
+   */
+  bool Search(const N& referencia);
   std::deque<RedBlackTreeNode<N> *> * Enumerate(int low, int high);
   void CheckAssumptions() const;
+  
+  /** 
+   * 
+   * 
+   * @param estado 
+   */
+  void LiberarTodo(bool estado){ liberarTodo=estado; }
 protected:
   /*  A sentinel is used for root and for nil.  These sentinels are */
   /*  created when RedBlackTreeCreate is caled.  root->left should always */
@@ -107,6 +126,9 @@ protected:
   /*  that the root and nil nodes do not require special cases in the code */
   RedBlackTreeNode<N> * root;
   RedBlackTreeNode<N> * nil;
+  bool liberarTodo;		/**< Flag para indicar si se deben
+				   liberar las claves al destruir el
+				   arbol */
   void LeftRotate(RedBlackTreeNode<N> *);
   void RightRotate(RedBlackTreeNode<N> *);
   int TreeInsertHelp(RedBlackTreeNode<N> *);
@@ -144,6 +166,8 @@ RedBlackTreeNode<N>::~RedBlackTreeNode(){
 template <class N>
 RedBlackTree<N>::RedBlackTree()
 {
+
+  liberarTodo = false; // por defecto no liberamos las claves
   nil = new RedBlackTreeNode<N>;
   nil->left = nil->right = nil->parent = nil;
   nil->red = 0;
@@ -524,7 +548,8 @@ RedBlackTree<N>::~RedBlackTree() {
     if (x->right != nil) {
       stuffToFree.push_back(x->right);
     }
-    // delete x->storedEntry;
+    if(liberarTodo)
+	 delete x->key;
     delete x;
     while( !stuffToFree.empty() ) {
       x = stuffToFree.back(); stuffToFree.pop_back();
@@ -534,7 +559,8 @@ RedBlackTree<N>::~RedBlackTree() {
       if (x->right != nil) {
 	stuffToFree.push_back(x->right);
       }
-      // delete x->storedEntry;
+      if(liberarTodo)
+	   delete x->key;
       delete x;
     }
   }
