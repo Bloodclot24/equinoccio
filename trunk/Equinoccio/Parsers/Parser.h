@@ -96,6 +96,11 @@ public:
       * @param cantMaxReg La cantidad maxima de registros por archivo.
       */
 		 Parser(uint32_t cantMaxReg);
+		 
+		 /** 
+      * Destruye el Parser.
+      */
+		 ~Parser();
 		
      /** 
       * El método intenta abrir el archivo con el nombre dado e

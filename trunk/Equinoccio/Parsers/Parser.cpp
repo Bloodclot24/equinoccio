@@ -9,6 +9,12 @@ Parser::Parser(uint32_t cantMaxReg) {
 }
 
 /*--------------------------------------------------------------------------*/
+Parser::~Parser() {
+	
+	arbol.LiberarTodo(true);
+}
+
+/*--------------------------------------------------------------------------*/
 void Parser::cargarStopWord(std::string nombreStopWord) {
 	
 		std::fstream archivo(nombreStopWord.c_str(), std::fstream::in);
