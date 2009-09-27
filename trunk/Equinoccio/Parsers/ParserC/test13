@@ -1,0 +1,209 @@
+#include "TDA_Validacion.h"
+
+/* NO OLVIDAR LAS HIPOTESIS! */
+int ProcesarEntrada (char **argv, int cant) {
+
+	short int opciones[CANTOPCIONES];
+	int i, bytespos, fieldspos, cont = 0, cantarch = 0; /* cont cuenta solo las opciones (-V, -b y -f) */
+	char delim = '\t', *archivos[MAXARCHIVOS];
+	int rginf = -1, rgsup = INT_MAX, vecrangos[MAXRANGES][2], cantregs, aux;
+
+	for (i = 0; i < CANTOPCIONES; i++)  opciones[i] = FALSE;
+	for (i = 0; i < MAXRANGES; i++) {
+		vecrangos[i][0] = 0;
+		vecrangos[i][1] = 0;
+	}
+	i = 1; /* primer parametro */
+	while ( (i < cant) && (opciones[HELP] == FALSE) ) {
+		if ( argv[i][0] == '-' ) { /* Es una opcion para el comando*/
+			if ( (strcmp(argv[i], "-h") == 0) || (strcmp(argv[i], "--help") == 0) ) {
+				opciones[HELP] = TRUE;
+			} else if ( (strcmp(argv[i], "-V") == 0) || (strcmp(argv[i], "--version") == 0) ) {
+				opciones[VERSION] = TRUE;
+				cont++;
+				if (cont > 1)  opciones[HELP] = TRUE;
+			} else if ( (argv[i][1] == 'd') || (strcmp(argv[i], "--delimiter") == 0) ) {
+				opciones[DELIM] = TRUE;
+				if ( (strlen(argv[i]) > 2) && (strcmp(argv[i], "--delimiter") != 0) )  delim = argv[i][2];
+				else if ( i + 1 < cant )  delim = argv[++i][0];
+				else  opciones[HELP] = TRUE;
+			} else if ( (strcmp(argv[i], "-b") == 0) || (strcmp(argv[i], "--bytes") == 0) ) {
+				opciones[BYTES] = TRUE;
+				cont++;
+				if ( (i + 1 >= cant) || (cont > 1) )  opciones[HELP] = TRUE;
+				else  bytespos = ++i;
+			} else if ( (strcmp(argv[i], "-f") == 0) || (strcmp(argv[i], "--fields") == 0) ) {
+				opciones[FIELDS] = TRUE;
+				cont++;
+				if ( (i + 1 >= cant) || (cont > 1) )  opciones[HELP] = TRUE;
+				else  fieldspos = ++i;
+			} else if ( (strcmp(argv[i], "-s") == 0) || (strcmp(argv[i], "--ignore") == 0) ) {
+				opciones[IGNORE] = TRUE;
+			} else  opciones[HELP] = TRUE; /* Intenta usar una opcion que no existe */
+		} else { /* Asumo que me paso un archivo */
+			archivos[cantarch] = argv[i];
+			cantarch++;
+		}
+		i++;
+	} /* Fin del while */
+	if (opciones[HELP] == TRUE) {
+		displayHelp();
+		return 1;
+	}
+	if (opciones[VERSION] == TRUE) {
+		displayVersion();
+		return 2;
+	}
+	if (opciones[BYTES] == TRUE) {
+		if ( (opciones[DELIM] == TRUE) || (opciones[IGNORE] == TRUE) ) {
+			displayHelp(); /* No tiene sentido usar -d o -s con -b */
+			return 1;
+		}
+		/* Decidir que hacer... si sacar el proceso afuera... o que */
+		if ( (cantregs = ParsearPosiciones(&rginf, &rgsup, argv[bytespos], vecrangos)) == INVALIDFORMAT ) {
+			/*hacer algo mas?*/
+			outputError("\n ATENCION: Hubo un error de formato\n\n");
+			/* dar return ? */
+		}
+		/* <-----------  PARTE DE TESTEO - SACAR!  -----------> */
+		fprintf(stdout, "El delimitador usado es: \"%c\"\n", delim);
+		fprintf(stdout, "\n Resultados del parseo de posiciones: \n\n");
+		fprintf(stdout, "Cantidad de registros de rangos/posiciones: %d\n", cantregs);
+		for (i=0; i<cantregs; i++)  fprintf(stdout, "Rango numero %d: %d - %d\n", i, vecrangos[i][0], vecrangos[i][1]);
+		fprintf(stdout, "Registro inferior para la condicion tipo (-N): %d\n", rginf);
+		fprintf(stdout, "Registro superior para la condicion tipo (N-): %d\n", rgsup);
+		/* <-----------  FIN PARTE DE TESTEO - SACAR!  -----------> */
+		aux = PrepararVectorRangos(vecrangos, cantregs, rginf, rgsup);
+		cantregs = aux;
+		printf ("\nAhora cantregs tiene: %d\n", cantregs);
+		printf ("\n luego de procesar el vector quedo: \n");
+		for (i=0; i<cantregs; i++)  fprintf(stdout, "Rango numero %d: %d - %d\n", i, vecrangos[i][0], vecrangos[i][1]);
+		obtenerBytes (archivos, cantarch, rginf, rgsup, vecrangos, cantregs);
+		return 3;
+	}
+	/* Si continue hasta aca es porque quedo la opcion de "fields" */
+	/* Decidir que hacer, igual que con bytes */
+	if ( (cantregs = ParsearPosiciones(&rginf, &rgsup, argv[fieldspos], vecrangos)) == INVALIDFORMAT ) {
+		/*hacer algo mas?*/
+		outputError("\n ATENCION: Hubo un error de formato\n\n");
+		/* dar return ? PORQUE NO SE PUEDE PROCESAR! */
+	}
+	/* <-----------  PARTE DE TESTEO - SACAR!  -----------> */
+	fprintf(stdout, "El delimitador usado es: \"%c\"\n", delim);
+	fprintf(stdout, "\n Resultados del parseo de posiciones: \n\n");
+	fprintf(stdout, "Cantidad de registros de rangos/posiciones: %d\n", cantregs);
+	for (i=0; i<cantregs; i++)  fprintf(stdout, "Rango numero %d: %d - %d\n", i, vecrangos[i][0], vecrangos[i][1]);
+	fprintf(stdout, "Registro inferior para la condicion tipo (-N): %d\n", rginf);
+	fprintf(stdout, "Registro superior para la condicion tipo (N-): %d\n", rgsup);
+
+	printf("\n Muestro archivos: \n\n");
+	for (i=0; i < cantarch; i++) {
+		printf("archivos[%d] tiene: %s\n", i, archivos[i]);
+	}
+	/* <-----------  FIN PARTE DE TESTEO - SACAR!  -----------> */
+	aux = PrepararVectorRangos(vecrangos, cantregs, rginf, rgsup);
+	cantregs = aux;
+	printf ("\nAhora cantregs tiene: %d\n", cantregs);
+	printf ("\n luego de procesar el vector quedo: \n");
+	for (i=0; i<cantregs; i++)  fprintf(stdout, "Rango numero %d: %d - %d\n", i, vecrangos[i][0], vecrangos[i][1]);
+	obtenerCampos (archivos, cantarch, delim, rginf, rgsup, vecrangos, cantregs, opciones [IGNORE]);
+	return 4;
+}
+
+/* Paramentros:
+ * 		-rginf: Representa el valor hasta donde si o si se debe tomar todo desde el principio (con rango -N)
+ * 		-rgsup: Representa el valor desde donde si o si se debe tomar todo hasta el final (con rango N-)
+ * 		-rangos: Sera un vector de enteros de dos dimensiones que representa los rangos que se deben procesar
+ * 		rgsup y rginf estaran en -1 si no existen tales.
+ */
+/* Hipotesis: En los rangos no se define nada con mas de TAMBUFFER caracteres */
+int ParsearPosiciones(int *rginf, int *rgsup, char *string, int rangos[MAXRANGES][2]) {
+
+	char buffer[TAMBUFFER];
+	int j, i = 0, rgi = -1, rgs = INT_MAX, seguir = TRUE, inf = -1, sup = -1, rgcont = 0;
+	short int length = strlen(string), rangeflag = FALSE;
+
+	memset(buffer, '\0', TAMBUFFER);
+	while ( (i < length) && (seguir == TRUE) ) {
+		j = 0;
+		while ( (i < length) && (IsNumber(string[i])) )  buffer[j++] = string[i++];
+		if (j > 0) {
+			inf = atoi(buffer);
+			if (inf == 0)  seguir = FALSE; /* DECIDIR QUE HACEMOS EN ESTE CASO */
+			j = 0;
+			memset(buffer, '\0', TAMBUFFER);
+		}
+		if ( (i < length) && (string[i] == '-') && (seguir == TRUE) ) {
+			rangeflag = TRUE;
+			i++;
+			while ( (i < length) && (IsNumber(string[i])) )  buffer[j++] = string[i++];
+			if (j > 0) {
+				sup = atoi(buffer);
+				if (sup == 0)  seguir = FALSE; /* DECIDIR QUE HACEMOS EN ESTE CASO */
+				j = 0;
+				memset(buffer, '\0', TAMBUFFER);
+			}
+		}
+		if ( (i < length) && (string[i] != ',') )  seguir = FALSE; /* Implica que esta mal el formato */
+		if ( seguir == TRUE ) {
+			if (rangeflag == TRUE) {
+				if ( inf > 0 ) {
+					if ( sup > 0 ) { /* ACA: EXCLUYO LOS CASOS DONDE inf sea MAYOR a sup ?? */
+						if (inf > sup)  seguir = FALSE;
+						else if ( (sup > rgi) && (inf < rgs) ) { /* Solo agrego si no estan ya contenidos */
+							rangos[rgcont][0] = inf;
+							rangos[rgcont][1] = sup;
+							rgcont++;
+						}
+					} else if ( inf < rgs )  rgs = inf;
+				} else if ( sup > rgi )  rgi = sup;
+			} else if ( (inf > rgi) && (inf < rgs) ) { /* Solo agrego si no estan ya contenidos */
+				rangos[rgcont][0] = rangos[rgcont][1] = inf;
+				rgcont++;
+			}
+		}
+		rangeflag = FALSE;
+		i++;
+		inf = sup = -1;
+	}
+	if ( seguir == FALSE )  return INVALIDFORMAT;
+	*rgsup = rgs;
+	*rginf = rgi;
+	return rgcont; /* Devuelvo la cantidad de rangos ingresados al vector de rangos/posiciones */
+}
+
+int IsNumber(char c) {
+
+	if ( (c >= '0') && (c <= '9') )  return TRUE;
+	return FALSE;
+}
+
+/* Funcion que optimiza al maximo y facilita el proceso de los rangos y posiciones, eliminando los solapados */
+int PrepararVectorRangos(int rangos[MAXRANGES][2], int size, int rginf, int rgsup) {
+
+	int newcant = 0, i = 0;
+
+	printf("\n Antes de ordenar!\n\n");
+	dsort(rangos, size, 1);
+	asort(rangos, size, 0);
+	printf("\ndespues de ordenar!\n\n");
+	for (i=0; i<size; i++)  fprintf(stdout, "Rango numero %d: %d - %d\n", i, rangos[i][0], rangos[i][1]);
+
+	i = 0;
+	while ( (i < size) && (rangos[i][1] < rginf) )  i++;
+	if (i < size) {
+		if (rangos[i][0] < rginf)  rangos[newcant][0] = rginf + 1;
+		else  rangos[newcant][0] = rangos[i][0];
+		rangos[newcant++][1] = rangos[i++][1];
+	}
+	while ( (i < size) && (rangos[i][0] < rgsup) ) {
+		if ( rangos[i][1] > rangos[newcant - 1][1] ) {
+			if ( rangos[i][0] <= rangos[newcant - 1][1] )  rangos[newcant][0] = rangos[newcant - 1][1] + 1;
+			else  rangos[newcant][0] = rangos[i][0];
+			rangos[newcant++][1] = rangos[i][1];
+		}
+		i++;
+	}
+	if (rangos[newcant - 1][1] >= rgsup)  rangos[newcant - 1][1] = rgsup - 1;
+	return newcant;
+}

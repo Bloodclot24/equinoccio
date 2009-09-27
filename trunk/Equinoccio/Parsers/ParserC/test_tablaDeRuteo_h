@@ -1,0 +1,95 @@
+#ifndef TABLADERUTEO_H_INCLUDED
+#define TABLADERUTEO_H_INCLUDED
+
+#include "lista.h"
+
+class TablaDeRuteo{
+private:
+     /*
+      * Estructura auxiliar para almacenar las entradas de la tabla
+      */
+     typedef struct entrada{
+	  int direccionDestino;
+	  int direccionMejorRuta;
+     }entrada;
+     Lista<entrada*>* tabla;
+public:
+     /*
+      * Crea una nueva tabla de ruteo vacía.
+      */
+     TablaDeRuteo(void){
+	  tabla = new Lista<entrada*>;
+     }
+
+     /*
+      * Agrega informacion de ruteo a la tabla. Si una entrada ya existia previamente
+      * para esa direccion destino, se actualiza la informacion.
+      */
+     void agregarRuta(int direccionDestino, int direccionMejorRuta){
+	  Lista<entrada*>::Iterador* it = tabla->getIterador();
+	  bool encontrado = false;
+	  entrada* e = NULL;
+	  while(it->tieneSiguiente() && !(encontrado)){
+	       e = it->getProximoElemento();
+	       if(e->direccionDestino == direccionDestino)
+		    encontrado = true;
+	  }
+	  if(!encontrado){
+	       e = new entrada;
+	       e->direccionDestino = direccionDestino;
+	       tabla->agregarElemento(e);
+	  }
+	  e->direccionMejorRuta = direccionMejorRuta;
+	  delete it;	  
+     }
+
+     /*
+      * Busca en la tabla de ruteo el mejor camino dada la direccion destino.
+      * En caso de no encontrar la direccion destino, devuelve -1.
+      */
+
+     int buscarRuta(int direccionDestino){
+	  Lista<entrada*>::Iterador* it = tabla->getIterador();
+	  bool encontrado = false;
+	  entrada* e = NULL;
+	  while(it->tieneSiguiente() && !encontrado){
+	       e = it->getProximoElemento();
+	       if(e->direccionDestino == direccionDestino)
+		    encontrado = true;
+	  }
+	  delete it;
+
+	  if(encontrado)
+	       return e->direccionMejorRuta;
+	  else
+	       return -1;
+     }
+
+     /*
+      * Vacía la tabla de ruteo
+      */
+
+     void vaciar(void){
+	  Lista<entrada*>::Iterador* it = tabla->getIterador();
+	  entrada *e;
+	  while(it->tieneSiguiente()){
+	       e = it->getProximoElemento();
+	       if(e!= NULL)
+		    delete e;
+	  }
+	  delete it;
+	  delete tabla; 
+	  tabla = new Lista<entrada*>;
+     }
+
+     /*
+      * Libera todas las entradas de la tabla y destruye la lista.
+      */
+     ~TablaDeRuteo(){
+	  vaciar();
+	  delete tabla; 
+
+     }     
+};
+
+#endif // TABLADERUTEO_H_INCLUDED

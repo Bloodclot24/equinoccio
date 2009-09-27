@@ -1,0 +1,393 @@
+#include "red.h"
+#include "comparadorNodos.h"
+
+Red::Red(const char *nombreArchivo){
+     entrada.open(nombreArchivo);
+     nodos = new Lista<NodoDeRed*>;
+     nodos->asignarComparador(new CNodosDeRed);
+     cantidadDeNodos = 0;
+     cantidadDeServers = 0;
+     contadorDijkstra = 1;
+     dijkstraPrimeraVez = false;
+}
+
+Red::~Red(){
+     Lista<NodoDeRed*>::Iterador* it = nodos->getIterador();
+     while(it->tieneSiguiente()){
+	  delete it->getProximoElemento();
+     }
+     delete it;
+     delete nodos; 
+}
+
+/*
+ * Corre la simulacion.
+ */
+void Red::simular(void){
+     while(parsear()){}
+}
+
+
+/*
+ * Busca un nodo en la red segun su direccion.
+ * Devuelve el nodo si lo encuentra o NULL si no.
+ */
+NodoDeRed* Red::buscarNodo(int direccion){
+     Lista<NodoDeRed*>::Iterador* it = nodos->getIterador();
+     bool encontrado = false;
+     NodoDeRed* nodo = NULL;
+	  
+     while(it->tieneSiguiente() && !(encontrado)){
+	  nodo = it->getProximoElemento();
+	  if(nodo->getDireccion() == direccion)
+	       encontrado = true;
+     }
+     delete it;
+     if(!encontrado)
+	  nodo = NULL;
+     return nodo;
+}
+
+/*
+ * Crea un nuevo nodo y lo agrega a la lista.
+ * Aumenta en uno el contador de nodos.Puede incrementar o no el contador de servidores
+ * dependiendo del tipo de nodo a construir.
+ */
+void Red::nuevoNodo(void){
+     char parametro1;
+     char auxiliar;
+     int parametro2;
+     // tipo
+     do{
+	  obtenerParametro(parametro1); // obtenemos el parametro, descartando la ','
+     }while(parametro1 == ',');
+
+     obtenerParametro(auxiliar); // despues del parametro hay una ','
+
+     // direccion
+     obtenerParametro(parametro2); //obtenemos el segundo parametro
+     NodoDeRed* nodo;
+
+     switch(parametro1){
+     case 'S':
+	  nodo = new Servidor(parametro2);
+	  cantidadDeServers++;
+	  break;
+     case 'R':
+	  nodo = new Router(parametro2);
+	  break;
+     default:
+	  break;
+     }
+
+     nodos->agregarElemento(nodo);
+     cantidadDeNodos++;
+}
+
+/*
+ * Crea una relacion entre dos nodos de la red.
+ */
+void Red::nuevaArista(void){
+     char auxiliar;
+     int parametro1, parametro2;
+
+     obtenerParametro(auxiliar); //salteamos la ','
+     obtenerParametro(parametro1); //direccion1
+     obtenerParametro(parametro2); //direccion2
+
+     NodoDeRed *nodoOrigen, *nodoDestino;
+
+     // busca los dos nodos involucrados
+     nodoOrigen = buscarNodo(parametro1);
+     nodoDestino = buscarNodo(parametro2);
+
+     if(nodoOrigen != NULL && nodoDestino != NULL){
+	  nodoOrigen->agregarRuta(nodoDestino);
+	  nodoDestino->agregarRuta(nodoOrigen);
+     }
+     else{
+	  // se supone que siempre lo encuentra
+     }
+}
+
+/*
+ * Hace que el servidor indicado cree un mensaje dado, con un cierto
+ * destino.
+ */
+void Red::nuevoMensaje(void){
+     char auxiliar;
+     int parametro1, parametro2;
+     std::string *mensaje = new std::string;
+     Servidor* nodo;
+     obtenerParametro(auxiliar); //salteamos la ','
+     obtenerParametro(parametro1); //dierccion1
+     obtenerParametro(parametro2); //direccion2
+
+     auxiliar = entrada.get();
+     while(auxiliar != '\n'){
+	  mensaje->push_back(auxiliar);
+	  auxiliar = entrada.get();
+     }
+
+     nodo = (Servidor*)buscarNodo(parametro1);
+
+     if(nodo != NULL){
+	  nodo->nuevoPaquete(mensaje, parametro2);
+
+     }
+}
+
+/*
+ * Pone en 'c' el proximo caracter del archivo de entrada.
+ */
+void Red::obtenerParametro(char &c){
+     c = entrada.get();
+}
+
+/*
+ * Pone en 'i'el valor del paramatro codificado en ASCII.
+ * Como en este caso la longitud del campo no es siempre fija, terminamos de leer
+ * cuando encontramos ',', '\n' o ' '.
+ */
+void Red::obtenerParametro(int &i){
+     char c;
+     int acumulado=0;
+
+     c = entrada.get();
+     while(c != ',' && c != '\n' && c != ' '){
+	  acumulado *= 10;
+	  acumulado += c - '0';
+	  c = entrada.get();
+     }
+     i = acumulado;
+}
+     
+/*
+ * Recorre cada nodo de la red y le permite procesar un turno.
+ */
+void Red::ronda(void){
+
+     std::clog << "-------------- P (" << contadorDijkstra << ") --------------\n";
+
+     contadorDijkstra++;
+
+     Lista<NodoDeRed*>::Iterador* it = nodos->getIterador();
+     if(contadorDijkstra > 5){
+	  contadorDijkstra = 1;
+	  std::clog << "------------DIJKSTRA---------------\n";
+	  Dijkstra();
+
+	  std::clog << "----------FIN DIJKSTRA-------------\n";
+     }
+     while(it->tieneSiguiente()){
+	  it->getProximoElemento()->procesar();
+
+     }
+     delete it;
+
+
+     std::clog << "-----------------------------------\n";
+}
+
+
+
+/*
+ * Corre el algoritmo de Dijkstra en todos los nodos del tipo servidor de la red, 
+ * creando o actualizando las tablas de ruteo.
+ */
+void Red::Dijkstra(void){
+     bool *visto = new bool[cantidadDeNodos];
+     unsigned int *distancia = new unsigned int[cantidadDeNodos];
+     //en este vector se guardan las decisiones tomadas (el mejor camino para cada nodo)
+     int *decision = new int[cantidadDeNodos];
+     Lista<NodoDeRed*>::Iterador* it = nodos->getIterador();
+
+	       std::clog << "Mensajes en espera en nodos: [ ";
+	       Lista<NodoDeRed*>::Iterador* it3 = nodos->getIterador();
+	       NodoDeRed* auxiliar;
+	       //por cada nodo adyacente a este nodo
+	       while(it3->tieneSiguiente()){
+		    auxiliar = it3->getProximoElemento();
+		    auxiliar->borrarCaminos();
+		    std::clog << auxiliar->mensajesEnEspera();
+		    std::clog << ", ";
+	       }
+	       std::clog << "]\n";
+	       delete it3;
+
+
+
+     while(it->tieneSiguiente()){
+	  NodoDeRed* nodo = it->getProximoElemento();
+	  if(nodo->getTipo() != NodoDeRed::Tipo){ //Si es un servidor, o un Router
+	       //inicializo todo a un estado valido
+	       for(int i=0;i<cantidadDeNodos;i++){
+		    distancia[i]=-2;
+		    visto[i]=false;
+		    decision[i]=0;
+	       }
+
+	       Lista<NodoDeRed*>::Iterador* it2 = nodo->getAdyacentes()->getIterador();
+	       //por cada nodo adyacente a este nodo
+	       while(it2->tieneSiguiente()){
+		    int direccion = it2->getProximoElemento()->getDireccion();
+		    distancia[direccion-1] = nodo->mensajesEnEspera()+1;
+		    // el nodo 'nodo' es el destino, desde este router, si quiero enviar
+		    // informacion a nodo, esta es la mejor ruta (la unica).
+		    decision[direccion-1]=nodo->getDireccion();
+	       }
+	       delete it2;
+		    
+	       //distancia desde este nodo hacia si mismo
+	       distancia[nodo->getDireccion()-1] = 0;
+	       visto[nodo->getDireccion()-1] = true;
+
+	       while(!todosVistos(visto)){
+		    int direccion = minimaDistancia(distancia, visto);
+		    visto[direccion-1] = true;
+		    ajustarDistanciasMinimas(buscarNodo(direccion), distancia, decision);
+	       }
+	       //actualizo las tablas de ruteo
+	       ajustarTablas(nodo->getDireccion(), decision);
+	       
+	       std::clog << "Decisiones para el nodo " << nodo->getDireccion() << ": [ ";
+	       for(int i=0;i<cantidadDeNodos;i++){
+		    std::clog << decision[i] << ", ";
+	       }
+	       std::clog << "]\n";
+	  }
+     }
+
+     delete it;
+     delete[] visto;
+     delete[] distancia;
+     delete[] decision;
+}
+
+/*
+ * Para una direccion destino dada, ajusta las tablas de ruteo de los
+ * nodos de la red según el vector 'decision'.
+ */
+void Red::ajustarTablas(int direccion, int* decision){
+     Lista<NodoDeRed*>::Iterador* it = nodos->getIterador();
+     unsigned int indice=0;
+     while(it->tieneSiguiente()){
+	  NodoDeRed* nodo = it->getProximoElemento();
+	  indice = nodo->getDireccion();
+	  unsigned int ruta = nodo->obtenerCamino(direccion);
+	  if(ruta > decision[indice-1])
+	       nodo->definirCamino(direccion, decision[indice-1]);
+     }
+     delete it; 
+}
+
+/*
+ * Dado un vector de booleanos, indica si ya estan marcados
+ * todos como verdaderos. Asume que el tamaño del vector es
+ * igual a la cantidad de nodos en la red.
+ */
+bool Red::todosVistos(bool *visto){
+     bool encontrado=false;
+     for(int i=0;i<cantidadDeNodos && !encontrado;i++){
+	  if(visto[i] == false)
+	       encontrado=true;
+     }
+     if(encontrado)
+	  return false;
+     else
+	  return true;
+}
+
+/*
+ * Devuelve el indice del elemento del vector de distancias de menor valor
+ * que a su vez este marcado como 'false' en el vector 'visto'.
+ * Asume que las longitudes delos vectores son iguales, y contienen
+ * tantos elementos como nodos en la red.
+ */
+int Red::minimaDistancia(unsigned int *distancias, bool *visto){
+     unsigned int indice=-1;
+     unsigned int valor = -1;
+     for(int i=0;i<cantidadDeNodos;i++){
+	  if(visto[i] == false){
+	       if(distancias[i] < valor){
+		    indice = i;
+		    valor = distancias[i];
+	       }
+	  }
+     }
+     // tabajamos con direcciones que empiezan en 1
+     return indice+1;
+}
+
+/*
+ * Dado un nodo y un vector de distancias, actualiza el vector de distancias
+ * segun el algoritmo de Dijkstra.
+ * Asume que el vector de distancias tiene tantos elementos como nodos de la red.
+ */
+void Red::ajustarDistanciasMinimas(NodoDeRed* nodo, unsigned int *distancia, int *decision){
+     Lista<NodoDeRed*>::Iterador* it = nodo->getAdyacentes()->getIterador();
+     //por cada nodo adyacente a este nodo
+     while(it->tieneSiguiente()){
+	  int direccion = it->getProximoElemento()->getDireccion();
+	  unsigned int termino1=distancia[direccion-1];
+	  unsigned int termino2=distancia[nodo->getDireccion()-1]+nodo->mensajesEnEspera()+1;
+	  if( termino1 >= termino2 ){
+	       distancia[direccion-1] = termino2;
+	       if(termino1 == termino2){
+		    //si se produce una igualdad, elegimos el camino de direccion mas baja
+	       	    if(decision[direccion-1] > nodo->getDireccion())
+			 //si la decision actual es de un camino de direccion mas alta
+			 // al camino que acabamos de encontrar, lo reemplazamos
+			 decision[direccion-1]=nodo->getDireccion();
+		    //si no, queda como estaba
+	       }
+	       else  //si no se produce igualdad, la mejor direccion posible es esta
+		    decision[direccion-1]=nodo->getDireccion();
+	  }
+     }
+     delete it;
+}
+
+/*
+ * Parsea una linea del archivo.
+ * Si todo sale bien devuelve TRUE, si algo falla devuelve FALSE.
+ * Como sabemos que el archivo siempre biene bien formado
+ * el parseo se simplifica y no se contemplan los casos de error.
+ * La funcion extrae el primer caracter del archivo de entrada y
+ * llama a la funcion pertinente segun su valor. Por lo tanto, el 
+ * proximo caracter de la entrada es ',' si se requieren parametros
+ * o '\n' si no se esperan parametros. Cada funcion se hace cargo de 
+ * tomar los datos que necesita de la entrada.
+ */
+bool Red::parsear(void){
+     std::string linea;
+     char caracter;
+     if(!entrada.good()){
+	  return false;
+     }
+
+     caracter = entrada.get();
+	  
+     switch(caracter){
+     case 'V':
+	  nuevoNodo();
+	  break;
+     case 'A':
+	  nuevaArista();
+	  break;
+     case 'M':
+	  nuevoMensaje();
+	  break;
+     case 'P':
+	  if(!dijkstraPrimeraVez){
+	       Dijkstra();
+	       dijkstraPrimeraVez = true;
+	  }
+	  ronda();
+	  break;
+     default:
+	  break;
+     }
+	  
+     return true;
+}

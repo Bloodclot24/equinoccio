@@ -1,0 +1,65 @@
+#ifndef __SPRITE_H__INCLUDED__
+#define __SPRITE_H__INCLUDED__
+
+#ifdef __APPLE__
+#include <SDL/SDL.h>
+#else
+#include <SDL.h>
+#endif
+
+#include "Point.h"
+#include "Frame.h"
+#include "tinyxml/tinyxml.h"
+#include <map>
+#include <string>
+#include <vector>
+
+
+
+class Sprite {
+
+    private:
+        std::vector<Point*> pointsVector;
+        Point*  centerPoint;
+        double currentAngle, previousAngle;
+        std::map<std::string, SDL_Rect*> spriteParts;
+        std::map<Point*, Sprite*> spriteStructure;
+        std::map<std::string*, Point*> *pointMapping; //TODO: check for posibilities
+        int width, height;
+        std::vector<Frame*> framesVector;
+        unsigned int currentFrame;
+        int toNextFrame;
+        SDL_Surface *partsSurface;
+        SDL_Surface *surface;
+        std::string *partName;
+        SDL_Rect *boundingBox;
+
+    public:
+        Sprite(int x, int y);
+        Sprite(TiXmlNode *xmlNode);
+        void DefineBasePart(std::string partName);
+        void addPoint(Point* point);
+        Point* addPoint(int x, int y);
+        void addPointAndMap(Point* point, Sprite* sprite);
+        void addPointAndMap(int x, int y, Sprite* sprite);
+        void removePoint(Point* point);
+        void declareCenterPoint(Point* centerPoint);
+        void declareCenterPoint(int x, int y);
+        void declarePart(std::string partName, SDL_Rect* positionInPartsSurface);
+        void undeclarePart(std::string name);
+        void mapSpriteToPoint(Point* point, Sprite* sprite);
+        SDL_Surface* draw();
+        int addFrame(Frame* frame);
+        int nextFrame();
+        void giveTime(int deltaT);
+        ~Sprite();
+        void load(std::string fileName);
+        void load(TiXmlNode *xmlNode);
+        void rotate(double degrees);
+        Point* getCenterPoint();
+        int getWidth();
+        int getHeigth();
+        void loadSpriteSheet(std::string fileName);
+};
+
+#endif // __SPRITE_H__INCLUDED__

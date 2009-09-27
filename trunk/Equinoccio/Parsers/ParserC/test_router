@@ -1,0 +1,99 @@
+#include <iostream>
+#include <sstream>
+#include "router.h"
+
+std::string Router::Tipo = "Router";
+
+/*
+ * Creo un nuevo router con una cola vacía.
+ */
+Router::Router(int direccion):NodoDeRed(direccion){
+     colaDePaquetes = new Cola<Paquete*>;
+}
+     
+/*
+ * Envia un paquete al proximo nodo de la red segun su direccion destino.
+ * Antesde enviarlo agrega su direccion a la informacion administrativa del
+ * paquete.
+ */
+void Router::enviarPaquete(Paquete *p){
+     int dirDestino = tabla->buscarRuta(p->obtenerDireccionDestino());
+     Lista<NodoDeRed*>::Iterador* it = caminos->getIterador();
+     bool encontrado = false;
+     NodoDeRed* nodo = NULL;
+	  
+     while(it->tieneSiguiente() && !(encontrado)){
+	  nodo = it->getProximoElemento();
+	  if(nodo->getDireccion() == dirDestino)
+	       encontrado = true;
+     }
+     delete it;
+
+     std::clog << "r" << direccion << " -> r" << dirDestino << " paquete (" << p->getID() << ")";
+     std::clog << " (" << p->obtenerDireccionOrigen() << "," <<  p->obtenerDireccionDestino() << ") {";
+     std::clog << p->obtenerInformacion() <<"}\n";
+
+
+     if(!encontrado){
+	  nodo = NULL;
+	  //no debiera suceder nunca
+	  std::cerr << "Error en el router " << direccion << ", no se encuentra la ruta hacia "  << dirDestino << std::endl;
+     }
+     else{
+	  std::string info("r");
+	  std::stringstream auxiliar;
+	  // para convertir de int a string
+	  auxiliar << direccion;
+	  info += auxiliar.str();
+
+	  p->agregarInformacion(info);
+	  nodo->recibirPaquete(p);
+     }
+}
+     
+/*
+ * Recibe un paquete de informacion de un nodo vecino. Si no hay espacio suficiente
+ * en la cola como para almacenar el paquete, éste, se descarta y se retorna FALSE.
+ * Si no hay problemas en la transaccion, se develve TRUE.
+ */
+bool Router::recibirPaquete(Paquete *p){
+     if(mensajesEnEspera()<5){
+	  colaDePaquetes->acolar(p);
+	  return true;
+     }
+     else{
+	  return false;
+     }
+}
+
+int Router::mensajesEnEspera(void){
+     int tamanio = colaDePaquetes->getTamanio();
+     return tamanio;
+}
+
+std::string Router::getTipo(void){
+     return "Router";
+}
+
+
+/*
+ * En cada turno, el router manda el primer paquete de la cola (si existe) al 
+ * proximo nodo. (Invoca a enviarPaquete(p), con 'p' el primer paquete de la cola.
+ */
+void Router::procesar(void){
+     if(!colaDePaquetes->estaVacia()){ 
+	  enviarPaquete(colaDePaquetes->desacolar()); 
+     } 
+}
+
+/*
+ * Elimina el router, liberando todos aquellos paquetes que
+ * quedaron sin 'rutear'.
+ */
+Router::~Router(){
+     while(!colaDePaquetes->estaVacia()){
+	  // borro los paquetes que pudieron haber quedado en el router
+	  delete colaDePaquetes->desacolar();
+     }
+     delete colaDePaquetes;
+}
