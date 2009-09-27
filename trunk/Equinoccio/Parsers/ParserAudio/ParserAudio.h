@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 #include <list>
-#include <extractor.h>
+#include "../libExtractor/libExtractor.h" 
 #include "../Parser.h"
 
 // Los campos de los archivos de audio que se van a tener en cuenta
@@ -32,7 +32,7 @@ class ParserAudio: public Parser {
 	
 	private:
 		void guardarEnDump(std::ofstream& dump, std::string palabra, uint32_t documento);
-		std::string obtenerExtension(char* extension);
+		std::string obtenerExtension(std::string extension);
 	
 	public: 
 		ParserAudio(uint32_t cantMaxReg);
