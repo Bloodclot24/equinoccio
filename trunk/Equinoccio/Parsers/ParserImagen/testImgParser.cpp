@@ -10,6 +10,6 @@ int main() {
 	p2.parsear("heart_avi.png",3);
 
 	ParserImagen p3(2000);
-	p.parsear("logo.png",3);
+	p3.parsear("logo.png",3);
 	return 0;
 }

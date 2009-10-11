@@ -1,5 +1,4 @@
-SOURCES=Equinoccio.cpp \
-	CodigoGamma/TDA_Codigos.cpp \
+SOURCES=CodigoGamma/TDA_Codigos.cpp \
 	Parsers/Parser.cpp \
 	Parsers/ParserAudio/ParserAudio.cpp \
 	Parsers/ParserC/ParserC.cpp \
@@ -9,17 +8,40 @@ SOURCES=Equinoccio.cpp \
 	Registros/Registro.cpp \
 	Util/Util.cpp
 
-OBJECTS=$(SOURCES:.cpp=.o)
+TESTSOURCES=Arbol/arbol.cpp\
+	Arbol/arbolRegistros.cpp\
+	CodigoGamma/TDA_Codigos_ejec.cpp\
+	Parsers/ParserAudio/PruebaParserAudio.cpp\
+	Parsers/ParserC/Archivos_ejec.cpp\
+	Parsers/ParserImagen/testImgParser.cpp\
+	Registros/pruebaRegistro.cpp\
+	Registros/pruebaRegistroEscritura.cpp
+
+MAIN=Equinoccio.cpp
+
 CFLAGS=-lextractor
 CC=g++
 EXECUTABLE=Equinoccio
 
-all: $(SOURCES) $(EXECUTABLE)
+OBJECTS=$(SOURCES:.cpp=.o)
+TESTOBJECTS=$(TESTSOURCES:.cpp=.o)
+MAINSOURCES=$(SOURCES) $(MAIN)
+MAINOBJECTS=$(MAIN:.cpp=.o) $(OBJECTS)
+ALLOBJECTS=$(MAINOBJECTS) $(TESTOBJECTS)
+TESTEXEC=$(TESTSOURCES:.cpp=)
 
+all: $(MAINSOURCES) $(EXECUTABLE)
 
-$(EXECUTABLE): $(OBJECTS)
-	$(CC) $(CFLAGS) $(OBJECTS) -o $@
+$(EXECUTABLE): $(MAINOBJECTS)
+	$(CC) $(CFLAGS) $(MAINOBJECTS) -o $@
 
 .cpp.o:
 	$(CC) -c $< -o $@
 
+test: $(TESTSOURCES) $(TESTEXEC)
+
+$(TESTEXEC): $(TESTOBJECTS) $(OBJECTS)
+	$(CC) $(CFLAGS) $(OBJECTS) $@.o -o $@
+
+clean:
+	rm -f $(ALLOBJECTS) $(EXECUTABLE) $(TESTEXEC)
