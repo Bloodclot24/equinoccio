@@ -34,4 +34,3 @@ void libExtractor::freeKeywords(EXTRACTOR_KeywordList* keywordList) {
 }
 
 /*--------------------------------------------------------------------------*/
-	  		 

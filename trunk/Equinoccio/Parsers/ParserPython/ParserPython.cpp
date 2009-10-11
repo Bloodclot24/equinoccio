@@ -3,15 +3,16 @@
 #include "../../Util/Util.h"
 
 #define PYTHON_DUMP_BASENAME "dump_src_"
+#define PYTHON_STOP_WORD_FILE "stopwords"
 
 ParserPython::ParserPython(uint32_t cantMaxReg):Parser::Parser(cantMaxReg){
      cargarStopWord(PYTHON_STOP_WORD_FILE);
      std::string nombre(PYTHON_DUMP_BASENAME);
      nombre += Util::intToString(archivos);
-     salida.open(nombre.c_str(), std::ios:out);
+     salida.open(nombre.c_str(), std::ios::out);
 }
 
-bool parsear(std::string nombre, uint32_t documento){
+bool ParserPython::parsear(std::string nombre, uint32_t documento){
 
      std::ifstream entrada(nombre.c_str());
 
@@ -98,8 +99,9 @@ void ParserPython::guardarTermino(const std::string& termino, uint32_t documento
 	       cantReg=0;
 	       salida.close();
 	       archivos++;
+	       std::string nombre(PYTHON_DUMP_BASENAME);
 	       nombre += Util::intToString(archivos);
-	       salida.open(nombre.c_str(), std::ios:out);
+	       salida.open(nombre.c_str(), std::ios::out);
 	  }
      }
 }
