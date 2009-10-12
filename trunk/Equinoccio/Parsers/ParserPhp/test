@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Documento sin t&iacute;tulo</title>
+</head>
+0
+<body>
+<?
+function verificador($cadena) // verificador (string):int
+{
+	$tot=0;
+	$acumulador=0;
+	$bandera=0;
+	$tempcad=$cadena;
+	$long = strlen ($cadena);
+	
+	while($long >= 1)
+	{
+		if (strlen($tempcad) <> 0) 
+		{
+			if ($bandera == 0)
+				$acumulador = $cadena[$long-1] * 3;
+			if ($bandera == 1)
+				$acumulador = $cadena[$long-1];
+		}
+		$tot = $acumulador + $tot;
+		if ($bandera == 0)
+			$bandera = 1;
+		else
+			$bandera = 0;
+		$long = $long - 1;
+	}
+	 $resul=fmod ($tot, 10);
+	return $resul;
+}
+echo "verif: ".verificador ("123456");
+?>
+
+</body>
+</html>

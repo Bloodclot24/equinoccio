@@ -1,0 +1,104 @@
+<?
+ob_start();
+session_start();
+include_once ("inc.conexion.php");
+if (!isset($_SESSION["nombrex"]) || ($_SESSION["id_nivel"] != 2) )
+{
+	$caca = 1;
+	include_once ("oops.php");
+	die();
+}
+else
+{
+	echo "User: ";
+	echo $_SESSION["nombrex"];
+	echo '<a href="logout.php"><br>Logout</a>';
+
+}
+$con = conectarse ();
+if ($con)
+{
+				$sql  = "select * from cfg_sitio where id = 6";
+				$sqlcons = mysql_query ($sql);
+				$fetch = mysql_fetch_array ($sqlcons);
+				$item = $fetch["valor"];
+}
+?>
+<html>
+	<head>
+	<link href="styles.css" rel="stylesheet" type="text/css">
+				<title>Menu de Bajas de <?=$item?></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><style type="text/css">
+<!--
+body {
+	background-image: url();
+}
+-->
+</style></head>
+
+	<body>
+
+
+<br>
+<table width="731" border="1" align="center" cellpadding="5" cellspacing="0" bordercolor="#000000" bgcolor="#FFFFFF">
+  <tr>
+    <td width="776"><?php
+ include_once ("inc.conexion.php");
+ if (isset ($_POST ["btnbaja"]) )
+ {
+  		$conn = conectarse();
+		if ($conn)
+		{ //si hubo coneccion, saca los datos de la base
+     			$id = $_GET["id_baja"];
+				$fechaux = date("d/m/Y");
+  				$fec = explode("/", $fechaux);
+				$fechainv = $fec[2]."/".$fec[1]."/".$fec[0];
+    			$fe_baja = $fechainv;
+				$id_baja = $_SESSION["id_user"];
+				$modifica = "UPDATE item SET fe_baja = '".$fe_baja."' , id_baja = ".$id_baja." WHERE id_i= ".$id." ";
+				$cambiar = mysql_query ($modifica); 
+				echo "<br>";
+   				echo "Item con id $id dado de baja <br>";
+   				echo '<a href="item.lista.php">Volver</a>'; 
+				header ("location: item.lista.php?id_i=".$_GET["id_i"]." ");
+				die ();
+		}
+ }
+  
+  $conn = conectarse();
+  if ($conn) //si hubo coneccion, saca los datos de la base
+  {
+  	  $id = $_GET["id_baja"];
+	  $sql= "SELECT * FROM item where id_i= ".$id."  ";
+  	  $sqlcons = mysql_query($sql);
+	  $fetch = mysql_fetch_array($sqlcons);
+  }
+  
+
+?>
+
+<H1>Baja de <?=$item?> </H1> 
+Esta a punto de darle de baja al item <?=$fetch["nombre"]; ?><br>
+<form method="post" action="item.baja.php?id_baja=<?= $_GET["id_baja"] ?>&id_i=<?= $_GET["id_i"] ?>">
+  <table border="0" frame="border" cellpadding="3%" cellspacing="2" width="56%">
+		<tr bgcolor="#CCCCCC">
+			<td><b>Nombre</b></td>
+			<td><b>Nombre Científico</b></td>
+		</tr>
+
+		<tr>
+			<td><?= $fetch["nombre"] ?></td>
+			<td><?= $fetch["nombre_cientifico"] ?></td>
+		</tr>
+  </table>
+	<input type="submit" id="btnbaja" value="Baja" name="btnbaja">
+	<? echo " <input name=\"volver\" type=\"button\" id=\"volver\" onclick=\"javascript:history.go(-1);return true;\" value=\"Cancelar\" />"; ?>
+	</form></td>
+  </tr>
+</table> 
+  
+    </body>
+</html>
+<?PHP
+ob_end_flush();
+?>
