@@ -59,8 +59,8 @@ void agregarDirectorio(const std::string& nombre){
 	       return;
 	  while((entry=readdir(directory))!=NULL)
 	       if(esArchivo(nombre+'/'+entry->d_name)){
-		    std::cout << "Agregar el archivo: " << entry->d_name << "\n";
-		    parsers.parsear(entry->d_name);
+		    std::cout << "Agregar el archivo: " << nombre+'/'+entry->d_name << "\n";
+		    parsers.parsear(nombre+'/'+entry->d_name);
 	       }
 	  
 	  closedir(directory);
@@ -123,12 +123,12 @@ int main(int argc, char** argv){
 	  return error;
      }
 
-     parsers.agregarParser(new ParserPython(100));
      parsers.agregarParser(new ParserC(100));
+     parsers.agregarParser(new ParserPython(100));
+
      parsers.agregarParser(new ParserPHP(100));
      parsers.agregarParser(new ParserImagen(100));
      parsers.agregarParser(new ParserAudio(100));
-
 
      if(arg_list)
 	  std::cout << "Listado de directorios.\n";
