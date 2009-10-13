@@ -1,6 +1,11 @@
 #include <string.h>
 #include <iostream>
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <dirent.h>
+
+
 #define ARG_LIST   "-pl"
 #define ARG_ADD    "-pa"
 #define ARG_DEL    "-pd"
@@ -14,6 +19,45 @@
 #define ERROR_AGREGAR_EXISTENTE    -2
 #define ERROR_ELIMINAR_INEXISTENTE -2
 #define ERROR_CATALOGO_INEXISTENTE -2
+
+bool esDirectorio(const char* nombre){
+     struct stat sb;
+     if (stat(nombre, &sb) == -1)
+	  return false;
+
+     if((sb.st_mode & S_IFMT) == S_IFDIR)
+	  return true;
+     return false;
+}
+
+bool esArchivo(const char* nombre){
+     struct stat sb;
+     if (stat(nombre, &sb) == -1)
+	  return false;
+
+     if((sb.st_mode & S_IFMT) == S_IFREG)
+	  return true;
+     return false;
+}
+
+void agregarDirectorio(const char* nombre){
+     DIR* directory;
+     struct dirent* entry;
+
+     if(esDirectorio(nombre)){
+	  if( (directory =opendir(nombre)) ==NULL)
+	       return;
+	  if(chdir(nombre) == -1){
+	       closedir(directory);
+	       return;
+	  }
+	  while((entry=readdir(directory))!=NULL)
+	       if(esArchivo(entry->d_name))
+		    std::cout << "Agregar el archivo: " << entry->d_name << "\n";
+	  
+	  closedir(directory);
+     }
+}
 
 void mostrar_uso(const char* nombre){
      std::cout << "Uso: " << nombre << " [" << ARG_LIST << 
@@ -73,10 +117,13 @@ int main(int argc, char** argv){
 
      if(arg_list)
 	  std::cout << "Listado de directorios.\n";
-     if(arg_add_dir)
+     if(arg_add_dir){
 	  std::cout << "Agregar el directorio: " << arg_add_dir << std::endl;
-     if(arg_del_dir)
+	  agregarDirectorio(arg_add_dir);
+     }
+     if(arg_del_dir){
 	  std::cout << "Eliminar el directorio: " << arg_del_dir << std::endl;
+     }
      if(arg_search_string)
 	  std::cout << "Buscar la cadena: " << arg_search_string << std::endl;
      if(arg_cat_string)
