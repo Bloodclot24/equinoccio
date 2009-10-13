@@ -1,10 +1,10 @@
-#ifndef ParserC_
-#define ParserC_
+#ifndef ParserPHP_
+#define ParserPHP_
 
 #include "../Parser.h"
 
-#define PATH_DUMP_C "dump_C_"
-#define PATH_STOP_WORD "stop_words_php"
+#define PHP_PATH_DUMP "dump_php_"
+#define PHP_PATH_STOP_WORD "stop_words_php"
 
 class ParserPHP: public Parser {
 

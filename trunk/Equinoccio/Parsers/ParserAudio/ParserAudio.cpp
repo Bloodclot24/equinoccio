@@ -3,7 +3,7 @@
 /****************************************************************************/
 ParserAudio::ParserAudio(uint32_t cantMaxReg): Parser::Parser(cantMaxReg) { 
 	
-	cargarStopWord(PATH_STOP_WORD);
+	cargarStopWord(AUDIO_PATH_STOP_WORD);
 }; 
 		
 /*--------------------------------------------------------------------------*/
@@ -37,10 +37,11 @@ bool ParserAudio::parsear(std::string nombre, uint32_t documento) {
 			int type= extractor.getKeywordType(keywords);
 			std::string keyword= extractor.getKeyword(keywords);
 			
-			if(type == FILENAME || type == MIMETYPE || type == TITLE || 
-				 type == AUTHOR || type == ARTIST || type == DATE || type == PUBLISHER 
-				 || type == LANGUAGE || type == ALBUM || type == GENRE ||type == YEAR 
-				 || type == TRACK_NUMBER || type == 6) {
+			if(type == AUDIO_FILENAME || type == AUDIO_MIMETYPE || type == AUDIO_TITLE || 
+			   type == AUDIO_AUTHOR || type == AUDIO_ARTIST || type == AUDIO_DATE || 
+			   type == AUDIO_PUBLISHER || type == AUDIO_LANGUAGE || type == AUDIO_ALBUM || 
+			   type == AUDIO_GENRE ||type == AUDIO_YEAR || type == AUDIO_TRACK_NUMBER || 
+			   type == 6) {
 	  			
 	  			//Si se trata del anio o el numero de cancion lo agregamos a
 	  			//la lista directamente. 
@@ -48,11 +49,11 @@ bool ParserAudio::parsear(std::string nombre, uint32_t documento) {
 	  			//y se guarga la extension.
 	  			//En otro caso, se debe parsear las palabras y se agregan
 	  			//una a una. 
-	  			if(type == DATE || type == YEAR || type == TRACK_NUMBER) {
+	  			if(type == AUDIO_DATE || type == AUDIO_YEAR || type == AUDIO_TRACK_NUMBER) {
 	  				guardarEnDump(dump, keyword, documento);
 //			  		//TODO: /*PRUEBA*/
 //			  		std::cout << "Palabra A Guardar: " << keywords->keyword << std::endl;
-	  			} else if(type == MIMETYPE) {
+	  			} else if(type == AUDIO_MIMETYPE) {
 
 	  				if((keyword.compare(MIME_TYPE_MP3) != 0) && 
 	  				   (keyword.compare(MIME_TYPE_OGG) != 0))

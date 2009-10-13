@@ -5,17 +5,17 @@
 
 #define MIME_TYPE_JPEG "image/jpeg"
 #define MIME_TYPE_PNG "image/png"
-#define DUMP_NAME "dump_img_"
-#define PATH_STOPWORDS "stop_words_img"
+#define IMAGEN_DUMP_NAME "dump_img_"
+#define IMAGEN_PATH_STOPWORDS "stop_words_img"
 
-enum KeywordType {
-	FILENAME = 1,
-	MIME_TYPE = 2,
-	DESCRIPCION = 6,
-	COMMENT = 7,
-	SOFTWARE = 26,
-	CAMERA_MAKE = 72,
-	CAMERA_MODEL = 73
+enum IMG_KeywordType {
+	IMG_FILENAME = 1,
+	IMG_MIME_TYPE = 2,
+	IMG_DESCRIPCION = 6,
+	IMG_COMMENT = 7,
+	IMG_SOFTWARE = 26,
+	IMG_CAMERA_MAKE = 72,
+	IMG_CAMERA_MODEL = 73
 };
 
 

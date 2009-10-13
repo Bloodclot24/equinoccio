@@ -5,6 +5,14 @@
 #include <sys/stat.h>
 #include <dirent.h>
 
+#include "Parsers.h"
+#include "Parsers/Parser.h"
+#include "Parsers/ParserImagen/ParserImagen.h"
+#include "Parsers/ParserAudio/ParserAudio.h"
+#include "Parsers/ParserC/ParserC.h"
+#include "Parsers/ParserPhp/ParserPHP.h"
+#include "Parsers/ParserPython/ParserPython.h"
+
 
 #define ARG_LIST   "-pl"
 #define ARG_ADD    "-pa"
@@ -19,6 +27,8 @@
 #define ERROR_AGREGAR_EXISTENTE    -2
 #define ERROR_ELIMINAR_INEXISTENTE -2
 #define ERROR_CATALOGO_INEXISTENTE -2
+
+Parsers parsers; //NOOOOOOOOOOOOOOOO
 
 bool esDirectorio(const std::string& nombre){
      struct stat sb;
@@ -48,8 +58,10 @@ void agregarDirectorio(const std::string& nombre){
 	  if( (directory =opendir(nombre.c_str())) ==NULL)
 	       return;
 	  while((entry=readdir(directory))!=NULL)
-	       if(esArchivo(nombre+'/'+entry->d_name))
+	       if(esArchivo(nombre+'/'+entry->d_name)){
 		    std::cout << "Agregar el archivo: " << entry->d_name << "\n";
+		    parsers.parsear(entry->d_name);
+	       }
 	  
 	  closedir(directory);
      }
@@ -110,6 +122,13 @@ int main(int argc, char** argv){
 	  mostrar_uso(argv[0]);
 	  return error;
      }
+
+     parsers.agregarParser(new ParserPython(100));
+     parsers.agregarParser(new ParserC(100));
+     parsers.agregarParser(new ParserPHP(100));
+     parsers.agregarParser(new ParserImagen(100));
+     parsers.agregarParser(new ParserAudio(100));
+
 
      if(arg_list)
 	  std::cout << "Listado de directorios.\n";

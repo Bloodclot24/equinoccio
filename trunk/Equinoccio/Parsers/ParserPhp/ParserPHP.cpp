@@ -3,12 +3,12 @@
 using namespace std;
 
 ParserPHP::ParserPHP(uint32_t cantMaxReg): Parser::Parser(cantMaxReg){
-	cargarStopWord(PATH_STOP_WORD);
+	cargarStopWord(PHP_PATH_STOP_WORD);
 };
 
 bool ParserPHP::parsear(std::string nombre, uint32_t documento){
 	std::string nombre_dump;
-	nombre_dump+= PATH_DUMP_C;
+	nombre_dump+= PHP_PATH_DUMP;
 	nombre_dump+= Util::intToString(archivos);
 	std::ofstream dump;
 	dump.open(nombre_dump.c_str(), std::fstream::out);
@@ -29,7 +29,7 @@ bool ParserPHP::parsear(std::string nombre, uint32_t documento){
 			dump.close();
 			archivos++;
 			nombre_dump.clear();
-			nombre_dump+= PATH_DUMP_C;
+			nombre_dump+= PHP_PATH_DUMP;
 			nombre_dump+= Util::intToString(archivos);
 			nombre_dump+=".txt";
 			dump.open(nombre_dump.c_str(), std::fstream::out);

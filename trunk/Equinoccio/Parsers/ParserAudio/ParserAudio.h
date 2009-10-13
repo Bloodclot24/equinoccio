@@ -7,25 +7,25 @@
 #include "../Parser.h"
 
 // Los campos de los archivos de audio que se van a tener en cuenta
-enum KeywordType {
-	FILENAME = 1,
-	MIMETYPE = 2,
-  TITLE = 3,
-	AUTHOR = 4,
-  ARTIST = 5,
-  DATE = 8,
-  PUBLISHER = 9,
-  LANGUAGE = 10,
-  ALBUM = 11,
-  GENRE = 12,
-  YEAR = 115,
-  TRACK_NUMBER = 132,
+enum AUDIO_KeywordType {
+     AUDIO_FILENAME = 1,
+     AUDIO_MIMETYPE = 2,
+     AUDIO_TITLE = 3,
+     AUDIO_AUTHOR = 4,
+     AUDIO_ARTIST = 5,
+     AUDIO_DATE = 8,
+     AUDIO_PUBLISHER = 9,
+     AUDIO_LANGUAGE = 10,
+     AUDIO_ALBUM = 11,
+     AUDIO_GENRE = 12,
+     AUDIO_YEAR = 115,
+     AUDIO_TRACK_NUMBER = 132,
 };
 
 #define PATH_DUMP_AUDIO "dump_audio_"
 #define MIME_TYPE_MP3 "audio/mpeg"
 #define MIME_TYPE_OGG "application/ogg"
-#define PATH_STOP_WORD "Parsers/ParserAudio/stop_words_audio"
+#define AUDIO_PATH_STOP_WORD "Parsers/ParserAudio/stop_words_audio"
 
 /****************************************************************************/
 class ParserAudio: public Parser {

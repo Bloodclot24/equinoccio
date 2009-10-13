@@ -3,8 +3,8 @@
 
 #include "../Parser.h"
 
-#define PATH_DUMP_C "dump_C_"
-#define PATH_STOP_WORD "stop_words_c"
+#define C_PATH_DUMP "dump_C_"
+#define C_PATH_STOP_WORD "stop_words_c"
 
 class ParserC: public Parser {
 

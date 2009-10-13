@@ -31,11 +31,11 @@ public:
       * 
       * @param nombreArchivo El nombre del archivo a parsear.
       */
-     void parsear(const char* nombreArchivo){
+     void parsear(const std::string& nombreArchivo){
 	  std::list<Parser*>::iterator it;
 	  bool encontrado = false;
-	  for(it=cadena.begin();(it!=cadena.end) && !encontrado;it++){
-	       encontrado = (*it).parsear(nombreArchivo, documento)
+	  for(it=cadena.begin();(it!=cadena.end()) && !encontrado;it++){
+	       encontrado = (*it)->parsear(nombreArchivo, documento);
 	  }
 	  if(encontrado)
 	       ++documento;
