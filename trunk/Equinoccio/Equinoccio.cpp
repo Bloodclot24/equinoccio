@@ -20,9 +20,9 @@
 #define ERROR_ELIMINAR_INEXISTENTE -2
 #define ERROR_CATALOGO_INEXISTENTE -2
 
-bool esDirectorio(const char* nombre){
+bool esDirectorio(const std::string& nombre){
      struct stat sb;
-     if (stat(nombre, &sb) == -1)
+     if (stat(nombre.c_str(), &sb) == -1)
 	  return false;
 
      if((sb.st_mode & S_IFMT) == S_IFDIR)
@@ -30,9 +30,9 @@ bool esDirectorio(const char* nombre){
      return false;
 }
 
-bool esArchivo(const char* nombre){
+bool esArchivo(const std::string& nombre){
      struct stat sb;
-     if (stat(nombre, &sb) == -1)
+     if (stat(nombre.c_str(), &sb) == -1)
 	  return false;
 
      if((sb.st_mode & S_IFMT) == S_IFREG)
@@ -40,19 +40,15 @@ bool esArchivo(const char* nombre){
      return false;
 }
 
-void agregarDirectorio(const char* nombre){
+void agregarDirectorio(const std::string& nombre){
      DIR* directory;
      struct dirent* entry;
 
      if(esDirectorio(nombre)){
-	  if( (directory =opendir(nombre)) ==NULL)
+	  if( (directory =opendir(nombre.c_str())) ==NULL)
 	       return;
-	  if(chdir(nombre) == -1){
-	       closedir(directory);
-	       return;
-	  }
 	  while((entry=readdir(directory))!=NULL)
-	       if(esArchivo(entry->d_name))
+	       if(esArchivo(nombre+'/'+entry->d_name))
 		    std::cout << "Agregar el archivo: " << entry->d_name << "\n";
 	  
 	  closedir(directory);

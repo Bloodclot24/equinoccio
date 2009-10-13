@@ -17,76 +17,76 @@ class Parser{
 	
 private:	
 
-	class StopWord{
-	private:
-	     std::string texto;
-	     int cantidad;
+     class StopWord{
+     private:
+	  std::string texto;
+	  int cantidad;
 	     
-	public:
-	     StopWord(std::string texto){
-		  		this->texto = texto;
-		  		cantidad = 1;
-	     }
-	     StopWord(){}
-	     bool operator>(const StopWord& b){
-		  return texto.compare(b.texto)>0?1:0;
-	     }
-	     bool operator<(const StopWord& b){
-		  return texto.compare(b.texto)<0?1:0;
-	     }
-	     void unir(const StopWord& otro){
-		  cantidad++;
-	     }
-	     const std::string print() const{
-		  if(cantidad==1)
-		       return texto;
-		  else{
-		       std::string s;
-		       std::stringstream z;
-		       z << texto << "(" << cantidad << ")";
-		       z >> s;
-		       return s;
-		  }
-	     }
-	};
+     public:
+	  StopWord(std::string texto){
+	       this->texto = texto;
+	       cantidad = 1;
+	  }
+	  StopWord(){}
+	  bool operator>(const StopWord& b){
+	       return texto.compare(b.texto)>0?1:0;
+	  }
+	  bool operator<(const StopWord& b){
+	       return texto.compare(b.texto)<0?1:0;
+	  }
+	  void unir(const StopWord& otro){
+	       cantidad++;
+	  }
+	  const std::string print() const{
+	       if(cantidad==1)
+		    return texto;
+	       else{
+		    std::string s;
+		    std::stringstream z;
+		    z << texto << "(" << cantidad << ")";
+		    z >> s;
+		    return s;
+	       }
+	  }
+     };
 
-	RedBlackTree<StopWord> arbol;
+     RedBlackTree<StopWord> arbol;
 
 protected:
-	uint32_t archivos;
-	uint32_t cantMaxReg;
-	uint32_t cantReg;
-	std::list<std::string> lista;
+     uint32_t archivos;
+     uint32_t cantMaxReg;
+     uint32_t cantReg;
+     std::list<std::string> lista;
 
-	/**
-		* La funcion se encarga de cargar el arbol con los stop words.
-		* 
-    * @param nombreStopWord El archivo donde estan los stop words.
-	 	*/ 
-		void cargarStopWord(std::string nombreStopWord);
+     /**
+      * La funcion se encarga de cargar el arbol con los stop words.
+      * 
+      * @param nombreStopWord El archivo donde estan los stop words.
+      */ 
+     void cargarStopWord(std::string nombreStopWord);
 
-	/**
-		* La funcion se encarga de decir si la palabra pasada por
-		* parametro es o no stop word. Devuelve TRUE si es stop word,
-		* FALSE caso contrario.
-		* 
-    * @param palabra La palabra a saber si es o no stop word.
-	 	*/ 
-		bool esStopWord(std::string palabra);
+     /**
+      * La funcion se encarga de decir si la palabra pasada por
+      * parametro es o no stop word. Devuelve TRUE si es stop word,
+      * FALSE caso contrario.
+      * 
+      * @param palabra La palabra a saber si es o no stop word.
+      */ 
+     bool esStopWord(std::string palabra);
 	
-	/**
-	 	* La funcion devuelve una cadena en minuscula, sin caracteres invalidos;
-	  * Notar que los caracteres invalidos son convertidos en espacios, por lo
-	  * que puede devolverse una cadena con mas de una palabra o una cadena 
-	  * vacia.
-	 	*/ 
-		std::string aMinuscSinInvalidos(std::string informacion);
+     /**
+      * La funcion devuelve una cadena en minuscula, sin caracteres invalidos;
+      * Notar que los caracteres invalidos son convertidos en espacios, por lo
+      * que puede devolverse una cadena con mas de una palabra o una cadena 
+      * vacia.
+      */ 
+     std::string aMinuscSinInvalidos(std::string informacion);
 		
-	/**
-	 	* La funcion toma una cadena, filtra los espacios y guarda palabra a
-	 	* palabra, en una lista auxiliar.
-	 	*/ 
-		void guardarPalabras(std::string palabras);
+     /**
+      * La funcion toma una cadena, filtra los espacios y guarda palabra a
+      * palabra, en una lista auxiliar.
+      */ 
+     void guardarPalabras(std::string palabras);
 
 public:
      /** 
@@ -95,12 +95,12 @@ public:
       * 
       * @param cantMaxReg La cantidad maxima de registros por archivo.
       */
-		 Parser(uint32_t cantMaxReg);
+     Parser(uint32_t cantMaxReg);
 		 
-		 /** 
+     /** 
       * Destruye el Parser.
       */
-		 ~Parser();
+     ~Parser();
 		
      /** 
       * El método intenta abrir el archivo con el nombre dado e
@@ -119,14 +119,14 @@ public:
       */
      virtual bool parsear(std::string nombre, uint32_t documento)=0;
 
-		 /** 
-		  * Devuelve la cantidad de archivos que genero parseando.
-    	*/     
+     /** 
+      * Devuelve la cantidad de archivos que genero parseando.
+      */     
      uint32_t getCantArchivosParseados();
      
      /** 
-		  * Devuelve la cantidad de registros del ultimo archivo.
-    	*/     
+      * Devuelve la cantidad de registros del ultimo archivo.
+      */     
      uint32_t getCantReg();			
 };
 
