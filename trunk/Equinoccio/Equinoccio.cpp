@@ -50,8 +50,10 @@ int main(int argc, char** argv){
 	       param = &arg_search_string;
 	  else if(strcmp(argv[i], ARG_CAT) == 0)
 	       param = &arg_cat_string;
-	  else
+	  else{
 	       error=ERROR_ARG_DESCONOCIDO;
+	       break;
+	  }
 	  
 	  if(param){
 	       i++;
