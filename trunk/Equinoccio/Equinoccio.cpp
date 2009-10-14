@@ -123,9 +123,9 @@ int main(int argc, char** argv){
 	  return error;
      }
 
-     parsers.agregarParser(new ParserC(100));
-     parsers.agregarParser(new ParserPython(100));
 
+     parsers.agregarParser(new ParserPython(100));
+     parsers.agregarParser(new ParserC(100));
      parsers.agregarParser(new ParserPHP(100));
      parsers.agregarParser(new ParserImagen(100));
      parsers.agregarParser(new ParserAudio(100));

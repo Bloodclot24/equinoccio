@@ -7,12 +7,14 @@
 
 ParserPython::ParserPython(uint32_t cantMaxReg):Parser::Parser(cantMaxReg){
      cargarStopWord(PYTHON_STOP_WORD_FILE);
-     std::string nombre(PYTHON_DUMP_BASENAME);
-     nombre += Util::intToString(archivos);
-     salida.open(nombre.c_str(), std::ios::out);
 }
 
 bool ParserPython::parsear(std::string nombre, uint32_t documento){
+
+     std::cout << nombre << "\n";
+
+     if(nombre.compare(nombre.size()-3,3,".py")!=0)
+	  return false;  //No es archivo .py, no se puede parsear
 
      std::ifstream entrada(nombre.c_str());
 
@@ -79,18 +81,26 @@ bool ParserPython::parsear(std::string nombre, uint32_t documento){
 	       }while(c != '\n' &&!entrada.eof() && entrada.good());
 	  }
 	  if(isalnum(c) || (unsigned)c > 192){
-	       guardarTermino(termino, documento);
 	       termino += c;
 	       cr=false;
 	  }
 	  else if(!cr){
 	       cr=true;
+	       guardarTermino(termino, documento);
 	       termino.clear();
 	  }
      }
+
+     return true;
 }
 
 void ParserPython::guardarTermino(const std::string& termino, uint32_t documento){
+     if(!salida.is_open()){
+	  std::string nombre(PYTHON_DUMP_BASENAME);
+	  nombre += Util::intToString(documento);
+	  salida.open(nombre.c_str(), std::ios::out);
+     }
+
      if(!esStopWord(termino)){
 	  Registro r(termino, documento);
 	  r.escribir(salida,0);
