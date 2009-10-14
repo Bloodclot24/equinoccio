@@ -11,9 +11,12 @@ ParserPython::ParserPython(uint32_t cantMaxReg):Parser::Parser(cantMaxReg){
 
 bool ParserPython::parsear(std::string nombre, uint32_t documento){
 
+     std::string nombreMinus(nombre);
+     aMinusculas(nombreMinus);
+
      std::cout << nombre << "\n";
 
-     if(nombre.compare(nombre.size()-3,3,".py")!=0)
+     if(nombreMinus.compare(nombreMinus.size()-3,3,".py")!=0)
 	  return false;  //No es archivo .py, no se puede parsear
 
      std::ifstream entrada(nombre.c_str());
@@ -86,6 +89,7 @@ bool ParserPython::parsear(std::string nombre, uint32_t documento){
 	  }
 	  else if(!cr){
 	       cr=true;
+	       aMinusculas(termino);
 	       guardarTermino(termino, documento);
 	       termino.clear();
 	  }

@@ -66,6 +66,10 @@ std::string Parser::aMinuscSinInvalidos(std::string informacion) {
 	return palabraFiltrada;
 }
 
+void Parser::aMinusculas(std::string& str){
+     std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+}
+
 /*--------------------------------------------------------------------------*/
 void Parser::guardarPalabras(std::string palabras) {
 	

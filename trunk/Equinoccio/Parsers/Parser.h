@@ -5,6 +5,7 @@
 #include <string.h>
 #include <iostream>
 #include <fstream>
+#include <algorithm>
 #include "../Registros/Registro.h"
 #include "../Util/Util.h"
 #include "../Arbol/RedBlackTree.h"
@@ -81,6 +82,13 @@ protected:
       * vacia.
       */ 
      std::string aMinuscSinInvalidos(std::string informacion);
+
+     /** 
+      * Transforma un string a minusculas.
+      * 
+      * @param str El string a transformar.
+      */
+     void aMinusculas(std::string& str);
 		
      /**
       * La funcion toma una cadena, filtra los espacios y guarda palabra a
