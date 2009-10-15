@@ -7,6 +7,11 @@ ParserPHP::ParserPHP(uint32_t cantMaxReg): Parser::Parser(cantMaxReg){
 };
 
 bool ParserPHP::parsear(std::string nombre, uint32_t documento){
+
+     const char* validas[]={".php",0};
+     if(!verificarExtension(nombre,validas))
+	  return false;
+
 	std::string nombre_dump;
 	nombre_dump+= PHP_PATH_DUMP;
 	nombre_dump+= Util::intToString(archivos);

@@ -136,6 +136,18 @@ public:
       * Devuelve la cantidad de registros del ultimo archivo.
       */     
      uint32_t getCantReg();			
+
+     /** 
+      * Verifica que la extension del archivo sea alguna de las
+      * contenidas en el array (terminado en NULL)
+      * 
+      * @param nombre El nombre del archivo
+      * @param char Lista de extensiones terminada en NULL.
+      * 
+      * @return TRUE si la extension concuerda, FASE si no.
+      */
+     bool verificarExtension(const std::string& nombre, const char **validas);
+
 };
 
 #endif //PARSER_H_INCLUDED

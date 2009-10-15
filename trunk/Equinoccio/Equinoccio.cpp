@@ -57,11 +57,17 @@ void agregarDirectorio(const std::string& nombre){
      if(esDirectorio(nombre)){
 	  if( (directory =opendir(nombre.c_str())) ==NULL)
 	       return;
-	  while((entry=readdir(directory))!=NULL)
-	       if(esArchivo(nombre+'/'+entry->d_name)){
-		    std::cout << "Agregar el archivo: " << nombre+'/'+entry->d_name << "\n";
-		    parsers.parsear(nombre+'/'+entry->d_name);
+	  while((entry=readdir(directory))!=NULL){
+	       std::string nombreCompleto(nombre+'/'+entry->d_name);
+	       if(esArchivo(nombreCompleto)){
+		    std::cout << "Agregar el archivo: " << nombreCompleto << "\n";
+		    parsers.parsear(nombreCompleto);
 	       }
+	       else if(esDirectorio(nombreCompleto) && strncmp(entry->d_name,".",1)!=0){
+		    //agrego directorios recursivamente
+		    agregarDirectorio(nombreCompleto);
+	       }
+	  }
 	  
 	  closedir(directory);
      }
@@ -124,11 +130,11 @@ int main(int argc, char** argv){
      }
 
 
-     parsers.agregarParser(new ParserPython(100));
-     parsers.agregarParser(new ParserC(100));
-     parsers.agregarParser(new ParserPHP(100));
-     parsers.agregarParser(new ParserImagen(100));
-     parsers.agregarParser(new ParserAudio(100));
+     parsers.agregarParser(new ParserPython(1000));
+     parsers.agregarParser(new ParserC(1000));
+     parsers.agregarParser(new ParserPHP(1000));
+     parsers.agregarParser(new ParserImagen(1000));
+     parsers.agregarParser(new ParserAudio(1000));
 
      if(arg_list)
 	  std::cout << "Listado de directorios.\n";

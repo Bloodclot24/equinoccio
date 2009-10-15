@@ -13,6 +13,11 @@ ParserImagen::~ParserImagen() {}
 
 bool ParserImagen::parsear(std::string nombre, uint32_t documento) {
 
+     const char* validas[]={".png", ".jpg",0};
+     if(!verificarExtension(nombre,validas))
+	  return false;
+
+
 	libExtractor extractor;
 	EXTRACTOR_KeywordList *keywords = extractor.getKeyword(nombre);
 

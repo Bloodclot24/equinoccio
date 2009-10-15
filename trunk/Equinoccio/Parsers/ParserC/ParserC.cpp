@@ -7,6 +7,12 @@ ParserC::ParserC(uint32_t cantMaxReg): Parser::Parser(cantMaxReg){
 };
 
 bool ParserC::parsear(std::string nombre, uint32_t documento){
+
+     const char* validas[]={".cpp",".c",".h",".hpp",".cxx",".hxx",".cc",".hc",0};
+     if(!verificarExtension(nombre,validas))
+	  return false;
+
+
 	std::string nombre_dump;
 	nombre_dump+= C_PATH_DUMP;
 	nombre_dump+= Util::intToString(archivos);

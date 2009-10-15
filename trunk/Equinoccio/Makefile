@@ -21,7 +21,7 @@ TESTSOURCES=Arbol/arbol.cpp\
 
 MAIN=Equinoccio.cpp
 
-CFLAGS=-lextractor
+CFLAGS=-lextractor -g -Wall
 CC=g++
 EXECUTABLE=Equinoccio
 

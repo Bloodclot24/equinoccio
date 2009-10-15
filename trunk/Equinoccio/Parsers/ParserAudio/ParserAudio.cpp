@@ -11,6 +11,10 @@ bool ParserAudio::parsear(std::string nombre, uint32_t documento) {
 	
 //	EXTRACTOR_ExtractorList *extractors =EXTRACTOR_loadDefaultLibraries();
 //  EXTRACTOR_KeywordList *keywords= EXTRACTOR_getKeywords(extractors, nombre.c_str());
+
+     const char* validas[]={".mp3",".ogg",0};
+     if(!verificarExtension(nombre,validas))
+	  return false;
   
   libExtractor extractor;
   EXTRACTOR_KeywordList *keywordList= extractor.getKeyword(nombre.c_str());
