@@ -1,0 +1,15 @@
+int32_t TDA_Codigos::getNGamma(std::string &stro){
+	uint32_t una=1;/*Numero en Unario*/
+	uint32_t bin=0;/*Numero en Binario*/
+	uint32_t spbin=0;/*size parte binaria*/
+	uint32_t sizestr = stro.size();/*Size total*/
+	uint32_t puna = stro.find_first_of("0")+1;/*Donde termina la parte unaria*/
+	std::string strb =stro.substr(puna,sizestr);/*Obtengo el substring de la parte binaria*/
+	spbin=sizestr-puna;/*Calculo el size de la parte binaria*/
+	   if (puna>1)/*Si la parte unaria es mayor que 1 sino vale 1*/
+		   una=pow(2,puna-1);/*Calculo lo de la parte unaria*/
+
+	   for(uint32_t x=0;x<spbin;x++)
+		   bin+= (((short)strb.at(spbin-x-1))-48)*pow(2,(x)); /*Teorema F. Numeracion*/
+	 return (bin+una);
+}

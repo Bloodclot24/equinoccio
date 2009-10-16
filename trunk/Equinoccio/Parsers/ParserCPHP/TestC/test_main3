@@ -1,0 +1,166 @@
+#include "matrices.h"
+#include "datosCompartidos.h"
+#include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#define DIGITOS_MAXIMOS 10
+
+/*
+ * Lee un numero del archivo separado por ',' o por '\n'
+ * lo transforma en un entero y lo devuelve
+ */
+int leerParametro(FILE* archivo){
+     static char buffer[DIGITOS_MAXIMOS+1];
+     char auxiliar;
+     
+     int i, terminado;
+     for(i=0,terminado=0;i<DIGITOS_MAXIMOS+1 && !terminado;i++){
+	  auxiliar = fgetc(archivo);
+	  buffer[i] = auxiliar;
+	  if(auxiliar == '\n' || auxiliar == ','){
+		    buffer[i]=0;
+		    terminado = 1;
+	  }
+     }
+
+     return atol(buffer);
+}
+
+/*
+ * Reserva espacio paralas tres matrices, inicialza las primeras
+ * dos con los valores del archivo de entrada y la tercera la inicializa
+ * con ceros.
+ * En caso de exito devuelve 0. Si falla devuelve 1.
+ */
+int cargarMatrices(const char* nombre, Matrices* matrices){
+     FILE* archivo = fopen(nombre, "rb");
+     int returnValue = 1;
+     int tamanioMatriz, tamanioBloque, i;
+
+     if(archivo != NULL){
+	  
+	  tamanioMatriz = leerParametro(archivo);
+	  tamanioBloque = leerParametro(archivo);
+	  
+	  if( (tamanioMatriz % tamanioBloque) == 0){
+	       matrices->matrizA = malloc(sizeof(int)*tamanioMatriz*tamanioMatriz);
+	       matrices->matrizB = malloc(sizeof(int)*tamanioMatriz*tamanioMatriz);
+	       matrices->matrizC = malloc(sizeof(int)*tamanioMatriz*tamanioMatriz);
+	       matrices->tamanio = tamanioMatriz;
+	       matrices->tamanioBloque = tamanioBloque;
+
+	       if(matrices->matrizA != NULL && matrices->matrizB != NULL && matrices->matrizC != NULL){
+		    		    
+		    for(i=0;i<tamanioMatriz*tamanioMatriz;i++){
+			 matrices->matrizA[i] = leerParametro(archivo);
+		    }
+		    leerParametro(archivo); /* salto un \n */
+		    for(i=0;i<tamanioMatriz*tamanioMatriz;i++){
+			 matrices->matrizB[i] = leerParametro(archivo);
+		    }
+		    for(i=0;i<tamanioMatriz*tamanioMatriz;i++){
+			 matrices->matrizC[i] = 0;
+		    }
+		    returnValue = 0;
+	       }
+	       else{
+		    if(matrices->matrizA != NULL)
+			 free(matrices->matrizA);
+		    if(matrices->matrizB != NULL)
+			 free(matrices->matrizB);
+		    if(matrices->matrizC != NULL)
+			 free(matrices->matrizC);
+	       }
+
+	  }
+	  fclose(archivo);
+
+     }
+     return returnValue;
+}
+
+int main(int argc, char** argv){
+
+     int returnValue;
+     if(argc < 3){
+	  return 1;
+     }
+     Matrices *matrices = (Matrices*)malloc(sizeof(Matrices));
+         
+     /* cargo las matrices */
+     if((returnValue=cargarMatrices(argv[1], matrices))==0){
+	  /* si tengo exito, preparo todo para procesar */
+	  int i;
+	  int mutexTotales = matrices->tamanio/matrices->tamanioBloque;
+	  mutexTotales*=mutexTotales;
+
+	  int threadsTotales = mutexTotales*(matrices->tamanio/matrices->tamanioBloque);
+
+	  pthread_mutex_t **mutex = malloc(sizeof(pthread_mutex_t*)*mutexTotales);
+	  pthread_t **threads = malloc(sizeof(pthread_t*)*threadsTotales);
+	  DatosCompartidos **datos = malloc(sizeof(DatosCompartidos*)*threadsTotales);;
+
+	  /* creo un mutex por cada cuadrante de la matriz C */
+	  for(i=0;i<mutexTotales;i++){
+	       mutex[i] = malloc(sizeof(pthread_mutex_t));
+	       pthread_mutex_init(mutex[i], NULL);
+	  }
+
+	  /* Creo un thread por cada subproducto y un set de datos compartidos con los
+	   * punteros a las matrices origen y destino, tambien con el numero de thread y
+	   * datos de las matrices (dimensiones de la matriz y los bloques )
+	   */
+	  for(i=0;i<threadsTotales;i++){
+	       threads[i] = malloc(sizeof(pthread_t));
+	       datos[i] = DatosCompartidos_Crear(matrices, mutex ,i);
+	       /* crea el thread con la funcion de multiplicacion */
+	       pthread_create(threads[i], NULL, Matrices_Multiplicar, datos[i]);
+	  }
+
+	  for(i=0;i<threadsTotales;i++){
+
+	       /* espera que todos los threads terminen */
+	       pthread_join(*threads[i], NULL);
+
+	  }
+
+	  /* Ahore escribo el archivo de salida */
+	  FILE* salida = fopen(argv[2], "wb");
+	  int j;
+	  for(i=0;i<matrices->tamanio;i++){
+	       for(j=0;j<matrices->tamanio-1;j++){
+		    fprintf(salida, "%d," ,matrices->matrizC[i*matrices->tamanio+j]);
+	       }
+	       fprintf(salida, "%d\n" ,matrices->matrizC[i*matrices->tamanio+j]);
+	  }
+	  fclose(salida);
+
+	  /* Libero todo antes de salir */
+
+	  for(i=0;i<mutexTotales;i++){
+	       pthread_mutex_destroy(mutex[i]);
+	       free(mutex[i]);
+	  }
+
+	  for(i=0;i<threadsTotales;i++){
+	       free(threads[i]);
+	       DatosCompartidos_Destruir(datos[i]);
+	  }
+
+	  free(mutex);
+	  free(threads);
+	  free(datos);
+
+	  free(matrices->matrizA);
+	  free(matrices->matrizB);
+	  free(matrices->matrizC);
+	  
+     }
+
+     
+     free(matrices);
+
+     return returnValue;
+}
+

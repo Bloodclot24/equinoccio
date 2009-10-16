@@ -1,0 +1,7 @@
+#include "Archivos.h"
+int main(int argc, char** argv){/*Main de Prueba*/
+	std::string aux ="";
+	Archivos::Leer("test");/**/ aux=20;
+	std::cout << "Finalizado" << std::endl;
+	return 0;
+}

@@ -1,0 +1,236 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<?PHP
+ob_start();
+session_start();
+include("funciones.php");
+include ("inc.conexion.php");
+
+if (!isset($_SESSION["nombrex"]) )
+{
+	include "oops.php";
+	die();
+}
+
+$flag_window = 0; //bandera para abrir boleta generada
+$cadena = "";//string acumulador de cuotas de actas separado por "_" por acta y "+" entre acta y cuota
+
+/* FUNCION PARA GENERAR UNA CADENA */
+function randomkeys($length)
+{
+    $pattern = "1234567890";
+    $key  = $pattern{rand(0,9)};
+    for($i=1;$i<$length;$i++)
+    {
+        $key .= $pattern{rand(0,9)};
+    }
+    return $key;
+}
+
+$con = conectarse(); /* CONEXION A LA DB */
+if ($con)
+{
+	
+	/* VERIFACION DE EXISTENCIA DE ID_CADENA PARA EL CODIGO DE BARRAS */
+					
+	$id_cadena = randomkeys(20);
+	$bandera_existencia = 0;
+					
+	$sql_cadena = "select * from cuota where id_cadena = '".$id_cadena."' ";
+	$query_cadena = mysql_query($sql_cadena);
+					
+	if (mysql_num_rows($query_cadena) != 0)
+	{
+		while ($bandera_existencia == 0)
+		{
+			$id_cadena = randomkeys(20);
+			$sql_cadena = "select * from cuota where id_cadena = '".$id_cadena."' ";
+			$query_cadena = mysql_query($sql_cadena);
+			if (mysql_num_rows($query_cadena) == 0)
+			{
+				$bandera_existencia = 1;
+			}
+	
+		}
+	}
+	/*  ********************************************************   */
+
+
+			
+	$data = "select * from acta where id_empresa = ".$_SESSION["id_empresa"]." and pagado = 's'";
+	$query = mysql_query($data);
+	
+}
+?>
+<html>
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=iso-8859-1"/>
+<meta name="description" content="description"/>
+<meta name="keywords" content="keywords"/> 
+<meta name="author" content="author"/> 
+<link rel="stylesheet" type="text/css" href="default.css" media="screen"/>
+<title>CECQ</title>
+<script type="text/JavaScript">
+<!--
+function Insertar()
+{
+window.open('acta_boleta.php?id=<?=$id_cadena ?>','','width=800,height=700');
+}
+//-->
+</script>
+<style type="text/css">
+<!--
+.Estilo1 {
+	font-size: larger;
+	font-weight: bold;
+}
+-->
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="main">
+
+		<? include ("top.php");?>
+
+	<div class="footer"> 
+	  <div align="left">
+	    <table width="718" border="0">
+          <tr>
+            <td><div align="right"><?   	$fecha = explode ("/",date("d/m/Y") );
+			   	echo $fecha[0];
+			  	switch ($fecha[1])
+			   	{
+					case 1:
+					echo " de enero de ";
+					break;
+					case 2:
+					echo " de febrero de ";
+					break;
+					case 3:
+					echo " de marzo de ";
+					break;
+					case 4:
+					echo " de abril de ";
+					break;
+					case 5:
+					echo " de mayo de ";
+					break;
+					case 6:
+					echo " de junio de ";
+					break;
+					case 7:
+					echo " de julio de ";
+					break;
+					case 8:
+					echo " de agosto de ";
+					break;
+					case 9:
+					echo " de septiembre de ";
+					break;
+					case 10:
+					echo " de octubre de ";
+					break;
+					case 11:
+					echo " de noviembre de ";
+					break;
+					case 12:
+					echo " de diciembre de ";
+					break;
+			   	}
+				echo $fecha[2];
+		   ?></div></td>
+          </tr>
+        </table>
+		
+	    <p><br />
+	      <br />    
+	      <a href="logout.php">Salir</a> | <a href = "abm.php">Volver</a>	      </p>
+	    <p><br />
+	      Seleccione las cuotas que desea pagar, y luego haga click en el boton, para poder imprimir la boleta. </p>
+	  </div>
+	  <form method="POST" action="actas.php">
+	  <div align="center">
+
+		  <?
+		  if (mysql_num_rows($query) == 0 )
+		  {
+		  	echo "No hay actas";
+		  }
+		  while ( $fetch = mysql_fetch_array($query))
+		  {
+		  	$data_cuota = "select * from cuota where nro_acta = ".$fetch["nro_acta"]." and pagado = 's'";
+			$query_cuota = mysql_query($data_cuota);
+			if (mysql_num_rows($query_cuota) == 0)
+			{
+				$update_acta = "update acta set pagado = 'p' where nro_acta = ".$fetch["nro_acta"]." ";
+				mysql_query($update_acta);
+			}
+?>
+	    <table width="512" border="0">
+          <tr>
+            <td width="228"><div align="left" class="Estilo1">Numero de Acta: <?=$fetch["nro_acta"] ?></div></td>
+		</tr>
+		<tr>
+		  <td width="228"><div align="left">Cantidad de Cuotas: <?=$fetch["cantidad_cuotas"] ?></div></td>
+		  <td width="274"><div align="left">Deuda Total: <?=$fetch["total_deuda"] ?></div></td>
+          </tr>
+	    </table>
+<?			
+			while ($fetch_cuota = mysql_fetch_array($query_cuota))
+			{
+			?>
+			<table  width="600" border="0">
+			<tr>
+            <td width="30%"><div align="left">Numero de Cuota: <?=$fetch_cuota["nro_cuota"] ?></div></td>
+			<td width="24%"><div align="left">Monto: <?=$fetch_cuota["monto"] ?></div></td>
+			<td width="40%"><div align="left">Fecha Vencimiento: <?=$fetch_cuota["fecha_vencimiento"] ?></div></td>
+			<td width="6%"><div align="left"><input type="checkbox" name="<?=$fetch["nro_acta"]?>+<?= $fetch_cuota["nro_cuota"] ?>" <?PHP if (isset($_POST[$fetch["nro_acta"]."+".$fetch_cuota["nro_cuota"]] )) {echo 'checked= "checked"'; $cadena = $cadena.$fetch["nro_acta"]."+".$fetch_cuota["nro_cuota"]."_"; }?> /></div></td>
+          	</tr>
+			</table>
+			<?PHP
+			}//cierra while fetch_aporte
+
+		  }//cierra while fetch
+		  ?>
+			<br />
+			<br />
+			<input type="hidden" name="string" value="<?=$cadena ?>" />
+	      	<input type="submit" name="btninsert" value="Pagar" />
+      </form>
+      </div>
+	  <p align="center">&nbsp;</p>
+	  <p>&nbsp;</p>
+	  <p>&copy; 2006 <a href="http://www.improved-solutions.com.ar" target="_blank">Dise&ntilde;ado y programado por Improved Solutions </a> </p>
+	</div>
+<?
+if (isset ($_POST ["btninsert"]) )
+	{
+		$flag_window = 1;
+		$n = 0;
+		$actas = explode("_",$cadena);
+		while ($actas[$n] != NULL)
+		{
+			$cuota = explode("+", $actas[$n]);
+			$sql = "update cuota set id_cadena = '".$id_cadena."' where nro_acta = ".$cuota[0]." and nro_cuota = ".$cuota[1]." ";
+			$query_sql = mysql_query($sql);
+			$n += 1;
+		}
+	
+	}
+		
+if ($flag_window == 1)
+{
+	echo ' <script type="text/JavaScript"> Insertar(); </script>' ;
+}
+?>
+
+</body>
+
+</html>
+<?PHP
+ob_end_flush();
+?>

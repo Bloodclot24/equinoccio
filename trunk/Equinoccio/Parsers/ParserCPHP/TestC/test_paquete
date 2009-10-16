@@ -1,0 +1,72 @@
+#include "paquete.h"
+
+int Paquete::cantidad = 0;
+
+/*
+ * Crea un paquete con el mensaje y direcciones origen y destino dadas.
+ * El mensaje SERÁ liberado por el destructor.
+ */
+Paquete::Paquete(std::string *mensaje, int direccionOrigen, int direccionDestino){
+     this->mensaje = mensaje;
+     this->direccionOrigen = direccionOrigen;
+     this->direccionDestino = direccionDestino;
+     informacion = new std::string;
+     cantidad++;
+     id=cantidad;
+}
+
+int Paquete::getID(void){
+     return id;
+}
+
+/*
+ * Agrega informacion administrativa al paquete.
+ */
+void Paquete::agregarInformacion(std::string informacion){
+     if(!this->informacion->empty())
+	  this->informacion->push_back(',');
+     this->informacion->append(informacion);
+}
+
+/*
+ * Obtiene la direccion a la cual esta dirigido el paquete.
+ */
+int Paquete::obtenerDireccionDestino(void){
+     return direccionDestino;
+}
+
+/*
+ * Obtiene la direccion del creador del paquete.
+ */
+int Paquete::obtenerDireccionOrigen(void){
+     return direccionOrigen;
+}
+     
+/*
+ * Devuele el mensaje almacenado en el paquete.
+ */
+const std::string& Paquete::obtenerMensaje(void){
+     return *mensaje;
+}
+
+/*
+ * Devuele la informacion de ruteo almacenada en el paquete.
+ */
+const std::string& Paquete::obtenerInformacion(void){
+     return *informacion;
+}
+
+
+/*
+ * Muestra el contenido del paquete y la informacion administrativa por stderr.
+ */
+void Paquete::descartar(void){
+     std::cerr << "Error (" << direccionOrigen << "," << direccionDestino << ") ";
+     std::cerr << *mensaje;
+     std::cerr << " {" << *informacion << "}" << std::endl;
+}
+     
+Paquete::~Paquete(){
+     delete mensaje; //elimina el mensaje
+     delete informacion;
+}
