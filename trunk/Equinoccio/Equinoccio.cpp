@@ -4,13 +4,13 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
+#include <libgen.h>
 
 #include "Parsers.h"
 #include "Parsers/Parser.h"
 #include "Parsers/ParserImagen/ParserImagen.h"
 #include "Parsers/ParserAudio/ParserAudio.h"
-#include "Parsers/ParserC/ParserC.h"
-#include "Parsers/ParserPhp/ParserPHP.h"
+#include "Parsers/ParserCPHP/ParserCPHP.h"
 #include "Parsers/ParserPython/ParserPython.h"
 
 
@@ -53,15 +53,31 @@ private:
 	  return false;
      }
 
+     std::string parsearDirectorio(const std::string nombre){
+	  //dirname+basename;
+	  char *copia = new char[nombre.size()+1];
+	  strcpy(copia, nombre.c_str());
+	  std::string absoluto = dirname(copia);
+	  absoluto+='/';
+	  strcpy(copia, nombre.c_str());
+	  absoluto+= basename(copia);
+	  delete[] copia;
+	  return absoluto;
+     }
+
      void agregarDirectorio(const std::string& nombre){
 	  DIR* directory;
 	  struct dirent* entry;
 
-	  if(esDirectorio(nombre)){
-	       if( (directory =opendir(nombre.c_str())) ==NULL)
+	  std::string directorio = parsearDirectorio(nombre);
+
+	  std::cout << "Directorio absouto: " << directorio << "\n";
+
+	  if(esDirectorio(directorio)){
+	       if( (directory =opendir(directorio.c_str())) ==NULL)
 		    return;
 	       while((entry=readdir(directory))!=NULL){
-		    std::string nombreCompleto(nombre+'/'+entry->d_name);
+		    std::string nombreCompleto(directorio+'/'+entry->d_name);
 		    if(esArchivo(nombreCompleto)){
 			 std::cout << "Agregar el archivo: " << nombreCompleto << "\n";
 			 parsers.parsear(nombreCompleto);
@@ -139,8 +155,9 @@ private:
 	  }
 
 	  parsers.agregarParser(new ParserPython(1000));
-	  parsers.agregarParser(new ParserC(1000));
-	  parsers.agregarParser(new ParserPHP(1000));
+	  // parsers.agregarParser(new ParserC(1000));
+	  // parsers.agregarParser(new ParserPHP(1000));
+	  parsers.agregarParser(new ParserCPHP(1000));
 	  parsers.agregarParser(new ParserImagen(1000));
 	  parsers.agregarParser(new ParserAudio(1000));
 
@@ -148,7 +165,7 @@ private:
 	       std::cout << "Listado de directorios.\n";
 	  if(arg_add_dir){
 	       std::cout << "Agregar el directorio: " << baseDir+arg_add_dir << std::endl;
-	       agregarDirectorio(baseDir+arg_add_dir);
+	       agregarDirectorio(arg_add_dir);
 	  }
 	  if(arg_del_dir){
 	       std::cout << "Eliminar el directorio: " << arg_del_dir << std::endl;
@@ -168,7 +185,7 @@ private:
 public:
      static int main(int argc, char** argv){
 	  Equinoccio E;
-	  E.magic(argc, argv);
+	  return E.magic(argc, argv);
      }
 
 };

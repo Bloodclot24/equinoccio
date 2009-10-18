@@ -7,6 +7,7 @@
 
 ParserPython::ParserPython(uint32_t cantMaxReg):Parser::Parser(cantMaxReg){
      cargarStopWord(PYTHON_STOP_WORD_FILE);
+     archivos=0;
 }
 
 bool ParserPython::parsear(std::string nombre, uint32_t documento){
@@ -27,7 +28,7 @@ bool ParserPython::parsear(std::string nombre, uint32_t documento){
 
      bool literal = false;
      char cliteral=0;
-     bool comentario = false;
+     //bool comentario = false;
      int literal_count=1;
      for(;!entrada.eof() && entrada.good();entrada.get(c)){
 	  if(literal){ //Salteo strings literales
