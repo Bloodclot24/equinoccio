@@ -1,5 +1,6 @@
 #include <string.h>
 #include <iostream>
+#include <fstream>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -20,6 +21,12 @@
 #define ARG_SEARCH "-s"
 #define ARG_CAT    "-c"
 
+#define NOMBRE_IDX_DIRECTORIOS "IDX_DIRS.idx"
+#define NOMBRE_LEX_DIRECTORIOS "LEX_DIRS.lex"
+
+#define NOMBRE_IDX_ARCHIVOS "IDX_ARCH.idx"
+#define NOMBRE_LEX_ARCHIVOS "LEX_ARCH.lex"
+
 #define ERROR_NO_ERROR              0
 #define ERROR_ARG_DESCONOCIDO      -1
 #define ERROR_ARG_FALTANTE         -1
@@ -32,6 +39,10 @@ class Equinoccio{
 private:
      Parsers parsers;		/**< Cadena de parsers */
      std::string baseDir;	/**< CWD */
+     std::fstream idxDirectorios;
+     std::fstream lexDirectorios;
+     std::fstream idxArchivos;
+     std::fstream lexArchivos;
 
      bool esDirectorio(const std::string& nombre){
 	  struct stat sb;
@@ -76,11 +87,13 @@ private:
 	  if(esDirectorio(directorio)){
 	       if( (directory =opendir(directorio.c_str())) ==NULL)
 		    return;
+	       guardarDirectorio(directorio);
 	       while((entry=readdir(directory))!=NULL){
 		    std::string nombreCompleto(directorio+'/'+entry->d_name);
 		    if(esArchivo(nombreCompleto)){
 			 std::cout << "Agregar el archivo: " << nombreCompleto << "\n";
-			 parsers.parsear(nombreCompleto);
+			 if(parsers.parsear(nombreCompleto))
+			      guardarArchivo(nombreCompleto);
 		    }
 		    else if(esDirectorio(nombreCompleto) && strncmp(entry->d_name,".",1)!=0){
 			 //agrego directorios recursivamente
@@ -90,6 +103,28 @@ private:
 	  
 	       closedir(directory);
 	  }
+     }
+
+     uint32_t guardarDirectorio(const std::string& nombre){
+	  if(!idxDirectorios.is_open()){
+	       idxDirectorios.open(NOMBRE_IDX_DIRECTORIOS, std::fstream::in | std::fstream::out | std::fstream::trunc);
+	       lexDirectorios.open(NOMBRE_LEX_DIRECTORIOS, std::fstream::in | std::fstream::out | std::fstream::trunc);
+	  }
+	  std::streampos p = lexDirectorios.tellp();
+	  idxDirectorios.write((char*)&p,sizeof(std::streampos));
+	  lexDirectorios.write(nombre.c_str(), nombre.size()+1);
+	  return 0;
+     }
+
+     uint32_t guardarArchivo(const std::string& nombre){
+	  if(!idxArchivos.is_open()){
+	       idxArchivos.open(NOMBRE_IDX_ARCHIVOS, std::fstream::in | std::fstream::out | std::fstream::trunc);
+	       lexArchivos.open(NOMBRE_LEX_ARCHIVOS, std::fstream::in | std::fstream::out | std::fstream::trunc);
+	  }
+	  std::streampos p = lexArchivos.tellp();
+	  idxArchivos.write((char*)&p,sizeof(std::streampos));
+	  lexArchivos.write(nombre.c_str(), nombre.size()+1);
+	  return 0;
      }
 
      void mostrar_uso(const char* nombre){
@@ -154,12 +189,12 @@ private:
 	       return error;
 	  }
 
-	  parsers.agregarParser(new ParserPython(1000));
+	  parsers.agregarParser(new ParserPython(10000));
 	  // parsers.agregarParser(new ParserC(1000));
 	  // parsers.agregarParser(new ParserPHP(1000));
-	  parsers.agregarParser(new ParserCPHP(1000));
-	  parsers.agregarParser(new ParserImagen(1000));
-	  parsers.agregarParser(new ParserAudio(1000));
+	  parsers.agregarParser(new ParserCPHP(10000));
+	  parsers.agregarParser(new ParserImagen(10000));
+	  parsers.agregarParser(new ParserAudio(10000));
 
 	  if(arg_list)
 	       std::cout << "Listado de directorios.\n";

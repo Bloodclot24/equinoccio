@@ -7,7 +7,6 @@
 
 ParserPython::ParserPython(uint32_t cantMaxReg):Parser::Parser(cantMaxReg){
      cargarStopWord(PYTHON_STOP_WORD_FILE);
-     archivos=0;
 }
 
 bool ParserPython::parsear(std::string nombre, uint32_t documento){
@@ -18,7 +17,7 @@ bool ParserPython::parsear(std::string nombre, uint32_t documento){
 
      std::ifstream entrada(nombre.c_str());
 
-     char c;
+     char c=0;
      bool cr=true;
      if(!entrada.good())
 	  return false;

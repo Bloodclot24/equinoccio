@@ -33,7 +33,8 @@ bool ParserCPHP::parsear(std::string nombre, uint32_t documento){
 	if (opc>0){
 		nombre_dump+= nombre_dump_est;
 		nombre_dump+= Util::intToString(archivos);
-		dump.open(nombre_dump.c_str(), std::fstream::out);
+		dump.close();
+		dump.open(nombre_dump.c_str(), std::fstream::out | std::fstream::app);
 		if (this->Leer(nombre.c_str(),opc)){
 			std::list<std::string>::iterator it;
 			cout << "Cantidad de Datos:" << lista.size() << std::endl;

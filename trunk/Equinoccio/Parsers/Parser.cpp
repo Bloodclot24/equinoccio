@@ -2,7 +2,6 @@
 
 /****************************************************************************/
 Parser::Parser(uint32_t cantMaxReg) {
-	
 	this->archivos= 0;
 	this->cantMaxReg= cantMaxReg;
 	this->cantReg= 0;

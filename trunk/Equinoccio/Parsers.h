@@ -31,7 +31,7 @@ public:
       * 
       * @param nombreArchivo El nombre del archivo a parsear.
       */
-     void parsear(const std::string& nombreArchivo){
+     bool parsear(const std::string& nombreArchivo){
 	  std::list<Parser*>::iterator it;
 	  bool encontrado = false;
 	  for(it=cadena.begin();(it!=cadena.end()) && !encontrado;it++){
@@ -39,6 +39,7 @@ public:
 	  }
 	  if(encontrado)
 	       ++documento;
+	  return encontrado;
      }
      
      /** 

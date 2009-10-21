@@ -3,6 +3,8 @@
 
 #include "../Parser.h"
 
+#include <iostream>
+
 #define MIME_TYPE_JPEG "image/jpeg"
 #define MIME_TYPE_PNG "image/png"
 #define IMAGEN_DUMP_NAME "dump_img_"
@@ -22,7 +24,7 @@ enum IMG_KeywordType {
 class ParserImagen: public Parser {
 
 private:
-	void guardarEnDump(std::ofstream& dump, std::string palabra, uint32_t documento);
+     void guardarEnDump(std::ofstream& dump, std::string palabra, uint32_t documento);
 
 public:
 	ParserImagen(uint32_t cantMaxReg);

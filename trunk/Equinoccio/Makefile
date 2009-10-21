@@ -23,7 +23,8 @@ TESTSOURCES=Arbol/arbol.cpp\
 
 MAIN=Equinoccio.cpp
 
-CFLAGS=-lextractor -g -Wall
+CFLAGS=-g -Wall
+LDFLAGS=-lextractor
 CC=g++
 EXECUTABLE=Equinoccio
 
@@ -37,7 +38,7 @@ TESTEXEC=$(TESTSOURCES:.cpp=)
 all: $(MAINSOURCES) $(EXECUTABLE)
 
 $(EXECUTABLE): $(MAINOBJECTS)
-	$(CC) $(CFLAGS) $(MAINOBJECTS) -o $@
+	$(CC) $(CFLAGS) $(LDFLAGS) $(MAINOBJECTS) -o $@
 
 .cpp.o:
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -45,7 +46,7 @@ $(EXECUTABLE): $(MAINOBJECTS)
 test: $(TESTSOURCES) $(TESTEXEC)
 
 $(TESTEXEC): $(TESTOBJECTS) $(OBJECTS)
-	$(CC) $(CFLAGS) $(OBJECTS) $@.o -o $@
+	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJECTS) $@.o -o $@
 
 clean:
 	rm -f $(ALLOBJECTS) $(EXECUTABLE) $(TESTEXEC)

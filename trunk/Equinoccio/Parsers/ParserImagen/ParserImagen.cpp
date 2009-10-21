@@ -67,7 +67,7 @@ bool ParserImagen::parsear(std::string nombre, uint32_t documento) {
 			dump_name += Util::intToString(archivos);
 
 			std::ofstream dump;
-			dump.open(dump_name.c_str(), std::ofstream::out);
+			dump.open(dump_name.c_str(), std::ofstream::out | std::ofstream::app);
 
 			/* guardo la lista de palabras en el dump */
 			std::list<std::string>::iterator it;
