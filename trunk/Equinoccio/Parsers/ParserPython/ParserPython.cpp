@@ -6,6 +6,7 @@
 #define PYTHON_STOP_WORD_FILE "stopwords"
 
 ParserPython::ParserPython(uint32_t cantMaxReg):Parser::Parser(cantMaxReg){
+     nombreCatalogo = "SRC";
      cargarStopWord(PYTHON_STOP_WORD_FILE);
 }
 

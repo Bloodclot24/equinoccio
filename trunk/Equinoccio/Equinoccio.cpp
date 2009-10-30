@@ -24,9 +24,6 @@
 #define NOMBRE_IDX_DIRECTORIOS "IDX_DIRS.idx"
 #define NOMBRE_LEX_DIRECTORIOS "LEX_DIRS.lex"
 
-#define NOMBRE_IDX_ARCHIVOS "IDX_ARCH.idx"
-#define NOMBRE_LEX_ARCHIVOS "LEX_ARCH.lex"
-
 #define ERROR_NO_ERROR              0
 #define ERROR_ARG_DESCONOCIDO      -1
 #define ERROR_ARG_FALTANTE         -1
@@ -92,8 +89,8 @@ private:
 		    std::string nombreCompleto(directorio+'/'+entry->d_name);
 		    if(esArchivo(nombreCompleto)){
 			 std::cout << "Agregar el archivo: " << nombreCompleto << "\n";
-			 if(parsers.parsear(nombreCompleto))
-			      guardarArchivo(nombreCompleto);
+			 parsers.parsear(nombreCompleto);
+			      //     guardarArchivo(nombreCompleto);
 		    }
 		    else if(esDirectorio(nombreCompleto) && strncmp(entry->d_name,".",1)!=0){
 			 //agrego directorios recursivamente
@@ -116,16 +113,16 @@ private:
 	  return 0;
      }
 
-     uint32_t guardarArchivo(const std::string& nombre){
-	  if(!idxArchivos.is_open()){
-	       idxArchivos.open(NOMBRE_IDX_ARCHIVOS, std::fstream::in | std::fstream::out | std::fstream::trunc);
-	       lexArchivos.open(NOMBRE_LEX_ARCHIVOS, std::fstream::in | std::fstream::out | std::fstream::trunc);
-	  }
-	  std::streampos p = lexArchivos.tellp();
-	  idxArchivos.write((char*)&p,sizeof(std::streampos));
-	  lexArchivos.write(nombre.c_str(), nombre.size()+1);
-	  return 0;
-     }
+     // uint32_t guardarArchivo(const std::string& nombre){
+     // 	  if(!idxArchivos.is_open()){
+     // 	       idxArchivos.open(NOMBRE_IDX_ARCHIVOS, std::fstream::in | std::fstream::out | std::fstream::trunc);
+     // 	       lexArchivos.open(NOMBRE_LEX_ARCHIVOS, std::fstream::in | std::fstream::out | std::fstream::trunc);
+     // 	  }
+     // 	  std::streampos p = lexArchivos.tellp();
+     // 	  idxArchivos.write((char*)&p,sizeof(std::streampos));
+     // 	  lexArchivos.write(nombre.c_str(), nombre.size()+1);
+     // 	  return 0;
+     // }
 
      void mostrar_uso(const char* nombre){
 	  std::cout << "Uso: " << nombre << " [" << ARG_LIST << 

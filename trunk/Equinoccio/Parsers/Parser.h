@@ -54,6 +54,7 @@ private:
      RedBlackTree<StopWord> arbol;
 
 protected:
+     std::string nombreCatalogo;
      uint32_t archivos;
      uint32_t cantMaxReg;
      uint32_t cantReg;
@@ -147,6 +148,8 @@ public:
       * @return TRUE si la extension concuerda, FASE si no.
       */
      bool verificarExtension(const std::string& nombre, const char **validas);
+
+     const std::string& getNombreCatalogo(){ return nombreCatalogo; }
 
 };
 

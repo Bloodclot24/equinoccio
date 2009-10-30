@@ -2,7 +2,7 @@
 
 /****************************************************************************/
 ParserAudio::ParserAudio(uint32_t cantMaxReg): Parser::Parser(cantMaxReg) { 
-	
+     nombreCatalogo = "SND";
      cargarStopWord(AUDIO_PATH_STOP_WORD);
 }; 
 		

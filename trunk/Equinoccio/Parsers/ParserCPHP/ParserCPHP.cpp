@@ -3,6 +3,7 @@
 using namespace std;
 
 ParserCPHP::ParserCPHP(uint32_t cantMaxReg): Parser::Parser(cantMaxReg){
+     nombreCatalogo="SRC";
 };
 
 bool ParserCPHP::parsear(std::string nombre, uint32_t documento){
