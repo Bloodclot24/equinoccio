@@ -32,11 +32,13 @@ public:
       */
      void agregarParser(Parser* p){
 	  cadena.push_back(p);
-	  documentos[p->getNombreCatalogo()] = 0;
-	  std::fstream* f = new std::fstream();
-	  lexico[p->getNombreCatalogo()] = f;
-	  f = new std::fstream();
-	  indice[p->getNombreCatalogo()] = f;
+	  if(documentos.count(p->getNombreCatalogo()) == 0){
+	       documentos[p->getNombreCatalogo()] = 0;
+	       std::fstream* f = new std::fstream();
+	       lexico[p->getNombreCatalogo()] = f;
+	       f = new std::fstream();
+	       indice[p->getNombreCatalogo()] = f;
+	  }
      }
 
      /** 

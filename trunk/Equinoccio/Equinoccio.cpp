@@ -13,6 +13,7 @@
 #include "Parsers/ParserAudio/ParserAudio.h"
 #include "Parsers/ParserCPHP/ParserCPHP.h"
 #include "Parsers/ParserPython/ParserPython.h"
+#include "Parsers/ParserTXT/ParserTxt.h"
 
 
 #define ARG_LIST   "-pl"
@@ -90,7 +91,6 @@ private:
 		    if(esArchivo(nombreCompleto)){
 			 std::cout << "Agregar el archivo: " << nombreCompleto << "\n";
 			 parsers.parsear(nombreCompleto);
-			      //     guardarArchivo(nombreCompleto);
 		    }
 		    else if(esDirectorio(nombreCompleto) && strncmp(entry->d_name,".",1)!=0){
 			 //agrego directorios recursivamente
@@ -112,17 +112,6 @@ private:
 	  lexDirectorios.write(nombre.c_str(), nombre.size()+1);
 	  return 0;
      }
-
-     // uint32_t guardarArchivo(const std::string& nombre){
-     // 	  if(!idxArchivos.is_open()){
-     // 	       idxArchivos.open(NOMBRE_IDX_ARCHIVOS, std::fstream::in | std::fstream::out | std::fstream::trunc);
-     // 	       lexArchivos.open(NOMBRE_LEX_ARCHIVOS, std::fstream::in | std::fstream::out | std::fstream::trunc);
-     // 	  }
-     // 	  std::streampos p = lexArchivos.tellp();
-     // 	  idxArchivos.write((char*)&p,sizeof(std::streampos));
-     // 	  lexArchivos.write(nombre.c_str(), nombre.size()+1);
-     // 	  return 0;
-     // }
 
      void mostrar_uso(const char* nombre){
 	  std::cout << "Uso: " << nombre << " [" << ARG_LIST << 
@@ -192,6 +181,8 @@ private:
 	  parsers.agregarParser(new ParserCPHP(10000));
 	  parsers.agregarParser(new ParserImagen(10000));
 	  parsers.agregarParser(new ParserAudio(10000));
+	  parsers.agregarParser(new ParserTxt(10000));
+
 
 	  if(arg_list)
 	       std::cout << "Listado de directorios.\n";

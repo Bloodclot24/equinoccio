@@ -5,6 +5,7 @@ SOURCES=CodigoGamma/TDA_Codigos.cpp \
 	Parsers/ParserCPHP/ParserCPHP.cpp \
 	Parsers/ParserImagen/ParserImagen.cpp \
 	Parsers/ParserPython/ParserPython.cpp \
+	Parsers/ParserTXT/ParserTxt.cpp \
 	Parsers/libExtractor/libExtractor.cpp \
 	Parsers/ParserPhp/ParserPHP.cpp \
 	Registros/Registro.cpp \
@@ -18,6 +19,7 @@ TESTSOURCES=Arbol/arbol.cpp\
 	Parsers/ParserCPHP/Archivos_ejec.cpp\
 	Parsers/ParserImagen/testImgParser.cpp\
 	Parsers/ParserPhp/Archivos_ejec.cpp\
+	Parsers/ParserTXT/testTXTparser.cpp\
 	Registros/pruebaRegistro.cpp\
 	Registros/pruebaRegistroEscritura.cpp
 

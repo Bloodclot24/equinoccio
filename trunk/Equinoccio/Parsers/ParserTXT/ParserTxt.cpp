@@ -2,10 +2,16 @@
 
 
 ParserTxt::ParserTxt(uint32_t cantMaxReg) :Parser::Parser(cantMaxReg){
+     nombreCatalogo = "TXT";
 	cargarStopWord(PATH_STOP_WORD);
 };
 
 bool ParserTxt::parsear(std::string nombre, uint32_t documento){
+
+     const char* validas[]={".txt",0};
+     if(!verificarExtension(nombre,validas))
+	  return false;
+
 	std::string nombre_dump;
 	nombre_dump+= PATH_DUMP_TXT;
 	nombre_dump+= Util::intToString(archivos);
@@ -76,7 +82,7 @@ void ParserTxt::Leer(const char * ruta){
 }
 void ParserTxt::separarLinea(std::string line,short* comenent){
 	std::string sub=line,subaux="";
-	char car;
+	unsigned char car;
 	sub=limpiarTabs(sub);
 	uint32_t size=sub.size();
 
