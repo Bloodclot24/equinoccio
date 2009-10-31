@@ -11,7 +11,8 @@
       - [ ] Probar e integrar codificacion gamma.
     - [-] Sort.
       - [X] Implementacion de replacement selection.
-      - [ ] Encapsular.
+      - [X] Encapsular.
+      - [ ] Crear metodos separados para no repetir tanto codigo.
     - [-] Merge.
       - [X] Implementacion con N particiones
       - [X] Encapsular
