@@ -7,6 +7,7 @@
 
 ParserPython::ParserPython(uint32_t cantMaxReg):Parser::Parser(cantMaxReg){
      nombreCatalogo = "SRC";
+     nombreBase = PYTHON_DUMP_BASENAME;
      cargarStopWord(PYTHON_STOP_WORD_FILE);
 }
 

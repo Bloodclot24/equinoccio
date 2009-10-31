@@ -3,7 +3,8 @@
 
 ParserTxt::ParserTxt(uint32_t cantMaxReg) :Parser::Parser(cantMaxReg){
      nombreCatalogo = "TXT";
-	cargarStopWord(PATH_STOP_WORD);
+     nombreBase = PATH_DUMP_TXT;
+     cargarStopWord(PATH_STOP_WORD);
 };
 
 bool ParserTxt::parsear(std::string nombre, uint32_t documento){

@@ -6,7 +6,8 @@
 //TODO sacar los couts
 ParserImagen::ParserImagen(uint32_t cantMaxReg):Parser(cantMaxReg) {
      nombreCatalogo = "IMG";
-	cargarStopWord(IMAGEN_PATH_STOPWORDS);
+     nombreBase=IMAGEN_DUMP_NAME;
+     cargarStopWord(IMAGEN_PATH_STOPWORDS);
 }
 
 ParserImagen::~ParserImagen() {}

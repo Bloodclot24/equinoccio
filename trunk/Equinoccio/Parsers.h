@@ -4,8 +4,12 @@
 #include <list>
 #include <map>
 #include <fstream>
-#include "Parsers/Parser.h"
 #include <libgen.h>  //para basename
+
+#include "Parsers/Parser.h"
+#include "Merge.h"
+#include "Sort.h"
+#include "Util/Util.h"
 
 #define NOMBRE_IDX_ARCHIVOS "IDX_ARCH.idx"
 #define NOMBRE_LEX_ARCHIVOS "LEX_ARCH.lex"
@@ -85,6 +89,68 @@ public:
 	  return 0;
      }
      
+
+     int armarIndices(){
+	  std::list<Parser*>::iterator it;
+	  std::map<std::string, std::list<Parser*> > catalogos;
+	  for(it=cadena.begin();it!=cadena.end();it++){
+	       std::string catalogo = (*it)->getNombreCatalogo();
+	       /* armo una lista de los parsers correspondientes a
+		* cada catalogo */
+	       catalogos[catalogo].push_back((*it));
+	  }
+	  
+	  std::map<std::string, std::list<Parser*> >::iterator it2;
+	  for(it2=catalogos.begin(); it2!= catalogos.end();it2++){
+	       std::list<Parser*> parsers;
+	       /* Obtengo el nombre del indice del catalogo */
+	       std::string nombreIndice = "IDX_";
+	       std::list<Parser*> &lista = (*it2).second;
+	       Parser* p = lista.front();
+	       nombreIndice += p->getNombreCatalogo() + ".idx";
+	       do{
+		    /* Obtego uno de los parsers de el catalogo */
+		    Parser* p = lista.front(); lista.pop_front();
+		    
+		    uint32_t primero=0,ultimo=0;
+		    ultimo = p->getCantArchivosParseados();
+		    std::string nombreBase = p->getNombreBase();
+		    uint32_t generadas=0;
+		    for(;primero<ultimo;primero++){
+			 std::string particion=nombreBase + Util::intToString(primero);
+			 generadas += Sorter::Sort(particion,nombreBase+".sorted",50);
+		    }
+	       }while(lista.size()>0);
+	  }
+
+	  return 0;
+     }
+
+     std::string merge(const std::string& nombreBase, uint32_t primero, \
+		       uint32_t ultimo, const std::string& nombreSalida){
+	  std::vector<std::string> particiones;
+	  if(primero-ultimo <= 51){
+	       for(;primero<ultimo;primero++){
+		    std::string particion=nombreBase + Util::intToString(primero);
+		    particiones.push_back(particion);
+		    Merger::Merge(particiones,nombreSalida);
+	       }
+	  }
+	  else{
+	       uint32_t cantidad=(primero-ultimo)/50;
+	       uint32_t i;
+	       for(i=0;i<cantidad;i++){
+		    merge(nombreBase, i*cantidad, (i+1)*cantidad, nombreBase+"."+Util::intToString(i));
+	       }
+	       if((primero-ultimo)%50 > 0)
+		    merge(nombreBase, i*cantidad, ultimo, nombreBase+"."+Util::intToString(i));
+	       else i--;
+
+	       merge(nombreBase+".", 0,i, nombreSalida);
+	  }
+	  return nombreSalida;
+     }
+
      /** 
       * Elimina la cadena de parsers, eliminando todos los parsers
       * agregados.

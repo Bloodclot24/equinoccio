@@ -7,6 +7,8 @@
   - [ ] Armado del indice.
     - [-] Parseo
       - [X] Tener en cuenta los catalogos al parsear.
+      - [ ] Guardar numero de directorio en lexico de archivos de cada
+        catalogo.
       - [ ] Parser PDF.
       - [ ] Probar e integrar codificacion gamma.
     - [-] Sort.
