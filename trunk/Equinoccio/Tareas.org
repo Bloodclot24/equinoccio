@@ -1,0 +1,27 @@
+
+* TODO Equinoccio
+
+  - [ ] General
+    - [ ] Archivos de configuracion.
+    - [ ] Bug con wildcards en nombres de directorios.
+    - [ ] Definir paths.
+  - [ ] Armado del indice.
+    - [-] Parseo
+      - [X] Tener en cuenta los catalogos al parsear.
+      - [ ] Parser PDF.
+    - [-] Sort.
+      - [X] Implementacion de replacement selection.
+      - [ ] Encapsular.
+    - [ ] Merge.
+    - [ ] N-gramas.
+    - [ ] Armado final del indice.
+    - [ ] Logica de segmentos diferenciales.
+      - [ ] Diferentes sufijos en los archivos parciales.
+      - [ ] Bitmaps.
+      - [ ] Merge de los segmentos.
+  - [ ] Algoritmo de busqueda.
+    - [ ] Busqueda simple.
+    - [ ] Comodines.
+    - [ ] Busqueda en todos los segmentos.
+  - [ ] Interfaz.
+  - [ ] Instalacion.
