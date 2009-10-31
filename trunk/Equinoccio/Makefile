@@ -23,7 +23,7 @@ TESTSOURCES=Arbol/arbol.cpp\
 	Registros/pruebaRegistro.cpp\
 	Registros/pruebaRegistroEscritura.cpp\
 	Sort.cpp\
-	Merge.cpp
+	testMerge.cpp
 
 MAIN=Equinoccio.cpp
 

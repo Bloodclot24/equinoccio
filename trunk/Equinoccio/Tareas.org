@@ -14,7 +14,7 @@
       - [ ] Encapsular.
     - [-] Merge.
       - [X] Implementacion con N particiones
-      - [ ] Encapsular
+      - [X] Encapsular
       - [ ] Crear metodos separados para no repetir tanto codigo.
     - [ ] N-gramas.
     - [ ] Armado final del indice.
