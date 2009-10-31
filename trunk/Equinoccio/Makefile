@@ -22,7 +22,8 @@ TESTSOURCES=Arbol/arbol.cpp\
 	Parsers/ParserTXT/testTXTparser.cpp\
 	Registros/pruebaRegistro.cpp\
 	Registros/pruebaRegistroEscritura.cpp\
-	Sort.cpp
+	Sort.cpp\
+	Merge.cpp
 
 MAIN=Equinoccio.cpp
 

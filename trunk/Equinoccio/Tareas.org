@@ -1,4 +1,3 @@
-
 * TODO Equinoccio
 
   - [ ] General
@@ -9,10 +8,14 @@
     - [-] Parseo
       - [X] Tener en cuenta los catalogos al parsear.
       - [ ] Parser PDF.
+      - [ ] Probar e integrar codificacion gamma.
     - [-] Sort.
       - [X] Implementacion de replacement selection.
       - [ ] Encapsular.
-    - [ ] Merge.
+    - [-] Merge.
+      - [X] Implementacion con N particiones
+      - [ ] Encapsular
+      - [ ] Crear metodos separados para no repetir tanto codigo.
     - [ ] N-gramas.
     - [ ] Armado final del indice.
     - [ ] Logica de segmentos diferenciales.

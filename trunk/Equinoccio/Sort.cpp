@@ -6,7 +6,7 @@
 #include <iostream>
 #include <string>
 
-#define REG_CANT_MAX 500
+#define REG_CANT_MAX 50
 
 int main(int argc, char** argv){
      if(argc < 2)
@@ -77,4 +77,5 @@ int main(int argc, char** argv){
      }
      archivo.close();
      archivos.close(); 
+     return 0;
 }
