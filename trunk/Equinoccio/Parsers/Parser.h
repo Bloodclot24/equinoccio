@@ -110,7 +110,7 @@ public:
      /** 
       * Destruye el Parser.
       */
-     ~Parser();
+     virtual ~Parser();
 		
      /** 
       * El método intenta abrir el archivo con el nombre dado e
