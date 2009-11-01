@@ -31,40 +31,40 @@ Registro* Registro::leer(std::ifstream &archivo, int compresion){
 	       archivo.read((char*)&(p.frecuencia), sizeof(p.frecuencia));
 	  }
 	  else{
-	       #warning "Falta implementar Gamma."
+#warning "Falta implementar Gamma."
                char caracter;
                bool doc= false;
                bool frec= false;
                uint32_t distancia;
                std::string aux;
                while(!doc && !frec) {
-                 archivo.read((char*)&(caracter), sizeof(caracter));
-                 int bit;
-                 for(bit=1<<7; bit!=0; bit>>=1){/*Shifteo*/
-                   aux+= ((caracter&bit)>0?1:0);
+		    archivo.read((char*)&(caracter), sizeof(caracter));
+		    int bit;
+		    for(bit=1<<7; bit!=0; bit>>=1){/*Shifteo*/
+			 aux+= ((caracter&bit)>0?1:0);
 
 
-                   if((distancia= TDA_Codigos::getNGamma(aux)) != (uint32_t)-1){
+			 if((distancia= TDA_Codigos::getNGamma(aux)) != (uint32_t)-1){
 
-                     std::cout << "distancia: " << distancia  << " distinto de " << (uint32_t)-1<< std::endl;
+			      std::cout << "distancia: " << distancia  << " distinto de " << (uint32_t)-1<< std::endl;
 
-                     if(!doc) {
-                       doc= true;
-                       p.documento = distancia;
-                     } else if(!frec) {
-                       frec= true;
-                       p.frecuencia = distancia;
-                     }
-                     aux.clear();
-                   }
-                 }
+			      if(!doc) {
+				   doc= true;
+				   p.documento = distancia;
+			      } else if(!frec) {
+				   frec= true;
+				   p.frecuencia = distancia;
+			      }
+			      aux.clear();
+			 }
+		    }
                }
 	  }
 	  r->punteros.push_back(p);
-	 contador--;
-       }
+	  contador--;
+     }
 
-  return r;
+     return r;
 }
 
 int Registro::escribir(std::ofstream &archivo, int compresion){
@@ -86,66 +86,66 @@ int Registro::escribir(std::ofstream &archivo, int compresion){
 	  }
      }
      else{
-       #warning "Falta implementar Gamma."
-       char caracter;
-       std::string str;
-       char cadena;
-       int j = 0;
-       bool doc= false;
+#warning "Falta implementar Gamma."
+	  char caracter;
+	  std::string str;
+	  char cadena;
+	  int j = 0;
+	  bool doc= false;
 
-       for(it=punteros.begin(); it != punteros.end(); it++){
-         Registro::Punteros p;
-	 p = *it;
+	  for(it=punteros.begin(); it != punteros.end(); it++){
+	       Registro::Punteros p;
+	       p = *it;
 
-	 std::cout << "DOC AL PPIO: " << doc << std::endl;
-
-
-	 if(!doc) {
-	   std::cout << "doc a guardar: " << p.documento << std::endl;
-
-	   str= TDA_Codigos::getCGamma(p.documento);
-	   doc= true;
-
-	 } else {
-	   std::cout << "ENTREEEEEEEEE" << std::endl;
-           std::cout << "frecuencia a guardar: " << p.frecuencia << std::endl;
-
-	   str= TDA_Codigos::getCGamma(p.frecuencia);
-
-	   doc= false;
-	 }
-
-         std::cout << "str: " << str << std::endl;
+	       std::cout << "DOC AL PPIO: " << doc << std::endl;
 
 
-	 for(unsigned int i = 0; i < str.length(); i++){
-	   caracter= str[i];
-	   int bit;
-	   for(bit=1<<7;bit!=0 ;bit>>=1)/*Shifteo*/
-	     cadena+= (caracter>0?bit:0);
-	   if(j == 7){
-	     archivo.write((char*)&(cadena), sizeof(cadena));
-	     std::cout << "guarde: " << cadena << std::endl;
-	     std::cout << "------------------------------------" << std::endl;
+	       if(!doc) {
+		    std::cout << "doc a guardar: " << p.documento << std::endl;
 
-	     j= 0;
-	     cadena= 0;
-	   }
-	   j++;
-	 }
+		    str= TDA_Codigos::getCGamma(p.documento);
+		    doc= true;
 
-         std::cout << "DOC!: " << doc << std::endl;
+	       } else {
+		    std::cout << "ENTREEEEEEEEE" << std::endl;
+		    std::cout << "frecuencia a guardar: " << p.frecuencia << std::endl;
 
-       }
+		    str= TDA_Codigos::getCGamma(p.frecuencia);
+
+		    doc= false;
+	       }
+
+	       std::cout << "str: " << str << std::endl;
+
+
+	       for(unsigned int i = 0; i < str.length(); i++){
+		    caracter= str[i];
+		    int bit;
+		    for(bit=1<<7;bit!=0 ;bit>>=1)/*Shifteo*/
+			 cadena+= (caracter>0?bit:0);
+		    if(j == 7){
+			 archivo.write((char*)&(cadena), sizeof(cadena));
+			 std::cout << "guarde: " << cadena << std::endl;
+			 std::cout << "------------------------------------" << std::endl;
+
+			 j= 0;
+			 cadena= 0;
+		    }
+		    j++;
+	       }
+
+	       std::cout << "DOC!: " << doc << std::endl;
+
+	  }
 
 	  	
-       if (cadena != 0){
-         int bit;
-         for(bit=j<<(7-j);bit!=0 ;bit>>=1,j++)/*Shifteo*/
-           cadena += (caracter>0?bit:0);
-         std::cout << "guarde: " << cadena << std::endl;
-         archivo.write((char*)&(cadena),sizeof(cadena));
-	}
+	  if (cadena != 0){
+	       int bit;
+	       for(bit=j<<(7-j);bit!=0 ;bit>>=1,j++)/*Shifteo*/
+		    cadena += (caracter>0?bit:0);
+	       std::cout << "guarde: " << cadena << std::endl;
+	       archivo.write((char*)&(cadena),sizeof(cadena));
+	  }
      }
      return 1;
 }
