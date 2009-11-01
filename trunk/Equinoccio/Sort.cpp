@@ -1,7 +1,7 @@
 #include "Sort.h"
 
 
-static int Sorter::Sort(const std::string &nombreArchivo,			\
+int Sorter::Sort(const std::string &nombreArchivo,			\
 		     const std::string &nombreBaseSalida,		\
 		     unsigned cantMax){
 

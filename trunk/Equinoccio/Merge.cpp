@@ -1,7 +1,7 @@
 #include "Merge.h"
 
 
-static int Merger::Merge(const std::vector<std::string>& nombreParticiones, \
+int Merger::Merge(const std::vector<std::string>& nombreParticiones, \
 		      const std::string& nombreSalida){
 	  
 	  if(nombreParticiones.size() < 2)

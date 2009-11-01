@@ -9,7 +9,9 @@ SOURCES=CodigoGamma/TDA_Codigos.cpp \
 	Parsers/libExtractor/libExtractor.cpp \
 	Parsers/ParserPhp/ParserPHP.cpp \
 	Registros/Registro.cpp \
-	Util/Util.cpp
+	Util/Util.cpp \
+	Sort.cpp \
+	Merge.cpp
 
 TESTSOURCES=Arbol/arbol.cpp\
 	Arbol/arbolRegistros.cpp\
