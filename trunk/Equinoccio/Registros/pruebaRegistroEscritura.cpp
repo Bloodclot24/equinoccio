@@ -10,13 +10,13 @@ int main(int argc, char** argv){
      std::ofstream archivo(argv[1], std::fstream::out);
 
      Registro r1("palabra1", 1);
-     r1.escribir(archivo, 0);
+     r1.escribir(archivo, 1);
      Registro r2("palabra2", 2);
-     r2.escribir(archivo, 0);
+     r2.escribir(archivo, 1);
      Registro r3("palabra3", 3);
-     r3.escribir(archivo, 0);
+     r3.escribir(archivo, 1);
      Registro r4("palabra4", 4);
-     r4.escribir(archivo, 0);
+     r4.escribir(archivo, 1);
 
      archivo.close();
 }
