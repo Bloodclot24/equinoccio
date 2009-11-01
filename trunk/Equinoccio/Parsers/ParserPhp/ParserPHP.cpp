@@ -185,7 +185,7 @@ string ParserPHP::limpiarComentarioSimple(string cadorig){
 	else aux=cadorig;
 	return aux;
 }
-void ParserPHP::guardarEnDump(std::ofstream& dump,std::string palabra, uint32_t documento) {
+void ParserPHP::guardarEnDump(std::ofstream& dump,std::string& palabra, uint32_t documento) {
 	if(!esStopWord(palabra)) {
 		Registro reg(palabra, documento);
 		reg.escribir(dump, 0);

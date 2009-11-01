@@ -14,7 +14,7 @@ class libExtractor {
 		EXTRACTOR_ExtractorList *extractors;
 	
 	public:
-		EXTRACTOR_KeywordList* getKeyword(std::string archivo);
+		EXTRACTOR_KeywordList* getKeyword(const std::string& archivo);
 		int getKeywordType(EXTRACTOR_Keywords* keywords);
 		std::string getKeyword(EXTRACTOR_Keywords* keywords);  	
 		EXTRACTOR_Keywords* getNext(EXTRACTOR_Keywords* keywords);

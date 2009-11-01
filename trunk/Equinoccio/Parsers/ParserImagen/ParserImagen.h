@@ -24,7 +24,7 @@ enum IMG_KeywordType {
 class ParserImagen: public Parser {
 
 private:
-     void guardarEnDump(std::ofstream& dump, std::string palabra, uint32_t documento);
+     void guardarEnDump(std::ofstream& dump, std::string& palabra, uint32_t documento);
 
 public:
 	ParserImagen(uint32_t cantMaxReg);

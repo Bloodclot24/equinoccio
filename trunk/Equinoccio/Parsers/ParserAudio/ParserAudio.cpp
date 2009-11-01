@@ -10,9 +10,6 @@ ParserAudio::ParserAudio(uint32_t cantMaxReg): Parser::Parser(cantMaxReg) {
 /*--------------------------------------------------------------------------*/
 bool ParserAudio::parsear(std::string nombre, uint32_t documento) {
 	
-//	EXTRACTOR_ExtractorList *extractors =EXTRACTOR_loadDefaultLibraries();
-//  EXTRACTOR_KeywordList *keywords= EXTRACTOR_getKeywords(extractors, nombre.c_str());
-
      const char* validas[]={".mp3",".ogg",0};
      if(!verificarExtension(nombre,validas))
 	  return false;
@@ -117,7 +114,7 @@ bool ParserAudio::parsear(std::string nombre, uint32_t documento) {
 
 /*--------------------------------------------------------------------------*/
 void ParserAudio::guardarEnDump(std::ofstream& dump, 
-				std::string palabra, uint32_t documento) {
+				std::string& palabra, uint32_t documento) {
 	
      if(!esStopWord(palabra)) {
 	  Registro reg(palabra, documento);
@@ -126,7 +123,7 @@ void ParserAudio::guardarEnDump(std::ofstream& dump,
 }
 
 /*--------------------------------------------------------------------------*/
-std::string ParserAudio::obtenerExtension(std::string extension) {
+std::string ParserAudio::obtenerExtension(const std::string& extension) {
 
      std::string strAparsear(extension); 
      size_t found= strAparsear.find("/", 0);

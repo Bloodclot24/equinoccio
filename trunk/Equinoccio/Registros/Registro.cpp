@@ -1,6 +1,6 @@
 #include "Registro.h"
 
-Registro::Registro(std::string termino, uint32_t documento){
+Registro::Registro(const std::string& termino, uint32_t documento){
      Registro::Punteros puntero;
      this->termino = termino;
      frecuencia = 1;

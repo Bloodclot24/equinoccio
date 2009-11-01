@@ -38,7 +38,7 @@ public:
       * @param termino El termino a asociar con el registro.
       * @param documento El documento donde se encuentra el termino.
       */
-     Registro(std::string termino, uint32_t documento);
+     Registro(const std::string& termino, uint32_t documento);
 
      /** 
       * Lee un registro desde un archivo.

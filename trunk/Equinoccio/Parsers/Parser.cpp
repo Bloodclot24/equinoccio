@@ -14,35 +14,35 @@ Parser::~Parser() {
 }
 
 /*--------------------------------------------------------------------------*/
-void Parser::cargarStopWord(std::string nombreStopWord) {
+void Parser::cargarStopWord(const std::string& nombreStopWord) {
 	
-		std::fstream archivo(nombreStopWord.c_str(), std::fstream::in);
+	std::fstream archivo(nombreStopWord.c_str(), std::fstream::in);
 		
-		archivo.seekg(0, std::ios::end);
+	archivo.seekg(0, std::ios::end);
   	std::streampos	length= archivo.tellg();
   	archivo.seekg(0, std::ios::beg);
 		
-		char buffer[512];
+	char buffer[512];
 
-		if(archivo.is_open()) {
-			while(archivo.tellg() != length) {
-				archivo.getline(buffer, 512);
-				std::string palabra(buffer);
-				arbol.Insert(new StopWord(palabra));
-			}
+	if(archivo.is_open()) {
+		while(archivo.tellg() != length) {
+			archivo.getline(buffer, 512);
+			std::string palabra(buffer);
+			arbol.Insert(new StopWord(palabra));
 		}
+	}
 
-		archivo.close();
+	archivo.close();
 }
 
 /*--------------------------------------------------------------------------*/
-bool Parser::esStopWord(std::string palabra) {
+bool Parser::esStopWord(const std::string& palabra) {
 	
 	return(arbol.Search(StopWord(palabra)));
 }
 
 /*--------------------------------------------------------------------------*/
-std::string Parser::aMinuscSinInvalidos(std::string informacion) {
+std::string Parser::aMinuscSinInvalidos(const std::string& informacion) {
 	
 //	//TODO: /*PRUEBA*/
 //	std::cout << "Palabra Cruda: " << informacion << std::endl;

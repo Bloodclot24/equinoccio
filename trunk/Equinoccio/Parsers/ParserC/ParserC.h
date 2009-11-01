@@ -7,7 +7,7 @@
 #define C_PATH_STOP_WORD "stop_words_c"
 
 class ParserC: public Parser {
-
+		//TODO ver de poner referenncias en los strings en lugar de copias
 	private:
 		void guardarEnDump(std::ofstream& dump, std::string palabra, uint32_t documento);
 		void Leer(const char *);

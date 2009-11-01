@@ -9,7 +9,7 @@
 #define C_PATH_STOP_WORD "stop_words_c"
 
 class ParserCPHP: public Parser {
-
+//TODO ver de poner refencias en lugar de copias de los strings
 	private:
 		void guardarEnDump(std::ofstream& dump, std::string palabra, uint32_t documento);
 		bool Leer(const char *,short);

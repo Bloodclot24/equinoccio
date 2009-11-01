@@ -101,7 +101,7 @@ bool ParserPdf::parsear(std::string nombre, uint32_t documento) {
 	return is_ok;
 }
 
-void ParserPdf::guardarEnDump(std::ofstream& dump, std::string palabra, uint32_t documento) {
+void ParserPdf::guardarEnDump(std::ofstream& dump, std::string& palabra, uint32_t documento) {
 
 	if(!esStopWord(palabra)) {
 		Registro reg(palabra, documento);

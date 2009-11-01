@@ -99,7 +99,7 @@ bool ParserImagen::parsear(std::string nombre, uint32_t documento) {
 	return is_ok;
 }
 
-void ParserImagen::guardarEnDump(std::ofstream& dump, std::string palabra, uint32_t documento) {
+void ParserImagen::guardarEnDump(std::ofstream& dump, std::string& palabra, uint32_t documento) {
 
 	if(!esStopWord(palabra)) {
 		Registro reg(palabra, documento);

@@ -1,7 +1,7 @@
 #include "libExtractor.h"
 
 /*--------------------------------------------------------------------------*/
-EXTRACTOR_KeywordList* libExtractor::getKeyword(std::string archivo) {
+EXTRACTOR_KeywordList* libExtractor::getKeyword(const std::string& archivo) {
 	
 	extractors= EXTRACTOR_loadDefaultLibraries();
   EXTRACTOR_Keywords *keywords= EXTRACTOR_getKeywords(extractors, archivo.c_str());

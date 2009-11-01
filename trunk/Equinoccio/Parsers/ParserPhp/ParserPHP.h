@@ -9,7 +9,7 @@
 class ParserPHP: public Parser {
 
 	private:
-		void guardarEnDump(std::ofstream& dump, std::string palabra, uint32_t documento);
+		void guardarEnDump(std::ofstream& dump, std::string& palabra, uint32_t documento);
 		void Leer(const char *);
 		void separarLinea(std::string,short*);
 		void separarLineaRecursivo(std::string line,int campo,const char*,short);

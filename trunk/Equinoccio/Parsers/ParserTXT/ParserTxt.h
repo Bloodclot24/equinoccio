@@ -9,10 +9,10 @@
 class ParserTxt: public Parser {
 
 	private:
-		void guardarEnDump(std::ofstream& dump, std::string palabra, uint32_t documento);
+		void guardarEnDump(std::ofstream& dump, std::string& palabra, uint32_t documento);
 		void Leer(const char *);
-		void separarLinea(std::string,short*);
-		static std::string limpiarTabs(std::string);
+		void separarLinea(const std::string&,short*);
+		static std::string limpiarTabs(const std::string&);
 
 	public:
 		ParserTxt(uint32_t cantMaxReg);

@@ -81,7 +81,7 @@ void ParserTxt::Leer(const char * ruta){
 		
 	entrada.close();
 }
-void ParserTxt::separarLinea(std::string line,short* comenent){
+void ParserTxt::separarLinea(const std::string& line,short* comenent){
 	std::string sub=line,subaux="";
 	unsigned char car;
 	sub=limpiarTabs(sub);
@@ -110,7 +110,7 @@ void ParserTxt::separarLinea(std::string line,short* comenent){
 
 	}
 }
-std::string ParserTxt::limpiarTabs(std::string cadorig){
+std::string ParserTxt::limpiarTabs(const std::string& cadorig){
 	std::string aux=cadorig;short c;
 	do{
 		c=aux.find('\t');
@@ -119,7 +119,7 @@ std::string ParserTxt::limpiarTabs(std::string cadorig){
 	}while (c>-1);
 	return aux;
 }
-void ParserTxt::guardarEnDump(std::ofstream& dump,std::string palabra, uint32_t documento) {
+void ParserTxt::guardarEnDump(std::ofstream& dump,std::string& palabra, uint32_t documento) {
 
 	if(!esStopWord(palabra)) {
 		Registro reg(palabra, documento);
