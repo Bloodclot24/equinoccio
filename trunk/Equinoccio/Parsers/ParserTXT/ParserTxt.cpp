@@ -97,7 +97,7 @@ void ParserTxt::separarLinea(std::string line,short* comenent){
 		/*Solo letras(tanto mayusculas como minusculas)
 		 * tambien se guardan caracteres con acento y
 		 * las letras ñ tanto mayuscula como minuscula*/
-		if (((car>64)&&(car<91))||((car>96)&&(car<123)) || (car == 130) || ((car>159) && (car < 166)))
+		if (((car>64)&&(car<91))||((car>96)&&(car<123)) || (car > 127) )
 			subaux+=car;
 		else if((car==46)||(car==32)||(car==58)){/*Agregar separadores de palabras que se crean apropiados*/
 			//std::cout << "SubAux es:" << subaux << std::endl;
