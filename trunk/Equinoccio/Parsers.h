@@ -5,6 +5,7 @@
 #include <map>
 #include <fstream>
 #include <libgen.h>  //para basename
+#include <stdio.h>   //para remove
 
 #include "Parsers/Parser.h"
 #include "Merge/Merge.h"
@@ -14,8 +15,7 @@
 #define NOMBRE_IDX_ARCHIVOS "IDX_ARCH.idx"
 #define NOMBRE_LEX_ARCHIVOS "LEX_ARCH.lex"
 
-#define NUMERO_PARTICIONES  2
-
+#define NUMERO_PARTICIONES  7
 
 class Parsers{
      std::list<Parser*> cadena;	/**< Lista de parsers */
@@ -111,7 +111,7 @@ public:
 	       std::string nombreIndice = "IDX_";
 	       std::list<Parser*> &lista = (*it2).second;
 	       Parser* p = lista.front();
-	       nombreIndice += p->getNombreCatalogo() + ".idx";
+	       nombreIndice += p->getNombreCatalogo() + ".aux";
 	       do{
 		    /* Obtego uno de los parsers de el catalogo */
 		    Parser* p = lista.front(); lista.pop_front();
@@ -150,14 +150,14 @@ public:
 	       Merger::Merge(particiones,nombreSalida);
 	  }
 	  else{
-	       std::cout << "merge parcial" << std::endl;
-	       uint32_t cantidad=(ultimo-primero)/NUMERO_PARTICIONES;
+	       uint32_t cantidad=(ultimo-primero+1)/NUMERO_PARTICIONES;
+	       std::cout << "merge parcial: "<< cantidad << std::endl;
 	       uint32_t i;
 	       for(i=0;i<cantidad;i++){
-		    merge(nombreBase, i*cantidad, (i+1)*cantidad-1, nombreBase+"."+Util::intToString(i));
+		    merge(nombreBase, primero+i*NUMERO_PARTICIONES, primero+(i+1)*NUMERO_PARTICIONES-1, nombreBase+"."+Util::intToString(i));
 	       }
-	       if((ultimo-primero)%NUMERO_PARTICIONES > 0)
-		    merge(nombreBase, i*cantidad, ultimo, nombreBase+"."+Util::intToString(i));
+	       if((ultimo-primero+1)%NUMERO_PARTICIONES > 0)
+		    merge(nombreBase, primero+i*NUMERO_PARTICIONES, ultimo, nombreBase+"."+Util::intToString(i));
 	       else i--;
 
 	       merge(nombreBase+".", 0,i, nombreSalida);

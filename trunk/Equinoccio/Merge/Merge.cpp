@@ -3,8 +3,8 @@
 int Merger::Merge(const std::vector<std::string>& nombreParticiones, \
 		      const std::string& nombreSalida){
 	  
-  if(nombreParticiones.size() < 2)
-    return -1;
+  // if(nombreParticiones.size() < 2)
+  //   return -1;
 
   std::ifstream* archivo;
   std::ofstream salida(nombreSalida.c_str());
@@ -25,7 +25,7 @@ int Merger::Merge(const std::vector<std::string>& nombreParticiones, \
   }
 
   /* Si la cantidad de archivos agregados es mayor a 1 */
-  if(particiones.size() > 1){
+  if(particiones.size() > 0){
     /* lectura inicial de registros de cada particion */
     for(unsigned i=0;i<particiones.size();i++){
       registro[i] = Registro::leer(*particiones[i], 0);

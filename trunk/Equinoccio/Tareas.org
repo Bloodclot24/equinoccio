@@ -19,13 +19,16 @@
       - [X] Encapsular.
       - [X] Crear metodos separados para no repetir tanto codigo.
       - [X] Documentar
-    - [X] Merge.
+    - [-] Merge.
       - [X] Implementacion con N particiones
       - [X] Encapsular
       - [X] Crear metodos separados para no repetir tanto codigo.
       - [X] Documentar
+      - [ ] Borrar archivos intermedios.
+      - [ ] Bug: ¿Registros perdidos?
     - [-] Armado final del indice.
       - [X] Armado inicial (integracion Sort+Merge).
+      - [ ] Borrar archivos intermedios.
       - [ ] Probar exhaustivamente.
       - [ ] N-gramas.
       - [ ] Documentar.

@@ -189,7 +189,7 @@ private:
 	  if(arg_add_dir){
 	       std::cout << "Agregar el directorio: " << baseDir+arg_add_dir << std::endl;
 	       agregarDirectorio(arg_add_dir);
-	       parsers.armarIndices();
+//	       parsers.armarIndices();
 	  }
 	  if(arg_del_dir){
 	       std::cout << "Eliminar el directorio: " << arg_del_dir << std::endl;
