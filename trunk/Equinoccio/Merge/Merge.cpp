@@ -38,8 +38,8 @@ int Merger::Merge(const std::vector<std::string>& nombreParticiones, \
           registro[i] = registro[registro.size()-1];
           i--; // solo bajo supervision de un adulto
         }
-	particiones.pop_back();
-	registro.pop_back();
+		particiones.pop_back();
+		registro.pop_back();
 
 	/* Si el registro leido es mas chico al menor, modifico
 	 * el menor */
@@ -56,20 +56,26 @@ int Merger::Merge(const std::vector<std::string>& nombreParticiones, \
 
     /* Mientras haya particiones */
     while(particiones.size() > 0){
+      /* escribo el menor en el archivo de salida*/
       registro[menor]->escribir(salida, 0);
       delete registro[menor];
+      /*leo el siguiente*/
       registro[menor] = Registro::leer(*particiones[menor],0);
       if(registro[menor] == NULL){
         delete particiones[menor];
+        /* guardo la ultima particion y el ultimo registro
+         * en la posicion del menor que escribi*/
         if(menor < particiones.size()-1){
           particiones[menor] = particiones[particiones.size()-1];
           registro[menor] = registro[registro.size()-1];
-	}
+		}
         particiones.pop_back();
         registro.pop_back();
       }
       menor = 0;
+      /*Para todo el resto de las particiones*/
       for(unsigned i=0;i<particiones.size();i++){
+        /*Busco el menor*/
         if(*registro[i] < *registro[menor]){
           menor = i;
         } else if((i!=menor) && !(*registro[i] > *registro[menor])){
@@ -78,6 +84,8 @@ int Merger::Merge(const std::vector<std::string>& nombreParticiones, \
           registro[i] = Registro::leer(*particiones[i],0);
           if(registro[i] == NULL){
             delete particiones[i];
+            /* guardo la ultima particion y el ultimo registro
+         	* en la posicion del menor que escribi*/
             if(i < particiones.size()-1){
               particiones[i] = particiones[particiones.size()-1];
               registro[i] = registro[registro.size()-1];
