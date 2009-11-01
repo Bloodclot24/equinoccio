@@ -102,6 +102,7 @@ public:
 	  
 	  std::map<std::string, std::list<Parser*> >::iterator it2;
 	  for(it2=catalogos.begin(); it2!= catalogos.end();it2++){
+	       std::cout << "Catalogo: " << (*it2).first << "\n";
 	       std::list<Parser*> parsers;
 	       /* Obtengo el nombre del indice del catalogo */
 	       std::string nombreIndice = "IDX_";
@@ -116,9 +117,15 @@ public:
 		    ultimo = p->getCantArchivosParseados();
 		    std::string nombreBase = p->getNombreBase();
 		    uint32_t generadas=0;
-		    for(;primero<ultimo;primero++){
+		    std::cout << "Primero,Ultimo: " << primero << " " << ultimo << std::endl;
+		    for(;primero<ultimo+1;primero++){
 			 std::string particion=nombreBase + Util::intToString(primero);
 			 generadas += Sorter::Sort(particion,nombreBase+".sorted",50);
+		    }
+		    if(generadas > 1){
+			 std::cout << "ordenando: \n";
+			 merge(nombreBase+".sorted.",0,generadas-1, nombreIndice);
+
 		    }
 	       }while(lista.size()>0);
 	  }
@@ -129,15 +136,15 @@ public:
      std::string merge(const std::string& nombreBase, uint32_t primero, \
 		       uint32_t ultimo, const std::string& nombreSalida){
 	  std::vector<std::string> particiones;
-	  if(primero-ultimo <= 51){
+	  if(ultimo-primero <= 51){
 	       for(;primero<ultimo;primero++){
 		    std::string particion=nombreBase + Util::intToString(primero);
 		    particiones.push_back(particion);
-		    Merger::Merge(particiones,nombreSalida);
 	       }
+	       Merger::Merge(particiones,nombreSalida);
 	  }
 	  else{
-	       uint32_t cantidad=(primero-ultimo)/50;
+	       uint32_t cantidad=(ultimo-primero)/50;
 	       uint32_t i;
 	       for(i=0;i<cantidad;i++){
 		    merge(nombreBase, i*cantidad, (i+1)*cantidad, nombreBase+"."+Util::intToString(i));

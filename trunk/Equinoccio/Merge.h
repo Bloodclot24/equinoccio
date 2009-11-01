@@ -48,9 +48,10 @@ public:
 			 particiones.pop_back();
 			 registro.pop_back();
 		    }
-		    else if(registro[i] < registro[menor])
+		    else if(*registro[i] < *registro[menor]){
 			 menor = i;
-		    else if((i!=menor) && !(registro[i] > registro[menor])){
+		    }
+		    else if((i!=menor) && !(*registro[i] > *registro[menor])){
 			 /* son iguales */
 			 registro[menor]->unir(*registro[i]);
 			 delete registro[i];
@@ -71,22 +72,24 @@ public:
 			 particiones.pop_back();
 			 registro.pop_back();
 		    }
-	       
-		    for(unsigned i=0,menor=0;i<particiones.size();i++){
-			 if(registro[i] < registro[menor])
+		    menor = 0;
+		    for(unsigned i=0;i<particiones.size();i++){
+			 if(*registro[i] < *registro[menor]){
 			      menor = i;
-			 else if((i!=menor) && !(registro[i] > registro[menor])){
+			 }
+			 else if((i!=menor) && !(*registro[i] > *registro[menor])){
 			      registro[menor]->unir(*registro[i]);
 			      delete registro[i];
-			      registro[menor] = Registro::leer(*particiones[menor],0);
-			      if(registro[menor] == NULL){
-				   delete particiones[menor];
-				   if(menor < particiones.size()-1){
-					particiones[menor] = particiones[particiones.size()-1];
-					registro[menor] = registro[registro.size()-1];
+			      registro[i] = Registro::leer(*particiones[i],0);
+			      if(registro[i] == NULL){
+				   delete particiones[i];
+				   if(i < particiones.size()-1){
+					particiones[i] = particiones[particiones.size()-1];
+					registro[i] = registro[registro.size()-1];
 				   }
 				   particiones.pop_back();
 				   registro.pop_back();
+				   i--;
 			      }
 			 }
 		    }

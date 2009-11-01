@@ -84,7 +84,9 @@ int Registro::unir(const Registro& registro){
      
      it1 = punteros.begin();
      it2 = registro.punteros.begin();
-     
+
+     frecuencia=0;
+
      while(it1!= punteros.end() && it2 != registro.punteros.end()){
 	  if((*it1).documento < (*it2).documento){
 	       final.push_back(*it1);
@@ -102,15 +104,18 @@ int Registro::unir(const Registro& registro){
 	       it1++;
 	       it2++;
 	  }
+	  frecuencia++;
      }
      
      while(it1!= punteros.end()){
 	  final.push_back(*it1);
 	  it1++;
+	  frecuencia++;
      }
      while(it2!= registro.punteros.end()){
 	  final.push_back(*it2);
 	  it2++;
+	  frecuencia++;
      }
 
      punteros = final;
