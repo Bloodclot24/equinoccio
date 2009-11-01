@@ -5,6 +5,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include "../CodigoGamma/TDA_Codigos.h"
 
 /** 
  * Clase que se encarga de abstraer el manejo de las estructuras de
