@@ -24,7 +24,7 @@
 
 		/*Se obtiene la Decodificacion de Codigo Gamma de un Numero como maximo MAX_INT
 		 *Parametros: Cadena a Decodificar.
-		 *Retorno: String con la codificacion.
+		 *Retorno: String con la codificacion o -1 en caso de error.
 		* */
 
 		static uint32_t getNGamma(std::string &str);

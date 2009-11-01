@@ -7,10 +7,11 @@ uint32_t TDA_Codigos::getNGamma(std::string &str){
 	uint32_t sizestr = str.size();/*Size total*/
 	uint32_t puna = str.find_first_of("0")+1;/*Donde termina la parte unaria*/
 	std::string strb =str.substr(puna,sizestr);/*Obtengo el substring de la parte binaria*/
+	if (puna == std::npos) return -1; /* Si no tengo el 0, salgo con error */
 	spbin=sizestr-puna;/*Calculo el size de la parte binaria*/
 	   if (puna>1)/*Si la parte unaria es mayor que 1 sino vale 1*/
 		   una=pow(2,puna-1);/*Calculo lo de la parte unaria*/
-
+	   if(sizestr < una) return -1;/* Si no tengo la cantidad de bits necesaria, salgo con error*/
 	   for(uint32_t i=0;i<spbin;i++)
 		   bin+= (((short)strb.at(spbin-i-1))-48)*pow(2,(i)); /*Teorema F. Numeracion*/
 	 return (bin+una);
