@@ -14,6 +14,9 @@
 #define NOMBRE_IDX_ARCHIVOS "IDX_ARCH.idx"
 #define NOMBRE_LEX_ARCHIVOS "LEX_ARCH.lex"
 
+#define NUMERO_PARTICIONES  2
+
+
 class Parsers{
      std::list<Parser*> cadena;	/**< Lista de parsers */
      unsigned long documento;
@@ -120,12 +123,12 @@ public:
 		    std::cout << "Primero,Ultimo: " << primero << " " << ultimo << std::endl;
 		    for(;primero<ultimo+1;primero++){
 			 std::string particion=nombreBase + Util::intToString(primero);
-			 generadas += Sorter::Sort(particion,nombreBase+".sorted",50);
+			 generadas += Sorter::Sort(particion,nombreBase+".sorted", generadas,50);
+			 std::cout << " Particiones: " << particion << " generadas: " << generadas << std::endl;
 		    }
 		    if(generadas > 1){
 			 std::cout << "ordenando: \n";
-			 merge(nombreBase+".sorted.",0,generadas-1, nombreIndice);
-
+			 merge(nombreBase+".sorted",0,generadas-1, nombreIndice);
 		    }
 	       }while(lista.size()>0);
 	  }
@@ -135,21 +138,25 @@ public:
 
      std::string merge(const std::string& nombreBase, uint32_t primero, \
 		       uint32_t ultimo, const std::string& nombreSalida){
+	  std::cout << "nombreBase: " << nombreBase << " primero: " << primero << " ultimo: " << ultimo << std::endl;
 	  std::vector<std::string> particiones;
-	  if(ultimo-primero <= 51){
-	       for(;primero<ultimo;primero++){
+	  if(ultimo-primero <= NUMERO_PARTICIONES+1){
+	       for(;primero<=ultimo;primero++){
+		    std::cout << "Merge final" << std::endl;
 		    std::string particion=nombreBase + Util::intToString(primero);
 		    particiones.push_back(particion);
 	       }
+	       std::cout << "nombreSalida: " << nombreSalida << " particiones.size:" << particiones.size()<<"\n";
 	       Merger::Merge(particiones,nombreSalida);
 	  }
 	  else{
-	       uint32_t cantidad=(ultimo-primero)/50;
+	       std::cout << "merge parcial" << std::endl;
+	       uint32_t cantidad=(ultimo-primero)/NUMERO_PARTICIONES;
 	       uint32_t i;
 	       for(i=0;i<cantidad;i++){
-		    merge(nombreBase, i*cantidad, (i+1)*cantidad, nombreBase+"."+Util::intToString(i));
+		    merge(nombreBase, i*cantidad, (i+1)*cantidad-1, nombreBase+"."+Util::intToString(i));
 	       }
-	       if((primero-ultimo)%50 > 0)
+	       if((ultimo-primero)%NUMERO_PARTICIONES > 0)
 		    merge(nombreBase, i*cantidad, ultimo, nombreBase+"."+Util::intToString(i));
 	       else i--;
 

@@ -1,20 +1,20 @@
 #include "Sort.h"
 
 
-int Sorter::Sort(const std::string &nombreArchivo,			\
-		     const std::string &nombreBaseSalida,		\
-		     unsigned cantMax){
+uint32_t Sorter::Sort(const std::string &nombreArchivo,			\
+		      const std::string &nombreBaseSalida,		\
+		      uint32_t primero, unsigned cantMax){
 
 	 std::ifstream archivo(nombreArchivo.c_str());
-	 uint32_t nParticion = 0;
-	 std::string nombreBaseSalida2=nombreBaseSalida+'.';
+	 uint32_t nParticion = primero;
+	 std::string nombreBaseSalida2=nombreBaseSalida;
 	 std::string nombreSalida = nombreBaseSalida2;
 	 nombreSalida += Util::intToString(nParticion);
 	 std::ofstream archivos(nombreSalida.c_str());
 	 RedBlackTree<Registro> arbol;
 	 unsigned cantidad=0;
 	 /* registro referencia para sacar el menor registro del
-	   * arbol */
+	  * arbol */
 	 Registro referenciaVacia("", 0);
 	 Registro *referencia = &referenciaVacia;
 	 if(archivo.is_open()){

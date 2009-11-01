@@ -4,25 +4,26 @@
     - [ ] Archivos de configuracion.
     - [ ] Bug con wildcards en nombres de directorios.
     - [ ] Definir paths.
-  - [ ] Armado del indice.
+  - [-] Armado del indice.
     - [-] Parseo
       - [X] Tener en cuenta los catalogos al parsear.
       - [ ] Guardar numero de directorio en lexico de archivos de cada
-        catalogo.
+            catalogo.
+      - [ ] Separar Parser C y PHP.
       - [ ] Parser PDF.
       - [ ] Probar e integrar codificacion gamma.
       - [ ] Revision general de la clase parser (guardarTermino()).
       - [ ] Documentar apropiadamente.
-    - [-] Sort.
+    - [X] Sort.
       - [X] Implementacion de replacement selection.
       - [X] Encapsular.
-      - [ ] Crear metodos separados para no repetir tanto codigo.
-      - [ ] Documentar
-    - [-] Merge.
+      - [X] Crear metodos separados para no repetir tanto codigo.
+      - [X] Documentar
+    - [X] Merge.
       - [X] Implementacion con N particiones
       - [X] Encapsular
-      - [ ] Crear metodos separados para no repetir tanto codigo.
-      - [ ] Documentar
+      - [X] Crear metodos separados para no repetir tanto codigo.
+      - [X] Documentar
     - [-] Armado final del indice.
       - [X] Armado inicial (integracion Sort+Merge).
       - [ ] Probar exhaustivamente.
