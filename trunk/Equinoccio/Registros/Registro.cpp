@@ -60,6 +60,41 @@ int Registro::escribir(std::ofstream &archivo, int compresion){
      }
      else{
 	       #warning "Falta implementar Gamma."
+	       char caracter;
+	       bool doc= false;
+	       std::string str;
+	       char cadena;
+	       int j = 0;
+	       for(it=punteros.begin(); it != punteros.end(); it++){
+	       	Registro::Punteros p;
+	       	p = *it;
+	       	if(doc) {
+	       		str= TDA_Codigos::getCGamma(p.documento);
+	       		doc= true;
+	       	} else {
+	       		str= TDA_Codigos::getCGamma(p.frecuencia);
+	       		doc= false;
+	       	}
+	       	
+	       	for(int i = 0; i < str.lenght();i++){
+	       		caracter= str[i];
+				int bit;
+				for(bit=1<<7;bit!=0 ;bit>>=1,j++){/*Shifteo*/
+					cadena+= (caracter>0?bit:0);
+					if(j == 7){
+						archivo.write((char*)&(cadena), sizeof(cadena));
+						j= 0;
+						cadena= 0;
+					}	
+				}
+	       	}
+	  	}
+	  	
+	  	if (cadena != 0){
+	  		for(bit=j<<7-j;bit!=0 ;bit>>=1,j++)/*Shifteo*/
+					cadena += (caracter>0?bit:0);
+			archiv.write((char*)&(cadena),sizeof(cadena));
+	  	}				
      }
 
      return 1;
