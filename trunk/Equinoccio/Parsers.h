@@ -7,8 +7,8 @@
 #include <libgen.h>  //para basename
 
 #include "Parsers/Parser.h"
-#include "Merge.h"
-#include "Sort.h"
+#include "Merge/Merge.h"
+#include "Sort/Sort.h"
 #include "Util/Util.h"
 
 #define NOMBRE_IDX_ARCHIVOS "IDX_ARCH.idx"

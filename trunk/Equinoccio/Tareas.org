@@ -10,7 +10,7 @@
       - [ ] Guardar numero de directorio en lexico de archivos de cada
             catalogo.
       - [ ] Separar Parser C y PHP.
-      - [ ] Parser PDF.
+      - [X] Parser PDF.
       - [ ] Probar e integrar codificacion gamma.
       - [ ] Revision general de la clase parser (guardarTermino()).
       - [ ] Documentar apropiadamente.

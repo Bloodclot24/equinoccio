@@ -96,7 +96,7 @@ protected:
       * La funcion toma una cadena, filtra los espacios y guarda palabra a
       * palabra, en una lista auxiliar.
       */ 
-     void guardarPalabras(std::string palabras);
+     void guardarPalabras(const std::string& palabras);
 
 public:
      /** 

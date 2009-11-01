@@ -70,7 +70,7 @@ void Parser::aMinusculas(std::string& str){
 }
 
 /*--------------------------------------------------------------------------*/
-void Parser::guardarPalabras(std::string palabras) {
+void Parser::guardarPalabras(const std::string& palabras) {
 	
 	std::string strAparsear(palabras); 
 	size_t found, pos= 0;

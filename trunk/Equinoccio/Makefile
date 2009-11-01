@@ -8,10 +8,11 @@ SOURCES=CodigoGamma/TDA_Codigos.cpp \
 	Parsers/ParserTXT/ParserTxt.cpp \
 	Parsers/libExtractor/libExtractor.cpp \
 	Parsers/ParserPhp/ParserPHP.cpp \
+	Parsers/ParserPDF/ParserPdf.cpp \
 	Registros/Registro.cpp \
 	Util/Util.cpp \
-	Sort.cpp \
-	Merge.cpp
+	Sort/Sort.cpp \
+	Merge/Merge.cpp
 
 TESTSOURCES=Arbol/arbol.cpp\
 	Arbol/arbolRegistros.cpp\
@@ -21,11 +22,12 @@ TESTSOURCES=Arbol/arbol.cpp\
 	Parsers/ParserCPHP/Archivos_ejec.cpp\
 	Parsers/ParserImagen/testImgParser.cpp\
 	Parsers/ParserPhp/Archivos_ejec.cpp\
+	Parsers/ParserPDF/testPDF.cpp\
 	Parsers/ParserTXT/testTXTparser.cpp\
 	Registros/pruebaRegistro.cpp\
 	Registros/pruebaRegistroEscritura.cpp\
-	testSort.cpp\
-	testMerge.cpp
+	Sort/testSort.cpp\
+	Merge/testMerge.cpp
 
 MAIN=Equinoccio.cpp
 

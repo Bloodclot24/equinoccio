@@ -1,5 +1,4 @@
 #include "ParserImagen.h"
-#include <iostream>
 #include "../libExtractor/libExtractor.h"
 
 
