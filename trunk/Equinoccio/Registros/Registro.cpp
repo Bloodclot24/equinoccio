@@ -92,32 +92,33 @@ int Registro::escribir(std::ofstream &archivo, int compresion){
 	  char cadena;
 	  int j = 0;
 	  bool doc= false;
-
+	  std::cout << "punteros.size " << punteros.size() << "\n";
+	  
 	  for(it=punteros.begin(); it != punteros.end(); it++){
 	       Registro::Punteros p;
 	       p = *it;
-
+	       
 	       std::cout << "DOC AL PPIO: " << doc << std::endl;
-
-
+	       
+	       
 	       if(!doc) {
 		    std::cout << "doc a guardar: " << p.documento << std::endl;
-
+		    
 		    str= TDA_Codigos::getCGamma(p.documento);
 		    doc= true;
-
+		    
 	       } else {
 		    std::cout << "ENTREEEEEEEEE" << std::endl;
 		    std::cout << "frecuencia a guardar: " << p.frecuencia << std::endl;
-
+		    
 		    str= TDA_Codigos::getCGamma(p.frecuencia);
-
+		    
 		    doc= false;
 	       }
-
+	       
 	       std::cout << "str: " << str << std::endl;
-
-
+	       
+	       
 	       for(unsigned int i = 0; i < str.length(); i++){
 		    caracter= str[i];
 		    int bit;
@@ -126,19 +127,19 @@ int Registro::escribir(std::ofstream &archivo, int compresion){
 		    if(j == 7){
 			 archivo.write((char*)&(cadena), sizeof(cadena));
 			 std::cout << "guarde: " << cadena << std::endl;
-			 std::cout << "------------------------------------" << std::endl;
-
+			 std::cout << "------------------------------------\n" << std::endl;
+			 
 			 j= 0;
 			 cadena= 0;
 		    }
 		    j++;
 	       }
-
+	       
 	       std::cout << "DOC!: " << doc << std::endl;
-
+	       
 	  }
-
-	  	
+	  
+	  
 	  if (cadena != 0){
 	       int bit;
 	       for(bit=j<<(7-j);bit!=0 ;bit>>=1,j++)/*Shifteo*/

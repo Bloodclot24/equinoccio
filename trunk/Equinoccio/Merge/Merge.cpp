@@ -1,4 +1,5 @@
 #include "Merge.h"
+#include <stdio.h>
 
 int Merger::Merge(const std::vector<std::string>& nombreParticiones, \
 		      const std::string& nombreSalida){
@@ -102,6 +103,10 @@ int Merger::Merge(const std::vector<std::string>& nombreParticiones, \
   /* libero las particiones */
   for(unsigned i=0;i<particiones.size();i++)
     delete particiones[i];
+
+  /* elimino las particiones */
+  for(unsigned i=0;i<nombreParticiones.size();i++)
+       remove(nombreParticiones[i].c_str());
 
   return 0;
 }

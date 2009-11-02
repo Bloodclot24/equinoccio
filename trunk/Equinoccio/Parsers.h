@@ -15,7 +15,7 @@
 #define NOMBRE_IDX_ARCHIVOS "IDX_ARCH.idx"
 #define NOMBRE_LEX_ARCHIVOS "LEX_ARCH.lex"
 
-#define NUMERO_PARTICIONES  7
+#define NUMERO_PARTICIONES  100
 
 class Parsers{
      std::list<Parser*> cadena;	/**< Lista de parsers */
@@ -117,13 +117,14 @@ public:
 		    Parser* p = lista.front(); lista.pop_front();
 		    
 		    uint32_t primero=0,ultimo=0;
+		    p->flush();
 		    ultimo = p->getCantArchivosParseados();
 		    std::string nombreBase = p->getNombreBase();
 		    uint32_t generadas=0;
 		    std::cout << "Primero,Ultimo: " << primero << " " << ultimo << std::endl;
-		    for(;primero<ultimo+1;primero++){
+		    for(;primero<=ultimo;primero++){
 			 std::string particion=nombreBase + Util::intToString(primero);
-			 generadas += Sorter::Sort(particion,nombreBase+".sorted", generadas,50);
+			 generadas += Sorter::Sort(particion,nombreBase+".sorted", generadas,2000);
 			 std::cout << " Particiones: " << particion << " generadas: " << generadas << std::endl;
 		    }
 		    if(generadas > 1){

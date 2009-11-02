@@ -153,6 +153,8 @@ public:
      const std::string& getNombreCatalogo(){ return nombreCatalogo; }
      const std::string& getNombreBase(){ return nombreBase; }
 
+     virtual void flush(){ }
+
 };
 
 #endif //PARSER_H_INCLUDED

@@ -5,6 +5,7 @@ class ParserPython: public Parser{
 public:
      ParserPython(uint32_t cantMaxReg);
      virtual bool parsear(std::string nombre, uint32_t documento);
+     virtual void flush();
 private:
      void guardarTermino(const std::string& termino, uint32_t documento);
 };

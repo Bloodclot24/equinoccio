@@ -1,4 +1,5 @@
 #include "Sort.h"
+#include <stdio.h> //para remove
 
 
 uint32_t Sorter::Sort(const std::string &nombreArchivo,			\
@@ -20,8 +21,8 @@ uint32_t Sorter::Sort(const std::string &nombreArchivo,			\
 	 if(archivo.is_open()){
 	      Registro *r;
 	      bool salir=false;
+	      r=Registro::leer(archivo,0);
 	      while(!salir){
-		  	r=Registro::leer(archivo,0);
 		    /* leo tantos registros como tenga permitido
 		     * insertar en el arbol */
 		    while(r!=NULL&&cantidad<cantMax){
@@ -31,7 +32,7 @@ uint32_t Sorter::Sort(const std::string &nombreArchivo,			\
 			  	* clave en el arbol y hace un merge de los
 			  	* registros, entonces lo liberamos. */
 			 	else delete r;
-			 	r=Registro::leer(archivo,0);
+				r=Registro::leer(archivo,0);
 		    }
 		    if(r!=NULL){ /* si 'r' no es NULL, puede que
 				  * queden registros por leer */
@@ -94,6 +95,7 @@ uint32_t Sorter::Sort(const std::string &nombreArchivo,			\
 	  }
 	  archivo.close();
 	  archivos.close(); 
-	  return nParticion+1;
+	  remove(nombreArchivo.c_str());
+	  return nParticion+1-primero;
 
 }

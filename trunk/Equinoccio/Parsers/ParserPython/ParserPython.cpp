@@ -32,54 +32,54 @@ bool ParserPython::parsear(std::string nombre, uint32_t documento){
      //bool comentario = false;
      int literal_count=1;
      for(;!entrada.eof() && entrada.good();entrada.get(c)){
-	  if(literal){ //Salteo strings literales
-	       if(c=='\\'){
-		    entrada.get(c);
-		    continue;
-	       }
-	       if(c==cliteral && literal_count==1){
-		    literal=false;
-	       }
-	       else if(c==cliteral && literal_count==3){
-		    char d,e;
-		    entrada.get(d);
-		    if(c==d){
-			 entrada.get(e);
-			 if(c==e)
-			      literal=false;
-		    }
-	       }
-	       continue;
-	  }
-	  if(c=='"' || c=='\''){ //Comienzo de un string
-	       char d,e;
-	       cliteral=c;
-	       entrada.get(d);
-	       entrada.get(e);
-	       if(c==d && d==e){ // ''' o """
-		    literal=true;
-		    literal_count = 3;
-		    continue;
-	       }
-	       else if(c==d){ // ''X  o ""X
-		    literal=false;
-		    c=e; //para no perder el caracter;
-		    literal_count = 1;
-	       }
-	       else if(c==e && d != '\\'){ // 'X' o "X", X!='\'
-		    literal=false;
-		    continue;
-	       }
-	       else{
-		    literal=true;
-		    literal_count=1;
-		    continue;
-	       }
-	  }
+	  // if(literal){ //Salteo strings literales
+	  //      if(c=='\\'){
+	  // 	    entrada.get(c);
+	  // 	    continue;
+	  //      }
+	  //      if(c==cliteral && literal_count==1){
+	  // 	    literal=false;
+	  //      }
+	  //      else if(c==cliteral && literal_count==3){
+	  // 	    char d,e;
+	  // 	    entrada.get(d);
+	  // 	    if(c==d){
+	  // 		 entrada.get(e);
+	  // 		 if(c==e)
+	  // 		      literal=false;
+	  // 	    }
+	  //      }
+	  //      continue;
+	  // }
+	  // if(c=='"' || c=='\''){ //Comienzo de un string
+	  //      char d,e;
+	  //      cliteral=c;
+	  //      entrada.get(d);
+	  //      entrada.get(e);
+	  //      if(c==d && d==e){ // ''' o """
+	  // 	    literal=true;
+	  // 	    literal_count = 3;
+	  // 	    continue;
+	  //      }
+	  //      else if(c==d){ // ''X  o ""X
+	  // 	    literal=false;
+	  // 	    c=e; //para no perder el caracter;
+	  // 	    literal_count = 1;
+	  //      }
+	  //      else if(c==e && d != '\\'){ // 'X' o "X", X!='\'
+	  // 	    literal=false;
+	  // 	    continue;
+	  //      }
+	  //      else{
+	  // 	    literal=true;
+	  // 	    literal_count=1;
+	  // 	    continue;
+	  //      }
+	  // }
 	  if(c=='#'){ //Comienzo de un comentario (lo salteo todo)
-	       do{
-		    entrada.get(c);
-	       }while(c != '\n' &&!entrada.eof() && entrada.good());
+	       // do{
+	       // 	    entrada.get(c);
+	       // }while(c != '\n' &&!entrada.eof() && entrada.good());
 	  }
 	  if(isalnum(c) || (unsigned)c > 192){
 	       termino += c;
@@ -94,6 +94,10 @@ bool ParserPython::parsear(std::string nombre, uint32_t documento){
      }
 
      return true;
+}
+
+void ParserPython::flush(){
+     salida.close();
 }
 
 void ParserPython::guardarTermino(const std::string& termino, uint32_t documento){

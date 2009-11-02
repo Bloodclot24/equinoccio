@@ -32,7 +32,7 @@ bool ParserTxt::parsear(std::string nombre, uint32_t documento){
 			//Prueba
 			std::cout << "Palabra:" << (*it) << std::endl;
 			//
-			guardarEnDump(dump, (*it), documento);
+			guardarEnDump(dump, aMinuscSinInvalidos(*it), documento);
 			cantReg++;
 		} else {
 			//Prueba
@@ -119,7 +119,7 @@ std::string ParserTxt::limpiarTabs(const std::string& cadorig){
 	}while (c>-1);
 	return aux;
 }
-void ParserTxt::guardarEnDump(std::ofstream& dump,std::string& palabra, uint32_t documento) {
+void ParserTxt::guardarEnDump(std::ofstream& dump,std::string palabra, uint32_t documento) {
 
 	if(!esStopWord(palabra)) {
 		Registro reg(palabra, documento);

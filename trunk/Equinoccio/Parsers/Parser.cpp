@@ -47,7 +47,7 @@ std::string Parser::aMinuscSinInvalidos(const std::string& informacion) {
 //	//TODO: /*PRUEBA*/
 //	std::cout << "Palabra Cruda: " << informacion << std::endl;
 	
-	std::string invalidos("!#$%&'()*+,-.0123456789:;<=>?@[]^_`{|}~/\\\"");
+	std::string invalidos("!#$%&'()*+,-.0123456789:;<=>?@[]^_`{|}~/\\\"\n");
 	std::string palabraFiltrada;
 	for(size_t c=0; c<informacion.size(); c++) {
 		
