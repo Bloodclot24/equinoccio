@@ -32,6 +32,7 @@ Registro* Registro::leer(std::ifstream &archivo, int compresion){
 	  }
 	  else{
 #warning "Falta implementar Gamma."
+
                char caracter;
                bool doc= false;
                bool frec= false;
@@ -86,66 +87,41 @@ int Registro::escribir(std::ofstream &archivo, int compresion){
 	  }
      }
      else{
-#warning "Falta implementar Gamma."
-	  char caracter;
-	  std::string str;
-	  char cadena;
-	  int j = 0;
-	  bool doc= false;
-	  std::cout << "punteros.size " << punteros.size() << "\n";
-	  
+
+	  const char* ptr;
+	  std::string str1, str2;
+	  char byte=0;
+	  unsigned bit=1<<7;
+	  uint32_t docAnterior = 0;
+	  unsigned bits=0;
+
 	  for(it=punteros.begin(); it != punteros.end(); it++){
 	       Registro::Punteros p;
 	       p = *it;
-	       
-	       std::cout << "DOC AL PPIO: " << doc << std::endl;
-	       
-	       
-	       if(!doc) {
-		    std::cout << "doc a guardar: " << p.documento << std::endl;
-		    
-		    str= TDA_Codigos::getCGamma(p.documento);
-		    doc= true;
-		    
-	       } else {
-		    std::cout << "ENTREEEEEEEEE" << std::endl;
-		    std::cout << "frecuencia a guardar: " << p.frecuencia << std::endl;
-		    
-		    str= TDA_Codigos::getCGamma(p.frecuencia);
-		    
-		    doc= false;
-	       }
-	       
-	       std::cout << "str: " << str << std::endl;
-	       
-	       
-	       for(unsigned int i = 0; i < str.length(); i++){
-		    caracter= str[i];
-		    int bit;
-		    for(bit=1<<7;bit!=0 ;bit>>=1)/*Shifteo*/
-			 cadena+= (caracter>0?bit:0);
-		    if(j == 7){
-			 archivo.write((char*)&(cadena), sizeof(cadena));
-			 std::cout << "guarde: " << cadena << std::endl;
-			 std::cout << "------------------------------------\n" << std::endl;
-			 
-			 j= 0;
-			 cadena= 0;
+
+	       str1= TDA_Codigos::getCGamma(p.documento-docAnterior+1);
+	       docAnterior=p.documento;
+
+	       str2=TDA_Codigos::getCGamma(p.frecuencia);
+
+	       str1+=str2;
+
+	       ptr  = str1.c_str();
+	       bits = str1.length();
+	       while(bits > 0){
+		    for(;bit!=0 && bits > 0; bit >>= 1, bits--, ptr++){
+			 byte |= *ptr!='0'?bit:0;
 		    }
-		    j++;
+		    if(bit==0){
+			 /* escribir el byte a disco */
+			 archivo.write(&byte,1);
+			 bit=1<<7;
+			 byte=0;
+		    }
 	       }
-	       
-	       std::cout << "DOC!: " << doc << std::endl;
-	       
 	  }
-	  
-	  
-	  if (cadena != 0){
-	       int bit;
-	       for(bit=j<<(7-j);bit!=0 ;bit>>=1,j++)/*Shifteo*/
-		    cadena += (caracter>0?bit:0);
-	       std::cout << "guarde: " << cadena << std::endl;
-	       archivo.write((char*)&(cadena),sizeof(cadena));
+	  if(bit != 1<<7){
+	       archivo.write(&byte,1);
 	  }
      }
      return 1;
