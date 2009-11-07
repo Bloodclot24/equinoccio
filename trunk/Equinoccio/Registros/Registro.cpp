@@ -25,46 +25,51 @@ Registro* Registro::leer(std::ifstream &archivo, int compresion){
 
      uint32_t contador = r->frecuencia;
      Registro::Punteros p;
-     while(archivo.good() && contador > 0){
-	  if(!compresion){
+     
+
+     if(!compresion){
+	  while(archivo.good() && contador > 0){
 	       archivo.read((char*)&(p.documento), sizeof(p.documento));
 	       archivo.read((char*)&(p.frecuencia), sizeof(p.frecuencia));
+	       r->punteros.push_back(p);
+	       contador--;
 	  }
-	  else{
-#warning "Falta implementar Gamma."
+	  
+     }
+     else{
 
-               char caracter;
-               bool doc= false;
-               bool frec= false;
-               uint32_t distancia;
-               std::string aux;
-               while(!doc && !frec) {
-		    archivo.read((char*)&(caracter), sizeof(caracter));
-		    int bit;
-		    for(bit=1<<7; bit!=0; bit>>=1){/*Shifteo*/
-			 aux+= ((caracter&bit)>0?1:0);
+	  char byte=0;
+	  unsigned bit=1<<7;
+	  uint32_t docAnterior = 0;
+	  unsigned bits=0;
+	  unsigned indice=0;
+	  uint32_t valores[2];
+	  std::string aux;
 
+	  while(archivo.good() && contador > 0){
+	       if(bits==0){
+		    archivo.read(&byte, 1);
+		    bits=8;
+		    bit=1<<7;
+	       }
 
-			 if((distancia= TDA_Codigos::getNGamma(aux)) != (uint32_t)-1){
-
-			      std::cout << "distancia: " << distancia  << " distinto de " << (uint32_t)-1<< std::endl;
-
-			      if(!doc) {
-				   doc= true;
-				   p.documento = distancia;
-			      } else if(!frec) {
-				   frec= true;
-				   p.frecuencia = distancia;
-			      }
-			      aux.clear();
-			 }
-		    }
-               }
+	       for(;bit!=0 && bits > 0 && indice < 2; bit >>= 1, bits--){
+		    aux += byte&bit>0?'1':'0';
+		    
+		    if((valores[indice] = TDA_Codigos::getNGamma(aux)) != (uint32_t)-1)
+			 indice++;
+	       }
+	       if(indice==2){
+		    docAnterior = p.documento = valores[0]+docAnterior;
+		    p.frecuencia=valores[1];
+		    r->punteros.push_back(p);
+		    indice=0;
+		    contador--;
+	       }
 	  }
-	  r->punteros.push_back(p);
-	  contador--;
      }
 
+     
      return r;
 }
 
