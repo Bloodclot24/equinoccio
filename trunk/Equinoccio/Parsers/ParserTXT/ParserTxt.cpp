@@ -126,3 +126,4 @@ void ParserTxt::guardarEnDump(std::ofstream& dump,std::string palabra, uint32_t 
 		reg.escribir(dump, 0);
 	}
 }
+

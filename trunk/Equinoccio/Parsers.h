@@ -15,7 +15,8 @@
 #define NOMBRE_IDX_ARCHIVOS "IDX_ARCH.idx"
 #define NOMBRE_LEX_ARCHIVOS "LEX_ARCH.lex"
 
-#define NUMERO_PARTICIONES  100
+#define NUMERO_PARTICIONES  2
+#define NUMERO_REGISTROS_SORT  1
 
 class Parsers{
      std::list<Parser*> cadena;	/**< Lista de parsers */
@@ -117,17 +118,28 @@ public:
 		    Parser* p = lista.front(); lista.pop_front();
 		    
 		    uint32_t primero=0,ultimo=0;
-		    p->flush();
+		    p->flush(); /* hago que el parser cierre cualquier
+				 * archivo que le pudiera quedar
+				 * abierto */
+		    /* y obtengo la cantidad de archivos creados por
+		     * el parser */
 		    ultimo = p->getCantArchivosParseados();
+		    /* y que nombre base tiene cada uno */
 		    std::string nombreBase = p->getNombreBase();
-		    uint32_t generadas=0;
+		    uint32_t generadas=0; /* n de particiones generadas */
+
 		    std::cout << "Primero,Ultimo: " << primero << " " << ultimo << std::endl;
 		    for(;primero<=ultimo;primero++){
 			 std::string particion=nombreBase + Util::intToString(primero);
-			 generadas += Sorter::Sort(particion,nombreBase+".sorted", generadas,2000);
+			 /* ordeno cada paricion y cuento cuantas
+			  * particiones resultan */
+			 std::cout << "particion:" << particion <<" \n";
+			 generadas += Sorter::Sort(particion,nombreBase+".sorted", generadas,NUMERO_REGISTROS_SORT);
 			 std::cout << " Particiones: " << particion << " generadas: " << generadas << std::endl;
 		    }
-		    if(generadas > 1){
+		    if(generadas > 0){
+			 /* uno las particiones quedandome el
+			  * auxiliar ordenado */
 			 std::cout << "ordenando: \n";
 			 merge(nombreBase+".sorted",0,generadas-1, nombreIndice);
 		    }

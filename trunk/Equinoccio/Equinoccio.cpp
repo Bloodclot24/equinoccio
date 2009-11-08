@@ -175,13 +175,13 @@ private:
 	       return error;
 	  }
 
-	  parsers.agregarParser(new ParserPython(10000));
+	  parsers.agregarParser(new ParserPython(1));
 	  // parsers.agregarParser(new ParserC(1000));
 	  // parsers.agregarParser(new ParserPHP(1000));
-	  parsers.agregarParser(new ParserCPHP(10000));
-	  parsers.agregarParser(new ParserImagen(10000));
-	  parsers.agregarParser(new ParserAudio(10000));
-	  parsers.agregarParser(new ParserTxt(10000));
+//	  parsers.agregarParser(new ParserCPHP(100000));
+	  parsers.agregarParser(new ParserImagen(100000));
+	  parsers.agregarParser(new ParserAudio(100000));
+	  parsers.agregarParser(new ParserTxt(1));
 
 
 	  if(arg_list)

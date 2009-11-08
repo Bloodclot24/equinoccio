@@ -27,10 +27,10 @@ bool ParserPython::parsear(std::string nombre, uint32_t documento){
      
      std::string termino;
 
-     bool literal = false;
-     char cliteral=0;
+     //bool literal = false;
+     //char cliteral=0;
      //bool comentario = false;
-     int literal_count=1;
+     //int literal_count=1;
      for(;!entrada.eof() && entrada.good();entrada.get(c)){
 	  // if(literal){ //Salteo strings literales
 	  //      if(c=='\\'){
