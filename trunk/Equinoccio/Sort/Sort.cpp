@@ -102,7 +102,7 @@ uint32_t Sorter::Sort(const std::string &nombreArchivo,			\
 	 }
 	 archivo.close();
 	 archivos.close(); 
-//	  remove(nombreArchivo.c_str());
+	 remove(nombreArchivo.c_str());
 	 return nParticion+1-primero;
 
 }

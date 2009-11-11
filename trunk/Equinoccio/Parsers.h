@@ -15,8 +15,8 @@
 #define NOMBRE_IDX_ARCHIVOS "IDX_ARCH.idx"
 #define NOMBRE_LEX_ARCHIVOS "LEX_ARCH.lex"
 
-#define NUMERO_PARTICIONES  2
-#define NUMERO_REGISTROS_SORT  1
+#define NUMERO_PARTICIONES  100
+#define NUMERO_REGISTROS_SORT  10000
 
 class Parsers{
      std::list<Parser*> cadena;	/**< Lista de parsers */
@@ -113,6 +113,7 @@ public:
 	       std::list<Parser*> &lista = (*it2).second;
 	       Parser* p = lista.front();
 	       nombreIndice += p->getNombreCatalogo() + ".aux";
+	       uint32_t generadas=0; /* n de particiones generadas */
 	       do{
 		    /* Obtego uno de los parsers de el catalogo */
 		    Parser* p = lista.front(); lista.pop_front();
@@ -126,7 +127,6 @@ public:
 		    ultimo = p->getCantArchivosParseados();
 		    /* y que nombre base tiene cada uno */
 		    std::string nombreBase = p->getNombreBase();
-		    uint32_t generadas=0; /* n de particiones generadas */
 
 		    std::cout << "Primero,Ultimo: " << primero << " " << ultimo << std::endl;
 		    for(;primero<=ultimo;primero++){
@@ -134,16 +134,17 @@ public:
 			 /* ordeno cada paricion y cuento cuantas
 			  * particiones resultan */
 			 std::cout << "particion:" << particion <<" \n";
-			 generadas += Sorter::Sort(particion,nombreBase+".sorted", generadas,NUMERO_REGISTROS_SORT);
+			 generadas += Sorter::Sort(particion,nombreIndice+".sorted", generadas,NUMERO_REGISTROS_SORT);
 			 std::cout << " Particiones: " << particion << " generadas: " << generadas << std::endl;
 		    }
-		    if(generadas > 0){
-			 /* uno las particiones quedandome el
-			  * auxiliar ordenado */
-			 std::cout << "ordenando: \n";
-			 merge(nombreBase+".sorted",0,generadas-1, nombreIndice);
-		    }
 	       }while(lista.size()>0);
+	       if(generadas > 0){
+		    /* uno las particiones quedandome el
+		     * auxiliar ordenado */
+		    std::cout << "ordenando: \n";
+		    merge(nombreIndice+".sorted",0,generadas-1, nombreIndice);
+	       }
+	       separarAuxiliar(nombreIndice);
 	  }
 
 	  return 0;
@@ -176,6 +177,36 @@ public:
 	       merge(nombreBase+".", 0,i, nombreSalida);
 	  }
 	  return nombreSalida;
+     }
+
+     /** 
+      * Separa el archivo auxiliar en lexico, indice y punteros.
+      * 
+      * @param nombre El nombre del archivo auxiliar.
+      */
+     void separarAuxiliar(const std::string& nombre){
+	  std::cout << "Separando " << nombre << std::endl;
+	  std::ifstream archivo(nombre.c_str());
+	  Registro *r;
+	  /* TODO: asignar los nombres correctos segun catalogo */
+	  std::ofstream lexico("lexico.lex");
+	  std::ofstream indice("indice.idx");
+	  std::ofstream punteros("punteros.pun");
+
+	  uint64_t idxLexico=0, idxPunteros=0;
+
+	  for(r=Registro::leer(archivo, 0);r!=NULL;r=Registro::leer(archivo, 0)){
+	       std::string termino = r->obtenerTermino();
+	       uint64_t freq=r->obtenerFrecuencia();
+	       std::string spunteros = r->obtenerPunterosComprimidos();
+	       lexico.write(termino.c_str(), termino.length()+1);
+	       punteros.write(spunteros.c_str(), spunteros.size());
+	       indice.write((char*)&idxLexico, sizeof(idxLexico));
+	       indice.write((char*)&freq, sizeof(freq));
+	       indice.write((char*)&idxPunteros, sizeof(idxPunteros));
+	       idxLexico += termino.size()+1;
+	       idxPunteros += spunteros.size();
+	  }
      }
 
      /** 

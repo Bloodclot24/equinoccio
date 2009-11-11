@@ -12,7 +12,7 @@
       - [ ] Separar Parser C y PHP.
       - [ ] Parseo de comentarios en PHP.
       - [X] Parser PDF.
-      - [ ] Probar e integrar codificacion gamma.
+      - [X] Probar e integrar codificacion gamma.
       - [ ] Revision general de la clase parser.
       - [ ] Documentar apropiadamente.
     - [X] Sort.
@@ -20,17 +20,17 @@
       - [X] Encapsular.
       - [X] Crear metodos separados para no repetir tanto codigo.
       - [X] Documentar
-    - [-] Merge.
+    - [X] Merge.
       - [X] Implementacion con N particiones
       - [X] Encapsular
       - [X] Crear metodos separados para no repetir tanto codigo.
       - [X] Documentar
       - [X] Borrar archivos intermedios.
-      - [ ] Bug: ¿Registros perdidos?
+      - [X] Bug: ¿Registros perdidos?
     - [-] Armado final del indice.
       - [X] Armado inicial (integracion Sort+Merge).
       - [X] Borrar archivos intermedios.
-      - [ ] Separar punteros y lexico.
+      - [X] Separar punteros y lexico.
       - [ ] Probar exhaustivamente.
       - [ ] N-gramas.
       - [ ] Documentar.

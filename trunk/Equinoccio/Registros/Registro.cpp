@@ -132,6 +132,55 @@ int Registro::escribir(std::ofstream &archivo, int compresion){
      return 1;
 }
 
+std::string Registro::obtenerPunterosComprimidos(){
+     std::list<Registro::Punteros>::iterator it;
+     const char* ptr;
+     std::string str1, str2;
+     char byte=0;
+     unsigned bit=1<<7;
+     uint32_t docAnterior = 0;
+     unsigned bits=0;
+
+     std::string resultado;
+     
+     for(it=punteros.begin(); it != punteros.end(); it++){
+	  Registro::Punteros p;
+	  p = *it;
+	  
+	  str1= TDA_Codigos::getCGamma(p.documento-docAnterior+1);
+	  docAnterior=p.documento;
+	  
+	  str2=TDA_Codigos::getCGamma(p.frecuencia);
+	  
+	  str1+=str2;
+	  
+	  ptr  = str1.c_str();
+	  bits = str1.length();
+	  while(bits > 0){
+	       for(;bit!=0 && bits > 0; bit >>= 1, bits--, ptr++){
+		    byte |= *ptr!='0'?bit:0;
+	       }
+	       if(bit==0){
+		    /* escribir el byte a disco */
+		    resultado+=byte;
+		    bit=1<<7;
+		    byte=0;
+	       }
+	  }
+     }
+     if(bit != 1<<7){
+	  resultado += byte;
+     }
+
+     return resultado;
+}
+
+
+uint64_t Registro::obtenerFrecuencia(){
+     return frecuencia;
+}
+
+
 const std::string& Registro::obtenerTermino(){
      return termino;
 }

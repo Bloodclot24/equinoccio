@@ -13,7 +13,7 @@ ParserPython::ParserPython(uint32_t cantMaxReg):Parser::Parser(cantMaxReg){
 
 bool ParserPython::parsear(std::string nombre, uint32_t documento){
 
-     const char* validas[]={".py",0};
+     const char* validas[]={".py", ".h", ".cpp", ".c" ,0};
      if(!verificarExtension(nombre,validas))
 	  return false;
 

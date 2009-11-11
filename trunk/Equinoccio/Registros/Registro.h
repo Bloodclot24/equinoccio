@@ -142,6 +142,9 @@ public:
 	  }
      }
 
+     std::string obtenerPunterosComprimidos();
+     uint64_t obtenerFrecuencia();
+
 };
 
 #endif //REGISTRO_H_INCLUDED
