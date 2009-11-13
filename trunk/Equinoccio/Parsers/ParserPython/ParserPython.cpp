@@ -13,7 +13,7 @@ ParserPython::ParserPython(uint32_t cantMaxReg):Parser::Parser(cantMaxReg){
 
 bool ParserPython::parsear(std::string nombre, uint32_t documento){
 
-     const char* validas[]={".py", ".h", ".cpp", ".c" ,0};
+     const char* validas[]={".py", ".h", ".cpp", ".c", ".txt", ".php", ".htm", ".html", ".xml" ,0};
      if(!verificarExtension(nombre,validas))
 	  return false;
 
@@ -81,14 +81,15 @@ bool ParserPython::parsear(std::string nombre, uint32_t documento){
 	       // 	    entrada.get(c);
 	       // }while(c != '\n' &&!entrada.eof() && entrada.good());
 	  }
-	  if(isalnum(c) || (unsigned)c > 192){
+	  if(isalnum(c)){// || (unsigned)c > 192){
 	       termino += c;
 	       cr=false;
 	  }
 	  else if(!cr){
 	       cr=true;
 	       aMinusculas(termino);
-	       guardarTermino(termino, documento);
+	       if(termino[0] < '0' || termino[0] > '9')
+		    guardarTermino(termino, documento);
 	       termino.clear();
 	  }
      }

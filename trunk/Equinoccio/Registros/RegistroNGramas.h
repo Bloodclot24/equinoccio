@@ -1,17 +1,19 @@
-#ifndef REGISTRO_H_INCLUDED
-#define REGISTRO_H_INCLUDED
+#ifndef REGISTRONGRAMAS_H_INCLUDED
+#define REGISTRONGRAMAS_H_INCLUDED
 
 #include <list>
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <iostream>
 #include "../CodigoGamma/TDA_Codigos.h"
+#include "Registro.h"
 
 /** 
  * Clase que se encarga de abstraer el manejo de las estructuras de
  * los registros del indice principal.
  */
-class Registro{
+class RegistroNGramas{
 private:
      std::string termino;	/**< Término almacenado */
      uint32_t frecuencia;	/**< Cantidad de documentos en los que
@@ -19,26 +21,14 @@ private:
      /** 
       * Constructor privado. No inicializa nada.
       */
-     Registro(){};
-
-     
+     RegistroNGramas(){};
 
 public:
-     struct Punteros{		/**< Estructura auxiliar para manejar
-				 * pares (documento,frecuencia) */
-	  uint32_t documento;
-	  uint32_t frecuencia;
-     };
-     std::list<Punteros> punteros;	/**< Lista de punteros */
 
-     /** 
-      * Crea un nuevo registro, asociando el termino con el documento
-      * dados.
-      * 
-      * @param termino El termino a asociar con el registro.
-      * @param documento El documento donde se encuentra el termino.
-      */
-     Registro(const std::string& termino, uint32_t documento);
+     std::list<uint32_t> punteros;	/**< Lista de punteros */
+
+     RegistroNGramas(const std::string& termino, uint32_t documento);
+
 
      /** 
       * Lee un registro desde un archivo.
@@ -52,7 +42,7 @@ public:
       * 
       * @return El registro leído del archivo o NULL si no pudo leer.
       */
-     static Registro* leer(std::ifstream &archivo, int compresion);
+     static RegistroNGramas* leer(std::ifstream &archivo, int compresion);
 
      /** 
       * Escribe un registro en un archivo.
@@ -83,7 +73,7 @@ public:
       * @return Devuelve 1 si pudo combinar los registros, 0 si no
       * pudo (por ejemplo, los terminos son diferentes).
       */
-     int unir(const Registro& registro);
+     int unir(const RegistroNGramas& registro);
 
      /** 
       * Devuelve la lista de pares (documento,frecuencia) del
@@ -92,7 +82,7 @@ public:
       * 
       * @return La lista de punteros.
       */
-     const std::list<Punteros>& getPunteros(){ return punteros;};
+     const std::list<uint32_t>& getPunteros(){ return punteros;};
 
      /** 
       * Comparador.
@@ -102,7 +92,7 @@ public:
       * @return 1 si esta instancia es mayor que el parametro, 0 en
       * otro caso.
       */
-     bool operator>(const Registro& b) const {
+     bool operator>(const RegistroNGramas& b) const {
 	  return termino.compare(b.termino)>0?1:0;
      }
 
@@ -114,7 +104,7 @@ public:
       * @return 1 si esta instancia es menor que el parametro, 0 en
       * otro caso.
       */
-     bool operator<(const Registro& b) const {
+     bool operator<(const RegistroNGramas& b) const {
 	  return termino.compare(b.termino)<0?1:0;
      }
 
@@ -131,9 +121,9 @@ public:
 	  else{
 	       std::stringstream ss;
 	       ss << termino;
-	       std::list<Punteros>::const_iterator it=punteros.begin();
+	       std::list<uint32_t>::const_iterator it=punteros.begin();
 	       while(it != punteros.end()){
-		    ss << '/' << (*it).documento;
+		    ss << '/' << (*it);
 		    it++;
 	       }
 	       std::string salida;
@@ -142,10 +132,11 @@ public:
 	  }
      }
 
-     std::list<uint32_t> obtenerDocumentos();
      std::string obtenerPunterosComprimidos();
      uint32_t obtenerFrecuencia();
 
+     static int generarEscribir(std::ofstream &archivo, int compresion, Registro& r);
+
 };
 
-#endif //REGISTRO_H_INCLUDED
+#endif //REGISTRONGRAMAS_H_INCLUDED

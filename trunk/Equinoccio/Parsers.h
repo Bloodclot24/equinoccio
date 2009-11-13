@@ -12,11 +12,14 @@
 #include "Sort/Sort.h"
 #include "Util/Util.h"
 
+#include "Registros/RegistroNGramas.h"
+
 #define NOMBRE_IDX_ARCHIVOS "IDX_ARCH.idx"
 #define NOMBRE_LEX_ARCHIVOS "LEX_ARCH.lex"
 
 #define NUMERO_PARTICIONES  100
 #define NUMERO_REGISTROS_SORT  10000
+#define NUMERO_NGRAMAS 10000
 
 class Parsers{
      std::list<Parser*> cadena;	/**< Lista de parsers */
@@ -134,7 +137,7 @@ public:
 			 /* ordeno cada paricion y cuento cuantas
 			  * particiones resultan */
 			 std::cout << "particion:" << particion <<" \n";
-			 generadas += Sorter::Sort(particion,nombreIndice+".sorted", generadas,NUMERO_REGISTROS_SORT);
+			 generadas += Sorter<Registro>::Sort(particion,nombreIndice+".sorted", generadas,NUMERO_REGISTROS_SORT);
 			 std::cout << " Particiones: " << particion << " generadas: " << generadas << std::endl;
 		    }
 	       }while(lista.size()>0);
@@ -142,14 +145,15 @@ public:
 		    /* uno las particiones quedandome el
 		     * auxiliar ordenado */
 		    std::cout << "ordenando: \n";
-		    merge(nombreIndice+".sorted",0,generadas-1, nombreIndice);
+		    merge<Registro>(nombreIndice+".sorted",0,generadas-1, nombreIndice);
 	       }
-	       separarAuxiliar(nombreIndice);
+	       separarAuxiliar(nombreIndice,p->getNombreCatalogo());
 	  }
 
 	  return 0;
      }
 
+     template <class t>
      std::string merge(const std::string& nombreBase, uint32_t primero, \
 		       uint32_t ultimo, const std::string& nombreSalida){
 	  std::cout << "nombreBase: " << nombreBase << " primero: " << primero << " ultimo: " << ultimo << std::endl;
@@ -161,20 +165,20 @@ public:
 		    particiones.push_back(particion);
 	       }
 	       std::cout << "nombreSalida: " << nombreSalida << " particiones.size:" << particiones.size()<<"\n";
-	       Merger::Merge(particiones,nombreSalida);
+	       Merger<t>::Merge(particiones,nombreSalida);
 	  }
 	  else{
 	       uint32_t cantidad=(ultimo-primero+1)/NUMERO_PARTICIONES;
 	       std::cout << "merge parcial: "<< cantidad << std::endl;
 	       uint32_t i;
 	       for(i=0;i<cantidad;i++){
-		    merge(nombreBase, primero+i*NUMERO_PARTICIONES, primero+(i+1)*NUMERO_PARTICIONES-1, nombreBase+"."+Util::intToString(i));
+		    merge<t>(nombreBase, primero+i*NUMERO_PARTICIONES, primero+(i+1)*NUMERO_PARTICIONES-1, nombreBase+"."+Util::intToString(i));
 	       }
 	       if((ultimo-primero+1)%NUMERO_PARTICIONES > 0)
-		    merge(nombreBase, primero+i*NUMERO_PARTICIONES, ultimo, nombreBase+"."+Util::intToString(i));
+		    merge<t>(nombreBase, primero+i*NUMERO_PARTICIONES, ultimo, nombreBase+"."+Util::intToString(i));
 	       else i--;
 
-	       merge(nombreBase+".", 0,i, nombreSalida);
+	       merge<t>(nombreBase+".", 0,i, nombreSalida);
 	  }
 	  return nombreSalida;
      }
@@ -183,21 +187,26 @@ public:
       * Separa el archivo auxiliar en lexico, indice y punteros.
       * 
       * @param nombre El nombre del archivo auxiliar.
+      * @param nombreBase El nombre base para los archivos generados.
       */
-     void separarAuxiliar(const std::string& nombre){
+     void separarAuxiliar(const std::string& nombre, const std::string& nombreBase){
 	  std::cout << "Separando " << nombre << std::endl;
 	  std::ifstream archivo(nombre.c_str());
 	  Registro *r;
-	  /* TODO: asignar los nombres correctos segun catalogo */
-	  std::ofstream lexico("lexico.lex");
-	  std::ofstream indice("indice.idx");
-	  std::ofstream punteros("punteros.pun");
+	  std::ofstream lexico((nombreBase+".lex").c_str());
+	  std::ofstream indice((nombreBase+".idx").c_str());
+	  std::ofstream punteros((nombreBase+".pun").c_str());
 
-	  uint64_t idxLexico=0, idxPunteros=0;
+	  uint32_t idxLexico=0, idxPunteros=0;
+	  uint32_t contador=0;
+	  uint32_t particiones=0;
+	  uint32_t generadas = 0;
+	  std::string ngramasBase = nombreBase+".ng.aux";
+	  std::ofstream ngramas((ngramasBase + Util::intToString(particiones)).c_str());
 
 	  for(r=Registro::leer(archivo, 0);r!=NULL;r=Registro::leer(archivo, 0)){
 	       std::string termino = r->obtenerTermino();
-	       uint64_t freq=r->obtenerFrecuencia();
+	       uint32_t freq=r->obtenerFrecuencia();
 	       std::string spunteros = r->obtenerPunterosComprimidos();
 	       lexico.write(termino.c_str(), termino.length()+1);
 	       punteros.write(spunteros.c_str(), spunteros.size());
@@ -206,7 +215,28 @@ public:
 	       indice.write((char*)&idxPunteros, sizeof(idxPunteros));
 	       idxLexico += termino.size()+1;
 	       idxPunteros += spunteros.size();
+	       contador+=RegistroNGramas::generarEscribir(ngramas,0,*r);
+	       if(contador > NUMERO_NGRAMAS){
+		    contador = 0;
+		    ngramas.close();
+		    generadas += Sorter<RegistroNGramas>::Sort((ngramasBase + Util::intToString(particiones)), nombreBase+".sorted", generadas,NUMERO_REGISTROS_SORT);
+		    particiones++;
+		    ngramas.open((ngramasBase + Util::intToString(particiones)).c_str());	       }
+	       delete r;
 	  }
+	  if(contador >= 1){
+	       contador = 0;
+	       ngramas.close();
+	       generadas += Sorter<RegistroNGramas>::Sort((ngramasBase + Util::intToString(particiones)), nombreBase+".sorted", generadas,NUMERO_REGISTROS_SORT);
+	  }
+
+	  if(generadas > 0){
+	       /* uno las particiones quedandome el
+		* auxiliar ordenado */
+	       merge<RegistroNGramas>(nombreBase+".sorted",0,generadas-1, nombreBase+".ng");
+	  }
+
+	  remove(nombre.c_str());
      }
 
      /** 

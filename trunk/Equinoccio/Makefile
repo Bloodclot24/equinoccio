@@ -10,6 +10,7 @@ SOURCES=CodigoGamma/TDA_Codigos.cpp \
 	Parsers/ParserPhp/ParserPHP.cpp \
 	Parsers/ParserPDF/ParserPdf.cpp \
 	Registros/Registro.cpp \
+	Registros/RegistroNGramas.cpp \
 	Util/Util.cpp \
 	Sort/Sort.cpp \
 	Merge/Merge.cpp

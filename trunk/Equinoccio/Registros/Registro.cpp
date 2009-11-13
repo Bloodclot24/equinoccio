@@ -93,6 +93,7 @@ int Registro::escribir(std::ofstream &archivo, int compresion){
      }
      else{
 
+	  std::cout << "Escribo registro comprimido\n";
 	  const char* ptr;
 	  std::string str1, str2;
 	  char byte=0;
@@ -132,6 +133,15 @@ int Registro::escribir(std::ofstream &archivo, int compresion){
      return 1;
 }
 
+std::list<uint32_t> Registro::obtenerDocumentos(){
+     std::list<Registro::Punteros>::iterator it;
+     std::list<uint32_t> docs;
+     for(it=punteros.begin();it!=punteros.end();it++){
+	  docs.push_back((*it).documento);
+     }
+     return docs;
+}
+
 std::string Registro::obtenerPunterosComprimidos(){
      std::list<Registro::Punteros>::iterator it;
      const char* ptr;
@@ -140,7 +150,7 @@ std::string Registro::obtenerPunterosComprimidos(){
      unsigned bit=1<<7;
      uint32_t docAnterior = 0;
      unsigned bits=0;
-
+     
      std::string resultado;
      
      for(it=punteros.begin(); it != punteros.end(); it++){
@@ -171,15 +181,13 @@ std::string Registro::obtenerPunterosComprimidos(){
      if(bit != 1<<7){
 	  resultado += byte;
      }
-
+     
      return resultado;
 }
 
-
-uint64_t Registro::obtenerFrecuencia(){
+uint32_t Registro::obtenerFrecuencia(){
      return frecuencia;
 }
-
 
 const std::string& Registro::obtenerTermino(){
      return termino;

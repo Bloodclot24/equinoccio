@@ -31,7 +31,7 @@
       - [X] Armado inicial (integracion Sort+Merge).
       - [X] Borrar archivos intermedios.
       - [X] Separar punteros y lexico.
-      - [ ] Probar exhaustivamente.
+      - [X] Probar exhaustivamente.
       - [ ] N-gramas.
       - [ ] Documentar.
     - [ ] Logica de segmentos diferenciales.
