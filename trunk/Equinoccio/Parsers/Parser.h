@@ -9,7 +9,7 @@
 #include "../Registros/Registro.h"
 #include "../Util/Util.h"
 #include "../Arbol/RedBlackTree.h"
-
+#include <stdint.h>
 /** 
  * Interfaz a implementar por cada uno de los parsers del programa.
  */

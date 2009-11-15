@@ -3,7 +3,7 @@
 
 #include <sstream>
 #include <string>
-
+#include <stdint.h>
 /** 
  * Clase con funciones comunes para el programa.
  */

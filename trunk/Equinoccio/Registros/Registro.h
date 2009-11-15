@@ -5,6 +5,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <stdint.h>
 #include "../CodigoGamma/TDA_Codigos.h"
 
 /** 
