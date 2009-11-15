@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <stdint.h>
 
 /* El tipo de archivo que devuelve como resultado de la busqueda.
  **/
