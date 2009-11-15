@@ -39,9 +39,9 @@ RegistroIndice Buscador::buscar(const std::string termino,const std::string cata
 		
 		}else{
 			
-			if(termino.compare(cadena) < 0) derecha = medio;
+			if(termino.compare(cadena) < 0) derecha = medio - 1;
 			else 
-				izquierda = medio;
+				izquierda = medio + 1;
 		}		
 	} 
 	//si no lo encontre, o se produjo un error, devuelvo la estructura cargada de 0's
