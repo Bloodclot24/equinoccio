@@ -79,6 +79,7 @@ private:
 	  struct dirent* entry;
 
 	  std::string directorio = parsearDirectorio(nombre);
+	  uint32_t dir=0;
 
 	  std::cout << "Directorio absouto: " << directorio << "\n";
 
@@ -90,14 +91,14 @@ private:
 		    std::string nombreCompleto(directorio+'/'+entry->d_name);
 		    if(esArchivo(nombreCompleto)){
 			 std::cout << "Agregar el archivo: " << nombreCompleto << "\n";
-			 parsers.parsear(nombreCompleto);
+			 parsers.parsear(nombreCompleto, dir);
 		    }
 		    else if(esDirectorio(nombreCompleto) && strncmp(entry->d_name,".",1)!=0){
 			 //agrego directorios recursivamente
 			 agregarDirectorio(nombreCompleto);
 		    }
 	       }
-	  
+	       dir++; //cuento el directorio
 	       closedir(directory);
 	  }
      }
@@ -107,8 +108,8 @@ private:
 	       idxDirectorios.open(NOMBRE_IDX_DIRECTORIOS, std::fstream::in | std::fstream::out | std::fstream::trunc);
 	       lexDirectorios.open(NOMBRE_LEX_DIRECTORIOS, std::fstream::in | std::fstream::out | std::fstream::trunc);
 	  }
-	  std::streampos p = lexDirectorios.tellp();
-	  idxDirectorios.write((char*)&p,sizeof(std::streampos));
+	  uint32_t p = lexDirectorios.tellp();
+	  idxDirectorios.write((char*)&p,sizeof(uint32_t));
 	  lexDirectorios.write(nombre.c_str(), nombre.size()+1);
 	  return 0;
      }

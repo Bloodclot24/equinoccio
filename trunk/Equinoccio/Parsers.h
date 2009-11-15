@@ -57,8 +57,9 @@ public:
       * parsers, hasta que algno pueda parsearlo exitosamente.
       * 
       * @param nombreArchivo El nombre del archivo a parsear.
+      * @param dir Numero de directorio.
       */
-     bool parsear(const std::string& nombreArchivo){
+     bool parsear(const std::string& nombreArchivo, uint32_t dir){
 	  std::list<Parser*>::iterator it;
 	  bool encontrado = false;
 	  for(it=cadena.begin();(it!=cadena.end()) && !encontrado;it++){
@@ -68,14 +69,14 @@ public:
 		    documentos[cat]++;
 		    char* nombre = strdup(nombreArchivo.c_str());
 		    char* final = basename(nombre);
-		    guardarArchivo(cat, final);
+		    guardarArchivo(cat, final, dir);
 		    free(nombre);
 	       }
 	  }
 	  return encontrado;
      }
 
-     uint32_t guardarArchivo(const std::string& catalogo, const std::string& nombre){
+     uint32_t guardarArchivo(const std::string& catalogo, const std::string& nombre, uint32_t dir){
 	  std::fstream &idxArchivos = *indice[catalogo];
 	  std::fstream &lexArchivos = *lexico[catalogo];
 
@@ -90,8 +91,9 @@ public:
 	       nombre+=catalogo;
 	       lexArchivos.open(nombre.c_str(), std::fstream::in | std::fstream::out | std::fstream::trunc);
 	  }
-	  std::streampos p = lexArchivos.tellp();
-	  idxArchivos.write((char*)&p,sizeof(std::streampos));
+	  uint32_t p = lexArchivos.tellp();
+	  idxArchivos.write((char*)&p,sizeof(p));
+	  idxArchivos.write((char*)&dir, sizeof(dir));
 	  lexArchivos.write(nombre.c_str(), nombre.size()+1);
 	  return 0;
      }
@@ -216,14 +218,14 @@ public:
 	       indice.write((char*)&idxPunteros, sizeof(idxPunteros));
 	       idxLexico += termino.size()+1;
 	       idxPunteros += spunteros.size();
-	       contador+=RegistroNGramas::generarEscribir(ngramas,0,*r,offsetIndice);
-	       offsetIndice += sizeof(idxLexico) + sizeof(freq) + sizeof(idxPunteros);
-	       if(contador > NUMERO_NGRAMAS){
-		    contador = 0;
-		    ngramas.close();
-		    generadas += Sorter<RegistroNGramas>::Sort((ngramasBase + Util::intToString(particiones)), nombreBase+".sorted", generadas,NUMERO_REGISTROS_SORT);
-		    particiones++;
-		    ngramas.open((ngramasBase + Util::intToString(particiones)).c_str());	       }
+	       // contador+=RegistroNGramas::generarEscribir(ngramas,0,*r,offsetIndice);
+	       // offsetIndice += sizeof(idxLexico) + sizeof(freq) + sizeof(idxPunteros);
+	       // if(contador > NUMERO_NGRAMAS){
+	       // 	    contador = 0;
+	       // 	    ngramas.close();
+	       // 	    generadas += Sorter<RegistroNGramas>::Sort((ngramasBase + Util::intToString(particiones)), nombreBase+".sorted", generadas,NUMERO_REGISTROS_SORT);
+	       // 	    particiones++;
+	       // 	    ngramas.open((ngramasBase + Util::intToString(particiones)).c_str());	       }
 	       delete r;
 	  }
 

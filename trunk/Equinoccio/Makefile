@@ -13,7 +13,9 @@ SOURCES=CodigoGamma/TDA_Codigos.cpp \
 	Registros/RegistroNGramas.cpp \
 	Util/Util.cpp \
 	Sort/Sort.cpp \
-	Merge/Merge.cpp
+	Merge/Merge.cpp \
+	Busqueda\ Binaria/Buscador.cpp
+
 
 TESTSOURCES=Arbol/arbol.cpp\
 	Arbol/arbolRegistros.cpp\
@@ -28,7 +30,8 @@ TESTSOURCES=Arbol/arbol.cpp\
 	Registros/pruebaRegistro.cpp\
 	Registros/pruebaRegistroEscritura.cpp\
 	Sort/testSort.cpp\
-	Merge/testMerge.cpp
+	Merge/testMerge.cpp \
+	Busqueda\ Binaria/testBusquedaBinaria.cpp
 
 MAIN=Equinoccio.cpp
 
@@ -47,15 +50,15 @@ TESTEXEC=$(TESTSOURCES:.cpp=)
 all: $(MAINSOURCES) $(EXECUTABLE)
 
 $(EXECUTABLE): $(MAINOBJECTS)
-	$(CC) $(CFLAGS) $(LDFLAGS) $(MAINOBJECTS) -o $@
+	$(CC) $(CFLAGS) $(LDFLAGS) $(MAINOBJECTS) -o "$@"
 
 .cpp.o:
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c "$<" -o "$@"
 
 test: $(TESTSOURCES) $(TESTEXEC)
 
 $(TESTEXEC): $(TESTOBJECTS) $(OBJECTS)
-	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJECTS) $@.o -o $@
+	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJECTS) "$@.o" -o "$@"
 
 clean:
 	rm -f $(ALLOBJECTS) $(EXECUTABLE) $(TESTEXEC)

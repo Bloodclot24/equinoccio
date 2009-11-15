@@ -7,7 +7,7 @@
   - [-] Armado del indice.
     - [-] Parseo
       - [X] Tener en cuenta los catalogos al parsear.
-      - [ ] Guardar numero de directorio en lexico de archivos de cada
+      - [ ] Guardar numero de directorio en indice de archivos de cada
             catalogo.
       - [X] Separar Parser C y PHP.
       - [X] Parseo de comentarios en PHP.
@@ -38,8 +38,11 @@
       - [ ] Diferentes sufijos en los archivos parciales.
       - [ ] Bitmaps.
       - [ ] Merge de los segmentos.
-  - [ ] Algoritmo de busqueda.
+  - [-] Algoritmo de busqueda.
+    - [X] Busqueda binaria.
     - [ ] Busqueda simple.
+    - [ ] Busqueda compuesta.
+    - [ ] Busqueda rankeada.
     - [ ] Comodines.
     - [ ] Busqueda en todos los segmentos.
   - [ ] Interfaz.
