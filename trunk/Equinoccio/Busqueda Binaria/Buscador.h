@@ -14,6 +14,12 @@ typedef struct{
 	
 }RegistroIndice;
 
+typedef struct{
+	char ngrama[2];
+	uint32_t frec;
+	uint32_t pDocs;
+}RegistroNGrama;
+
 /* El Buscador es el encargado de realizar una busqueda binaria.
  **/
 
@@ -25,7 +31,9 @@ class Buscador
 		 * @param termino El termino a buscar.
 		 * @param catalogo El tipo de catalogo.
 		 **/
-		static RegistroIndice buscar(const std::string termino, const std::string catalogo);	
+		static RegistroIndice buscar(const std::string termino, const std::string catalogo);
+		
+		static RegistroNGrama buscarNgrama(const std::string ngrama,const std::string catalogo);	
 };
 
 #endif /*BUSCADOR_H_*/
