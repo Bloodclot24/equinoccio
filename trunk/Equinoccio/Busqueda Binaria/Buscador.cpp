@@ -21,27 +21,27 @@ RegistroIndice Buscador::buscar(const std::string termino,const std::string cata
 	//si se produjo un error al abrirlos cambio el flag
 	if ((!archIdx.is_open()) || (!archLex.is_open())) error = true;
 	
-	archIdx.seekg(std::fstream::end);
-	derecha = archIdx.tellg();
+	archIdx.seekg(0,std::fstream::end);
+	derecha = archIdx.tellg()/sizeof(RegistroIndice);
 	
 	while ((!encontrado) && (izquierda < derecha) && (!error)){
 		//calculo la mitad
-		medio = (derecha - izquierda) / 2;
-		archIdx.seekg(medio);
-		archIdx.read((char*)regInd.pLexico,sizeof(uint32_t));
-		archLex.seekg(regInd.pLexico);
-		archLex.get(cadena,'\0');
+		medio = (derecha + izquierda) / 2;
+		archIdx.seekg(medio*sizeof(RegistroIndice));
+		archIdx.read((char*)&(regInd.pLexico),sizeof(uint32_t));
+		archLex.seekg(regInd.pLexico,std::fstream::beg);
+		archLex.get((char*)cadena,50,'\0');
 		
 		if(termino.compare(cadena) == 0){
 			encontrado = true;
-			archIdx.read((char*)regInd.frec,sizeof(uint32_t));
-			archIdx.read((char*)regInd.pDocs,sizeof(uint32_t));
+			archIdx.read((char*)&(regInd.frec),sizeof(uint32_t));
+			archIdx.read((char*)&(regInd.pDocs),sizeof(uint32_t));
 		
 		}else{
 			
-			if(termino.compare(cadena) < 0) izquierda = medio;
+			if(termino.compare(cadena) < 0) derecha = medio;
 			else 
-				derecha = medio;
+				izquierda = medio;
 		}		
 	} 
 	//si no lo encontre, o se produjo un error, devuelvo la estructura cargada de 0's
