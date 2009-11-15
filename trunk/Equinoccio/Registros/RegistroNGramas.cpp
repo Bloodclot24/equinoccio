@@ -51,7 +51,7 @@ RegistroNGramas* RegistroNGramas::leer(std::ifstream &archivo, int compresion){
 	       }
 
 	       for(;bit!=0 && bits > 0 && !salir; bit >>= 1, bits--){
-		    aux += byte&bit>0?'1':'0';
+		    aux += ((byte)&(bit))>0?'1':'0';
 		    
 		    if((doc = TDA_Codigos::getNGamma(aux)) != (uint32_t)-1)
 			 salir=true;

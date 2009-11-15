@@ -14,7 +14,8 @@ SOURCES=CodigoGamma/TDA_Codigos.cpp \
 	Util/Util.cpp \
 	Sort/Sort.cpp \
 	Merge/Merge.cpp \
-	Busqueda\ Binaria/Buscador.cpp
+	Busqueda\ Binaria/Buscador.cpp \
+	Busquedas/Busqueda.cpp
 
 
 TESTSOURCES=Arbol/arbol.cpp\
@@ -31,7 +32,8 @@ TESTSOURCES=Arbol/arbol.cpp\
 	Registros/pruebaRegistroEscritura.cpp\
 	Sort/testSort.cpp\
 	Merge/testMerge.cpp \
-	Busqueda\ Binaria/testBusquedaBinaria.cpp
+	Busqueda\ Binaria/testBusquedaBinaria.cpp \
+	Busquedas/testBusqueda.cpp
 
 MAIN=Equinoccio.cpp
 

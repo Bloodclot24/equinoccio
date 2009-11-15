@@ -77,14 +77,6 @@ protected:
       */ 
      bool esStopWord(const std::string& palabra);
 	
-     /**
-      * La funcion devuelve una cadena en minuscula, sin caracteres invalidos;
-      * Notar que los caracteres invalidos son convertidos en espacios, por lo
-      * que puede devolverse una cadena con mas de una palabra o una cadena 
-      * vacia.
-      */ 
-     std::string aMinuscSinInvalidos(const std::string& informacion);
-
      /** 
       * Transforma un string a minusculas.
       * 
@@ -149,6 +141,15 @@ public:
       * @return TRUE si la extension concuerda, FASE si no.
       */
      bool verificarExtension(const std::string& nombre, const char **validas);
+
+
+     /**
+      * La funcion devuelve una cadena en minuscula, sin caracteres invalidos;
+      * Notar que los caracteres invalidos son convertidos en espacios, por lo
+      * que puede devolverse una cadena con mas de una palabra o una cadena
+      * vacia.
+      */
+    static std::string aMinuscSinInvalidos(const std::string& informacion);
 
      const std::string& getNombreCatalogo(){ return nombreCatalogo; }
      const std::string& getNombreBase(){ return nombreBase; }

@@ -22,8 +22,6 @@ private:
       */
      Registro(){};
 
-     
-
 public:
      struct Punteros{		/**< Estructura auxiliar para manejar
 				 * pares (documento,frecuencia) */
@@ -142,6 +140,8 @@ public:
 	       return salida;
 	  }
      }
+
+     static void obtenerPunterosEnLista(std::ifstream& arch, uint32_t frec, std::list<uint32_t>* lista_punteros);
 
      std::list<uint32_t> obtenerDocumentos();
      std::string obtenerPunterosComprimidos();
