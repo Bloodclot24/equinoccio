@@ -3,8 +3,6 @@
 #include "../Registros/Registro.h"
 #include "../Parsers/Parser.h"
 
-#include <algorithm>
-
 Busqueda::Busqueda() {
 	size = 0;
 }
@@ -24,16 +22,19 @@ std::list<std::string> Busqueda::buscar(std::string& consulta, std::string catal
 		do {
 			//tomo la palabra y la busco en el indice
 			where = consulta.find(' ', pos);
+			std::cout<<"Buscar: "<<consulta.substr(pos, where-pos)<<" where: "<<where<<" pos: "<<pos<<std::endl;
 			encontrado = buscarEnIndice(consulta.substr(pos, where-pos), catalogo); //VER!! cuidado con la cuenta XD
 			pos = where;
 		}while (pos != std::string::npos && encontrado);
 
 		if (!encontrado) {
 			//una o mas palabras no matcheadas
+			std::cout<<" * NO MATCH * "<<std::endl;
 		}
 		else {
 			//hacer un AND de todos los punteros y guardarlos en punteros_match
 //...
+			std::cout<<"HACER AND"<<std::endl;
 
 			std::list<uint32_t>::iterator it;
 			std::list<uint32_t>::iterator end = punteros_match.end();
@@ -45,6 +46,7 @@ std::list<std::string> Busqueda::buscar(std::string& consulta, std::string catal
 	}
 
 	borrarListas();
+	std::cout<<"Fin buscar"<<std::endl;
 	return paths;
 }
 
@@ -53,11 +55,13 @@ bool Busqueda::buscarEnIndice(std::string consulta, std::string& catalogo) {
 	RegistroIndice reg;
 
 	if (consulta.find('*') == std::string::npos) {
+		std::cout<<"Busqueda simple"<<std::endl;
 		reg = Buscador::buscar(Parser::aMinuscSinInvalidos(consulta), catalogo);
 
 	}
 	else {
 		reg.frec = 0; //bla
+		std::cout<<"busqueda con comodines"<<std::endl;
 		//consulta con comodines
 		//Parser::aMinuscSinInvalidos(consulta)
 		//armo bigramas y llamo a buscar para cada uno
@@ -79,6 +83,7 @@ bool Busqueda::buscarEnIndice(std::string consulta, std::string& catalogo) {
 			std::cout<<"error al abrir el arch de punteros"<<std::endl;
 		}
 	}
+	std::cout<<"frecuencia igual cero"<<std::endl;
 	return false;
 }
 

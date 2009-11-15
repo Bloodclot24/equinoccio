@@ -7,6 +7,9 @@ int main (int argc, char** argv) {
 	std::string consulta="";
 	for (int i=2; i<argc; i++) {
 		consulta +=argv[i];
+		if (i<(argc-1)) {
+			consulta +=" ";
+		}
 	}
 
 	Busqueda buscador;
