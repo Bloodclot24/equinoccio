@@ -17,9 +17,9 @@
 #define NOMBRE_IDX_ARCHIVOS "IDX_ARCH.idx"
 #define NOMBRE_LEX_ARCHIVOS "LEX_ARCH.lex"
 
-#define NUMERO_PARTICIONES  100
-#define NUMERO_REGISTROS_SORT  10000
-#define NUMERO_NGRAMAS 10000
+#define NUMERO_PARTICIONES  20
+#define NUMERO_REGISTROS_SORT  1000
+#define NUMERO_NGRAMAS 5000 //10000
 
 class Parsers{
      std::list<Parser*> cadena;	/**< Lista de parsers */
@@ -201,6 +201,7 @@ public:
 	  uint32_t contador=0;
 	  uint32_t particiones=0;
 	  uint32_t generadas = 0;
+	  uint32_t offsetIndice =0;
 	  std::string ngramasBase = nombreBase+".ng.aux";
 	  std::ofstream ngramas((ngramasBase + Util::intToString(particiones)).c_str());
 
@@ -215,7 +216,8 @@ public:
 	       indice.write((char*)&idxPunteros, sizeof(idxPunteros));
 	       idxLexico += termino.size()+1;
 	       idxPunteros += spunteros.size();
-	       contador+=RegistroNGramas::generarEscribir(ngramas,0,*r);
+	       contador+=RegistroNGramas::generarEscribir(ngramas,0,*r,offsetIndice);
+	       offsetIndice += sizeof(idxLexico) + sizeof(freq) + sizeof(idxPunteros);
 	       if(contador > NUMERO_NGRAMAS){
 		    contador = 0;
 		    ngramas.close();
@@ -224,6 +226,9 @@ public:
 		    ngramas.open((ngramasBase + Util::intToString(particiones)).c_str());	       }
 	       delete r;
 	  }
+
+	  remove(nombre.c_str());
+	  
 	  if(contador >= 1){
 	       contador = 0;
 	       ngramas.close();
@@ -236,7 +241,7 @@ public:
 	       merge<RegistroNGramas>(nombreBase+".sorted",0,generadas-1, nombreBase+".ng");
 	  }
 
-	  remove(nombre.c_str());
+
      }
 
      /** 

@@ -1,4 +1,5 @@
 #include "Merge.h"
+#include "../Registros/Registro.h"
 
 int main(int argc, char** argv){
      if(argc < 3)
@@ -8,7 +9,7 @@ int main(int argc, char** argv){
      for(int i=1;i<argc;i++)
 	  particiones.push_back(argv[i]);
      
-     Merger::Merge(particiones, "Archivosalida.merged");
+     Merger<Registro>::Merge(particiones, "Archivosalida.merged");
 
      return 0;
 }

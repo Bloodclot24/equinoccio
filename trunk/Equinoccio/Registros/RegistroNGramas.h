@@ -135,7 +135,7 @@ public:
      std::string obtenerPunterosComprimidos();
      uint32_t obtenerFrecuencia();
 
-     static int generarEscribir(std::ofstream &archivo, int compresion, Registro& r);
+     static int generarEscribir(std::ofstream &archivo, int compresion, Registro& r, uint32_t offset);
 
 };
 

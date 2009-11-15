@@ -68,13 +68,13 @@ RegistroNGramas* RegistroNGramas::leer(std::ifstream &archivo, int compresion){
      return r;
 }
 
-int RegistroNGramas::generarEscribir(std::ofstream &archivo, int compresion, Registro& r){
+int RegistroNGramas::generarEscribir(std::ofstream &archivo, int compresion, Registro& r, uint32_t offset){
      RegistroNGramas* reg= new RegistroNGramas();
      std::string termino = "$";
      unsigned contador=0;
      termino += r.obtenerTermino() + "$";
-     reg->frecuencia = r.obtenerFrecuencia();
-     reg->punteros = r.obtenerDocumentos();
+     reg->frecuencia = 1; 
+     reg->punteros.push_back(offset);
      for(unsigned i=0;i<termino.size()-1;i++){
 	  reg->termino = termino.substr(i, 2);
 	  reg->escribir(archivo, compresion);
