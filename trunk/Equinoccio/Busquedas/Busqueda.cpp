@@ -61,13 +61,13 @@ std::list<std::string> Busqueda::buscar(std::string& consulta, std::string catal
 	return paths;
 }
 
-bool Busqueda::buscarEnIndice(std::string consulta, std::string& catalogo) {
+bool Busqueda::buscarEnIndice(std::string consulta, std::string catalogo) {
 
 	RegistroIndice reg;
 
 	if (consulta.find('*') == std::string::npos) {
-		std::cout<<"Busqueda simple"<<std::endl;
 		consulta = Parser::aMinuscSinInvalidos(consulta);
+		std::cout<<"Busqueda simple: "<<consulta<<std::endl;
 		if (consulta.size() != 0)
 			reg = Buscador::buscar(consulta, catalogo);
 	}
@@ -99,7 +99,7 @@ bool Busqueda::buscarEnIndice(std::string consulta, std::string& catalogo) {
 	return false;
 }
 
-std::string Busqueda::buscarPath(uint32_t puntero,std::string& catalogo ) {
+std::string Busqueda::buscarPath(uint32_t puntero,std::string catalogo ) {
 
 	std::string path;
 	uint32_t par[2]; //par offsetLex - numDir

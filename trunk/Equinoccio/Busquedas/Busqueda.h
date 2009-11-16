@@ -21,10 +21,10 @@ private:
 	 * devuelve false si NO se encontro en el indice
 	 *
 	 * */
-	bool buscarEnIndice(std::string consulta, std::string& catalogo);
+	bool buscarEnIndice(std::string consulta, std::string catalogo);
 
 	//dado un puntero devuelve el path del archivo
-	std::string buscarPath(uint32_t, std::string& catalogo);
+	std::string buscarPath(uint32_t, std::string catalogo);
 
 public:
 	Busqueda();
@@ -35,7 +35,7 @@ public:
 	 * path de los documentos matcheados
 	 * devuelve lista vacia en caso de que no haya match
 	 * */
-	std::list<std::string> buscar(std::string& consulta, std::string catalogo); //VER!! =]
+	std::list<std::string> buscar(std::string& consulta, std::string catalogo);
 
 
 };
