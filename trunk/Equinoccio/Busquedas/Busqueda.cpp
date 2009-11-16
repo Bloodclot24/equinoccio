@@ -21,11 +21,11 @@ std::list<std::string> Busqueda::buscar(std::string& consulta, std::string catal
 		bool encontrado;
 		do {
 			//tomo la palabra y la busco en el indice
-			where = consulta.find(' ', pos);
+			where = consulta.find(' ', pos+1);
 			std::cout<<"Buscar: "<<consulta.substr(pos, where-pos)<<" where: "<<where<<" pos: "<<pos<<std::endl;
-			encontrado = buscarEnIndice(consulta.substr(pos, where-pos), catalogo); //VER!! cuidado con la cuenta XD
-			pos = where;
-		}while (pos != std::string::npos && encontrado);
+			encontrado = buscarEnIndice(consulta.substr(pos, where-pos), catalogo);
+			pos = where+1;
+		}while (where != std::string::npos && encontrado);
 
 		if (!encontrado) {
 			//una o mas palabras no matcheadas
@@ -42,6 +42,17 @@ std::list<std::string> Busqueda::buscar(std::string& consulta, std::string catal
 			//agregar los paths a la lista
 			for (it = punteros_match.begin(); it != end; it++)
 				paths.push_back(buscarPath(*it, catalogo));
+
+			//TODO.. por ahora sin el and =P
+			for (unsigned int i = 0; i<size; i++){
+				std::cout<<"lista: "<<i<<std::endl;
+				std::list<uint32_t>::iterator it;
+				std::list<uint32_t>::iterator end = punteros[i]->end();
+				for (it = punteros[i]->begin(); it != end; it++){
+					std::cout<<"MATCH sin and: "<<buscarPath(*it, catalogo)<<std::endl;
+				}
+			}
+
 		}
 	}
 
@@ -56,8 +67,9 @@ bool Busqueda::buscarEnIndice(std::string consulta, std::string& catalogo) {
 
 	if (consulta.find('*') == std::string::npos) {
 		std::cout<<"Busqueda simple"<<std::endl;
-		reg = Buscador::buscar(Parser::aMinuscSinInvalidos(consulta), catalogo);
-
+		consulta = Parser::aMinuscSinInvalidos(consulta);
+		if (consulta.size() != 0)
+			reg = Buscador::buscar(consulta, catalogo);
 	}
 	else {
 		reg.frec = 0; //bla
@@ -67,7 +79,7 @@ bool Busqueda::buscarEnIndice(std::string consulta, std::string& catalogo) {
 		//armo bigramas y llamo a buscar para cada uno
 		//obtengo registro con los punteros... continuara
 	}
-
+	std::cout<<"Frecuencia: "<<reg.frec<<std::endl;
 	if ( reg.frec != 0) {
 		std::list<uint32_t>* puntDocs = new std::list<uint32_t>;
 		//obtener los punteros
@@ -130,15 +142,15 @@ std::string Busqueda::buscarPath(uint32_t puntero,std::string& catalogo ) {
 					std::cout<<"error al abrir el lexico de directorios"<<std::endl;
 			}
 			else {
-				std::cout<<"error al abrir el arch de directorios"<<std::endl;
+				std::cout<<"error al abrir el indice de directorios"<<std::endl;
 			}
 		}
 		else {
-			std::cout<<"error al abrir el arch de documentos: "<<nombre<<std::endl;
+			std::cout<<"error al abrir el lexico de documentos: "<<nombre<<std::endl;
 		}
 	}
 	else {
-		std::cout<<"error al abrir el indice de directorios"<<std::endl;
+		std::cout<<"error al abrir el indice de documentos"<<std::endl;
 	}
 	return path;
 }
