@@ -2,12 +2,13 @@
 #include "../../Registros/Registro.h"
 #include "../../Util/Util.h"
 
+
 #define PYTHON_DUMP_BASENAME "dump_src_"
-#define PYTHON_STOP_WORD_FILE "stopwords"
 
 ParserPython::ParserPython(uint32_t cantMaxReg):Parser::Parser(cantMaxReg){
      nombreCatalogo = "SRC";
-     nombreBase = PYTHON_DUMP_BASENAME;
+     nombreBase = PATH_RES;
+     nombreBase += PYTHON_DUMP_BASENAME;
      cargarStopWord(PYTHON_STOP_WORD_FILE);
 }
 
@@ -103,7 +104,8 @@ void ParserPython::flush(){
 
 void ParserPython::guardarTermino(const std::string& termino, uint32_t documento){
      if(!salida.is_open()){
-	  std::string nombre(PYTHON_DUMP_BASENAME);
+	  std::string nombre(PATH_RES);
+	  nombre += PYTHON_DUMP_BASENAME;
 	  nombre += Util::intToString(archivos);
 	  salida.open(nombre.c_str(), std::ios::out);
      }
@@ -116,7 +118,8 @@ void ParserPython::guardarTermino(const std::string& termino, uint32_t documento
 	       cantReg=0;
 	       salida.close();
 	       archivos++;
-	       std::string nombre(PYTHON_DUMP_BASENAME);
+	       std::string nombre(PATH_RES);
+	       nombre += PYTHON_DUMP_BASENAME;
 	       nombre += Util::intToString(archivos);
 	       salida.open(nombre.c_str(), std::ios::out);
 	  }

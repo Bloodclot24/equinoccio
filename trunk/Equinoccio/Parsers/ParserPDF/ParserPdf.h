@@ -6,7 +6,6 @@
 
 #define MIME_TYPE_PDF "application/pdf"
 #define PDF_DUMP_NAME "dump_pdf_"
-#define PDF_PATH_STOPWORDS "stop_words_pdf"
 
 
 enum PDF_KeywordType {

@@ -1,4 +1,5 @@
 #include "FileManager.h"
+#include "ConstPath.h"
 
 FileManager::FileManager() {
 
@@ -7,33 +8,12 @@ FileManager::FileManager() {
 FileManager::~FileManager() {}
 
 
-int FileManager::crearDirectorio(const char* dirname) {
-
-        int estado= mkdir(dirname, PERMISO);
-
-        if(estado < 0)
-                return(errno);
-        else
-                return 0;
-}
-
 int FileManager::crearJerarquias() {
 
-	int estado= mkdir("Equinoccio", PERMISO);
-    if(estado < 0)
-		return(errno);
-	estado= mkdir("Equinoccio/Temp", PERMISO);
-    if(estado < 0)
-            return(errno);
-	estado= mkdir("Equinoccio/Resources", PERMISO);
-    if(estado < 0)
-            return(errno);
-	estado= mkdir("Equinoccio/Resources/SegDiferenciales", PERMISO);
-    if(estado < 0)
-            return(errno);
-	estado= mkdir("Equinoccio/Config", PERMISO);
-    if(estado < 0)
-            return(errno);
+	mkdir(PATH_TEMP, PERMISO);
+    mkdir(PATH_RES, PERMISO);
+	mkdir(PATH_SEGDIF, PERMISO);
+	mkdir(PATH_CONFIG, PERMISO);
     return 0;
 
 }
@@ -42,27 +22,25 @@ void FileManager::crearAlertaFallo() {
 
 	//Creo archivo de fallo por si se produce un fallo de segmentacion
 	std::fstream fallo;
-	std::string pathFallo= "Fallo.equi";
+	std::string pathFallo= PATH_FALLO;
 	fallo.open(pathFallo.c_str() , std::fstream::out);
     fallo.close();
 }
 
-void FileManager::crearConfiguracion() {
+void FileManager::cargarConfiguracion() {
 
     bool error= false;
     //Verifico si el archivo de fallos de segmentacion existe
     std::fstream fallo;
-	std::string pathFallo= "Fallo.equi";
-    fallo.open(pathFallo.c_str() , std::fstream::in);
+    fallo.open(PATH_FALLO , std::fstream::in);
     if(fallo.is_open()) {
     	error= true;
         fallo.close();
-        remove(pathFallo.c_str());
+        remove(PATH_FALLO);
     }
 
     std::fstream config;
-	std::string pathConfig= "Config.equi";
-    config.open(pathConfig.c_str() , std::fstream::in);
+    config.open(PATH_CONFIG_FILE , std::fstream::in);
     config.seekg(0, std::fstream::end);
     uint32_t last= config.tellg();
     config.seekg(0, std::fstream::beg);
@@ -77,15 +55,13 @@ void FileManager::crearConfiguracion() {
     config.close();
 }
 
-void FileManager::cargarConfiguracion() {
+void FileManager::crearConfiguracion() {
 
 	//Elimino el archivo alerta de fallos de segmentacion
-	std::string pathFallo= "Fallo.equi";
-	remove(pathFallo.c_str());
+	remove(PATH_FALLO);
 	//Creo el archivo de configuracion
-	std::string pathConfig= "Config.equi";
 	std::fstream config;
-	config.open(pathConfig.c_str() , std::fstream::out);
+	config.open(PATH_CONFIG_FILE , std::fstream::out);
 
 		if(config.is_open()){
 

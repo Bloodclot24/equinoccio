@@ -4,7 +4,6 @@
 #include "../Parser.h"
 
 #define PATH_DUMP_TXT "dump_txt_"
-#define PATH_STOP_WORD "Parsers/ParserTXT/stop_words_txt"
 
 class ParserTxt: public Parser {
 

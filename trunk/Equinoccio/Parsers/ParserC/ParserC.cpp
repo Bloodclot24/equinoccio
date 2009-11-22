@@ -13,7 +13,7 @@ bool ParserC::parsear(std::string nombre, uint32_t documento){
 	  return false;
 
 
-	std::string nombre_dump;
+	std::string nombre_dump = PATH_RES;
 	nombre_dump+= C_PATH_DUMP;
 	nombre_dump+= Util::intToString(archivos);
 	std::ofstream dump;
@@ -34,6 +34,7 @@ bool ParserC::parsear(std::string nombre, uint32_t documento){
 			dump.close();
 			archivos++;
 			nombre_dump.clear();
+			nombre_dump = PATH_RES;
 			nombre_dump+= C_PATH_DUMP;
 			nombre_dump+= Util::intToString(archivos);
 			//nombre_dump+=".txt";

@@ -13,9 +13,10 @@
 #include "Util/Util.h"
 
 #include "Registros/RegistroNGramas.h"
+#include "FileManager/ConstPath.h"
 
-#define NOMBRE_IDX_ARCHIVOS "IDX_ARCH.idx"
-#define NOMBRE_LEX_ARCHIVOS "LEX_ARCH.lex"
+#define NOMBRE_IDX_ARCHIVOS "Resources/IDX_ARCH.idx"
+#define NOMBRE_LEX_ARCHIVOS "Resources/LEX_ARCH.lex"
 
 #define NUMERO_PARTICIONES  20
 #define NUMERO_REGISTROS_SORT  1000
@@ -115,7 +116,8 @@ public:
 	       std::cout << "Catalogo: " << (*it2).first << "\n";
 	       std::list<Parser*> parsers;
 	       /* Obtengo el nombre del indice del catalogo */
-	       std::string nombreIndice = "IDX_";
+	       std::string nombreIndice = PATH_RES;
+	       nombreIndice += "IDX_";
 	       std::list<Parser*> &lista = (*it2).second;
 	       Parser* p = lista.front();
 	       nombreIndice += p->getNombreCatalogo() + ".aux";
@@ -150,7 +152,9 @@ public:
 		    std::cout << "ordenando: \n";
 		    merge<Registro>(nombreIndice+".sorted",0,generadas-1, nombreIndice);
 	       }
-	       separarAuxiliar(nombreIndice,p->getNombreCatalogo());
+	       std::string nombreCat = PATH_RES;
+	       nombreCat += p->getNombreCatalogo();
+	       separarAuxiliar(nombreIndice,nombreCat);
 	  }
 
 	  return 0;

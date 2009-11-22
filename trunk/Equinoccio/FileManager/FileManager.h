@@ -9,7 +9,6 @@
 #include <errno.h>
 
 #define PERMISO 0700
-#define COMIENZO_FILENAME "/"
 
 class FileManager {
 
@@ -24,26 +23,25 @@ public:
 		 */
 		~FileManager();
 
-		/**
-		 * Crea un directorio.
-		 *
-		 * @param dirname Directorio a crear.
-		 *
-		 * @return Devuelve 0 si se pudo crear el directorio, caso
-		 * contrario -1.
-		 */
-		static int crearDirectorio(const char* dirname);
-
 		/* Crea la jerarquia de directorios.
 		 * @return Devuelve 0 si se pudo crear el directorio, caso
 		 * contrario -1.
 		 */
 		static int crearJerarquias();
 
+		/*
+		 * Crea un archivo para verificar que el programa finalizo correctamente
+		 */
 		static void crearAlertaFallo();
 
+		/*
+		 * crea el archivo de configuracion de la aplicacion
+		 */
 		static void crearConfiguracion();
 
+		/*
+		 * levanta la configuracion desde archivo
+		 */
 		static void cargarConfiguracion();
 };
 #endif /*FILEMANAGER_H_*/

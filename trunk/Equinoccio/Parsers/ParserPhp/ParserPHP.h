@@ -4,7 +4,6 @@
 #include "../Parser.h"
 
 #define PHP_PATH_DUMP "dump_php_"
-#define PHP_PATH_STOP_WORD "stop_words_php"
 
 class ParserPHP: public Parser {
 

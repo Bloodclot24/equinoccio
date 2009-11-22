@@ -2,6 +2,7 @@
 #include "../Busqueda Binaria/Buscador.h"
 #include "../Registros/Registro.h"
 #include "../Parsers/Parser.h"
+#include "../FileManager/ConstPath.h"
 
 Busqueda::Busqueda() {
 	size = 0;
@@ -92,7 +93,7 @@ std::list<std::string> Busqueda::buscar(std::string& consulta, std::string catal
 		}
 	}
 
-	borrarListas();
+	//borrarListas();
 	std::cout<<"Fin buscar"<<std::endl;
 	return paths;
 }
@@ -119,7 +120,9 @@ bool Busqueda::buscarEnIndice(std::string consulta, std::string catalogo) {
 	if ( reg.frec != 0) {
 		std::list<uint32_t>* puntDocs = new std::list<uint32_t>;
 		//obtener los punteros
-		std::ifstream arch_punteros(catalogo.append(".pun").c_str(), std::ios::in | std::ios::binary);
+		std::string nombre_pun = PATH_RES;
+		nombre_pun += catalogo;
+		std::ifstream arch_punteros(nombre_pun.append(".pun").c_str(), std::ios::in | std::ios::binary);
 		if (arch_punteros.good()){
 		     std::cout << "Archivo: " << catalogo <<" Offset : " << reg.pDocs << std::endl;
 		     Registro::obtenerPunterosEnLista(arch_punteros, reg.pDocs , reg.frec, puntDocs);
@@ -140,7 +143,7 @@ std::string Busqueda::buscarPath(uint32_t puntero,std::string catalogo ) {
 
 	std::string path;
 	uint32_t par[2]; //par offsetLex - numDir
-	std::string nombre = "IDX_ARCH.idx.";
+	std::string nombre = IDX_ARCH;
 	nombre +=catalogo;
 
 	std::ifstream indiceDocs(nombre.c_str(),  std::ios::in | std::ios::binary);
@@ -150,7 +153,7 @@ std::string Busqueda::buscarPath(uint32_t puntero,std::string catalogo ) {
 		indiceDocs.read((char*)par, 2*sizeof(uint32_t));
 		indiceDocs.close();
 
-		nombre = "LEX_ARCH.lex.";
+		nombre = LEX_ARCH;
 		nombre += catalogo;
 		std::ifstream lexDocs(nombre.c_str(), std::ios::in);
 		if(lexDocs.good()) {
@@ -160,7 +163,8 @@ std::string Busqueda::buscarPath(uint32_t puntero,std::string catalogo ) {
 			lexDocs.close();
 
 			//busco el directorio
-			lexDocs.open("IDX_DIRS.idx", std::ios::in | std::ios::binary);
+
+			lexDocs.open(IDX_DIRS, std::ios::in | std::ios::binary);
 			if(lexDocs.good()){
 				//obtengo el offset del directorio
 				uint32_t offset;
@@ -168,7 +172,7 @@ std::string Busqueda::buscarPath(uint32_t puntero,std::string catalogo ) {
 				lexDocs.read((char*)&offset, sizeof(uint32_t));
 				lexDocs.close();
 
-				lexDocs.open("LEX_DIRS.lex",  std::ios::in);
+				lexDocs.open(LEX_DIRS,  std::ios::in);
 				if (lexDocs.good()) {
 					lexDocs.seekg(offset);
 					std::getline(lexDocs, path, '\0');

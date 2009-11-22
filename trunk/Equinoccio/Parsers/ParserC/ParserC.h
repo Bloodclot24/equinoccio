@@ -4,7 +4,6 @@
 #include "../Parser.h"
 
 #define C_PATH_DUMP "dump_C_"
-#define C_PATH_STOP_WORD "stop_words_c"
 
 class ParserC: public Parser {
 		//TODO ver de poner referenncias en los strings en lugar de copias

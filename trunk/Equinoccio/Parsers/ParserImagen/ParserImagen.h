@@ -8,7 +8,6 @@
 #define MIME_TYPE_JPEG "image/jpeg"
 #define MIME_TYPE_PNG "image/png"
 #define IMAGEN_DUMP_NAME "dump_img_"
-#define IMAGEN_PATH_STOPWORDS "stop_words_img"
 
 enum IMG_KeywordType {
 	IMG_FILENAME = 1,

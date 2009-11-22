@@ -24,8 +24,8 @@
 #define ARG_SEARCH "-s"
 #define ARG_CAT    "-c"
 
-#define NOMBRE_IDX_DIRECTORIOS "IDX_DIRS.idx"
-#define NOMBRE_LEX_DIRECTORIOS "LEX_DIRS.lex"
+#define NOMBRE_IDX_DIRECTORIOS "Resources/IDX_DIRS.idx"
+#define NOMBRE_LEX_DIRECTORIOS "Resources/LEX_DIRS.lex"
 
 #define ERROR_NO_ERROR              0
 #define ERROR_ARG_DESCONOCIDO      -1

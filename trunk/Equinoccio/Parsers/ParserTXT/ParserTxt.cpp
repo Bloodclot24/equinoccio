@@ -3,7 +3,8 @@
 
 ParserTxt::ParserTxt(uint32_t cantMaxReg) :Parser::Parser(cantMaxReg){
      nombreCatalogo = "TXT";
-     nombreBase = PATH_DUMP_TXT;
+     nombreBase = PATH_RES;
+     nombreBase += PATH_DUMP_TXT;
      cargarStopWord(PATH_STOP_WORD);
 };
 
@@ -13,7 +14,7 @@ bool ParserTxt::parsear(std::string nombre, uint32_t documento){
      if(!verificarExtension(nombre,validas))
 	  return false;
 
-	std::string nombre_dump;
+	std::string nombre_dump = PATH_RES;
 	nombre_dump+= PATH_DUMP_TXT;
 	nombre_dump+= Util::intToString(archivos);
 	std::ofstream dump;
@@ -42,6 +43,7 @@ bool ParserTxt::parsear(std::string nombre, uint32_t documento){
 			dump.close();
 			archivos++;
 			nombre_dump.clear();
+			nombre_dump = PATH_RES;
 			nombre_dump+= PATH_DUMP_TXT;
 			nombre_dump+= Util::intToString(archivos);
 			dump.open(nombre_dump.c_str(), std::fstream::out);

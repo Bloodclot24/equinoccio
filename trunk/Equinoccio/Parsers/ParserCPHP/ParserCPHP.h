@@ -4,9 +4,7 @@
 #include "../Parser.h"
 
 #define PHP_PATH_DUMP "dump_php_"
-#define PHP_PATH_STOP_WORD "stop_words_php"
 #define C_PATH_DUMP "dump_C_"
-#define C_PATH_STOP_WORD "stop_words_c"
 
 class ParserCPHP: public Parser {
 //TODO ver de poner refencias en lugar de copias de los strings

@@ -5,7 +5,8 @@
 //TODO sacar los couts
 ParserImagen::ParserImagen(uint32_t cantMaxReg):Parser(cantMaxReg) {
      nombreCatalogo = "IMG";
-     nombreBase=IMAGEN_DUMP_NAME;
+     nombreBase = PATH_RES;
+     nombreBase+=IMAGEN_DUMP_NAME;
      cargarStopWord(IMAGEN_PATH_STOPWORDS);
 }
 
@@ -63,7 +64,8 @@ bool ParserImagen::parsear(std::string nombre, uint32_t documento) {
 		std::cout<<"endKeys"<<std::endl<<std::endl;
 
 		if (is_ok) {
-			std::string dump_name = IMAGEN_DUMP_NAME;
+			std::string dump_name = PATH_RES;
+			dump_name += IMAGEN_DUMP_NAME;
 			dump_name += Util::intToString(archivos);
 
 			std::ofstream dump;
@@ -82,7 +84,9 @@ bool ParserImagen::parsear(std::string nombre, uint32_t documento) {
 					cantReg = 1;
 					archivos++;
 					dump.close();
-					dump_name = IMAGEN_DUMP_NAME;
+
+					dump_name = PATH_RES;
+					dump_name += IMAGEN_DUMP_NAME;
 					dump_name += Util::intToString(archivos);
 					dump.open(dump_name.c_str(), std::ofstream::out);
 
