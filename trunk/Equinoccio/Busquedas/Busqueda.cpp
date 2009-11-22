@@ -21,7 +21,7 @@ std::list<std::string> Busqueda::buscar(std::string& consulta, std::string catal
 		bool encontrado;
 		do {
 			//tomo la palabra y la busco en el indice
-			where = consulta.find(' ', pos+1);
+			where = consulta.find(' ', pos);
 			std::cout<<"Buscar: "<<consulta.substr(pos, where-pos)<<" where: "<<where<<" pos: "<<pos<<std::endl;
 			encontrado = buscarEnIndice(consulta.substr(pos, where-pos), catalogo);
 			pos = where+1;
@@ -67,13 +67,13 @@ bool Busqueda::buscarEnIndice(std::string consulta, std::string catalogo) {
 
 	if (consulta.find('*') == std::string::npos) {
 		consulta = Parser::aMinuscSinInvalidos(consulta);
-		std::cout<<"Busqueda simple: "<<consulta<<std::endl;
+		std::cout<<"Busqueda simple: \""<<consulta<<"\""<<std::endl;
 		if (consulta.size() != 0)
 			reg = Buscador::buscar(consulta, catalogo);
 	}
 	else {
 		reg.frec = 0; //bla
-		std::cout<<"busqueda con comodines"<<std::endl;
+		std::cout<<"busqueda con comodines: "<<consulta<<std::endl;
 		//consulta con comodines
 		//Parser::aMinuscSinInvalidos(consulta)
 		//armo bigramas y llamo a buscar para cada uno
@@ -136,6 +136,7 @@ std::string Busqueda::buscarPath(uint32_t puntero,std::string catalogo ) {
 					lexDocs.seekg(offset);
 					std::getline(lexDocs, path, '\0');
 					lexDocs.close();
+					path += '/';
 					path += nombre;
 				}
 				else
@@ -150,7 +151,7 @@ std::string Busqueda::buscarPath(uint32_t puntero,std::string catalogo ) {
 		}
 	}
 	else {
-		std::cout<<"error al abrir el indice de documentos"<<std::endl;
+		std::cout<<"error al abrir el indice de documentos: "<<nombre<<std::endl;
 	}
 	return path;
 }
