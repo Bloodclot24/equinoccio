@@ -45,31 +45,25 @@ std::list<std::string> Busqueda::buscar(std::string& consulta, std::string catal
 				for (uint32_t i=0;i<cant_listas;i++){
 					std::list<uint32_t>::iterator it;
 					it=punteros[i]->begin();
-					if(min > it.front()){
+					if(min > (*it)){
 						//vec_min.clear();
 						cont_min=0;
-						min = it.front();
+						min = punteros[i]->front();
 						pos_min=i;
-					}else if (min==it.front())
+					}else if (min==(*it))
 								//vec_min.push_back(i);
 								cont_min++;
 				}
 		/*		for (uint32_t i=0;i<vec_min.size();i++){
-					uint32_t pos=vec_min[i];
-					std::list<uint32_t>::iterator it;
-					it = punteros[pos]->begin();
-					it.pop();
+					punteros[pos]->pop_front();;
 				}*/
 				if (cont_min)
 					for (uint32_t i=pos_min;i<cant_listas;i++){
-						std::list<uint32_t>::iterator it;
-						it=punteros[i]->begin();
-						if(min == it.front())
-							it.pop();
+						if(min == punteros[i]->front())
+							punteros[i]->pop_front();
 					}
 					punteros_match.push_back(min);
-					std::list<uint32_t>::iterator it;
-					it=punteros[pos_min]->pop();
+					punteros[pos_min]->pop_front();
 					if (punteros[pos_min]->size()==0){
 						cant_listas--;
 						punteros[pos_min]=punteros[punteros.size()-1];
