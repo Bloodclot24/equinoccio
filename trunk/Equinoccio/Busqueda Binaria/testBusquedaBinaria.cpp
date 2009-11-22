@@ -6,7 +6,7 @@ int main(int argc, char* argv[]) {
 	RegistroIndice regResultado;
 	const std::string termino= argv[1];
 
-	regResultado= Buscador::buscar(termino, "SND");
+	regResultado= Buscador::buscar(termino, "SRC");
 
 	std::cout << "-- Resultado --" << std::endl;
 	if(regResultado.frec != 0) {

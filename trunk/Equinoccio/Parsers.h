@@ -218,14 +218,14 @@ public:
 	       indice.write((char*)&idxPunteros, sizeof(idxPunteros));
 	       idxLexico += termino.size()+1;
 	       idxPunteros += spunteros.size();
-	       // contador+=RegistroNGramas::generarEscribir(ngramas,0,*r,offsetIndice);
-	       // offsetIndice += sizeof(idxLexico) + sizeof(freq) + sizeof(idxPunteros);
-	       // if(contador > NUMERO_NGRAMAS){
-	       // 	    contador = 0;
-	       // 	    ngramas.close();
-	       // 	    generadas += Sorter<RegistroNGramas>::Sort((ngramasBase + Util::intToString(particiones)), nombreBase+".sorted", generadas,NUMERO_REGISTROS_SORT);
-	       // 	    particiones++;
-	       // 	    ngramas.open((ngramasBase + Util::intToString(particiones)).c_str());	       }
+	       contador+=RegistroNGramas::generarEscribir(ngramas,0,*r,offsetIndice);
+	       offsetIndice += sizeof(idxLexico) + sizeof(freq) + sizeof(idxPunteros);
+	       if(contador > NUMERO_NGRAMAS){
+	       	    contador = 0;
+	       	    ngramas.close();
+	       	    generadas += Sorter<RegistroNGramas>::Sort((ngramasBase + Util::intToString(particiones)), nombreBase+".sorted", generadas,NUMERO_REGISTROS_SORT);
+	       	    particiones++;
+	       	    ngramas.open((ngramasBase + Util::intToString(particiones)).c_str());	       }
 	       delete r;
 	  }
 

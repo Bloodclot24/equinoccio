@@ -1,6 +1,6 @@
 #include "Buscador.h"
 
-RegistroIndice Buscador::buscar(const std::string termino,const std::string catalogo)
+RegistroIndice Buscador::buscar(const std::string& termino,const std::string& catalogo)
 {
 	int medio = 0;
 	int izquierda = 0;
@@ -24,7 +24,7 @@ RegistroIndice Buscador::buscar(const std::string termino,const std::string cata
 	archIdx.seekg(0,std::fstream::end);
 	derecha = archIdx.tellg()/sizeof(RegistroIndice);
 	
-	while ((!encontrado) && (izquierda < derecha) && (!error)){
+	while ((!encontrado) && (izquierda <= derecha) && (!error)){
 		//calculo la mitad
 		medio = (derecha + izquierda) / 2;
 		archIdx.seekg(medio*sizeof(RegistroIndice));
@@ -54,7 +54,7 @@ RegistroIndice Buscador::buscar(const std::string termino,const std::string cata
 	return regInd;
 }
 
-RegistroNGrama Buscador::buscarNgrama(const std::string ngrama,const std::string catalogo)
+RegistroNGrama Buscador::buscarNgrama(const std::string& ngrama,const std::string& catalogo)
 {
 	int medio = 0;
 	int izquierda = 0;
