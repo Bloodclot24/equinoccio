@@ -56,8 +56,10 @@ Registro* Registro::leer(std::ifstream &archivo, int compresion){
 	       for(;bit!=0 && bits > 0 && indice < 2; bit >>= 1, bits--){
 		    aux += ((byte)&(bit))>0?'1':'0';
 		    
-		    if((valores[indice] = TDA_Codigos::getNGamma(aux)) != (uint32_t)-1)
+		    if((valores[indice] = TDA_Codigos::getNGamma(aux)) != (uint32_t)-1){
 			 indice++;
+			 aux.clear();
+		    }
 	       }
 	       if(indice==2){
 		    docAnterior = p.documento = valores[0]+docAnterior;
@@ -247,7 +249,7 @@ int Registro::unir(const Registro& registro){
      return 1;
 }
 
-void Registro::obtenerPunterosEnLista(std::ifstream& archivo, uint32_t frec, std::list<uint32_t>* lista_punteros) {
+void Registro::obtenerPunterosEnLista(std::ifstream& archivo, uint32_t offset, uint32_t frec, std::list<uint32_t>* lista_punteros) {
 
 	char byte=0;
 	unsigned bit=1<<7;
@@ -257,22 +259,28 @@ void Registro::obtenerPunterosEnLista(std::ifstream& archivo, uint32_t frec, std
 	uint32_t valores[2];
 	std::string aux;
 
+	archivo.seekg(offset);
+
 	while(archivo.good() && frec > 0){
 	   if(bits==0){
 		archivo.read(&byte, 1);
 		bits=8;
 		bit=1<<7;
 	   }
-
+	   std::cout << "Distancia: ";
 	   for(;bit!=0 && bits > 0 && indice < 2; bit >>= 1, bits--){
 		aux += ((byte)&(bit))>0?'1':'0';
-
-		if((valores[indice] = TDA_Codigos::getNGamma(aux)) != (uint32_t)-1)
+		
+		if((valores[indice] = TDA_Codigos::getNGamma(aux)) != (uint32_t)-1){
 		 indice++;
+		 std::cout << aux << " ";
+		 aux.clear();
+		}
 	   }
 	   if(indice==2){
 		docAnterior = valores[0]+docAnterior;
-		lista_punteros->push_back(valores[0]);
+		std::cout << "\ndocumento: " << docAnterior << std::endl;
+		lista_punteros->push_back(docAnterior-1);
 		indice=0;
 		frec--;
 	   }

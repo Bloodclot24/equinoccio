@@ -85,7 +85,8 @@ bool Busqueda::buscarEnIndice(std::string consulta, std::string catalogo) {
 		//obtener los punteros
 		std::ifstream arch_punteros(catalogo.append(".pun").c_str(), std::ios::in | std::ios::binary);
 		if (arch_punteros.good()){
-			Registro::obtenerPunterosEnLista(arch_punteros, reg.frec, puntDocs);
+		     std::cout << "Offset : " << reg.pDocs << std::endl;
+		     Registro::obtenerPunterosEnLista(arch_punteros, reg.pDocs , reg.frec, puntDocs);
 			punteros.push_back(puntDocs);
 			size++;
 			arch_punteros.close();
@@ -109,7 +110,7 @@ std::string Busqueda::buscarPath(uint32_t puntero,std::string catalogo ) {
 	std::ifstream indiceDocs(nombre.c_str(),  std::ios::in | std::ios::binary);
 	if (indiceDocs.good()) {
 		//obtengo el puntero al lexico de archivos
-		indiceDocs.seekg(puntero);
+	     indiceDocs.seekg(puntero*2*sizeof(uint32_t));
 		indiceDocs.read((char*)par, 2*sizeof(uint32_t));
 		indiceDocs.close();
 

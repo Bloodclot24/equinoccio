@@ -141,7 +141,7 @@ public:
 	  }
      }
 
-     static void obtenerPunterosEnLista(std::ifstream& arch, uint32_t frec, std::list<uint32_t>* lista_punteros);
+     static void obtenerPunterosEnLista(std::ifstream& arch,uint32_t offset, uint32_t frec, std::list<uint32_t>* lista_punteros);
 
      std::list<uint32_t> obtenerDocumentos();
      std::string obtenerPunterosComprimidos();

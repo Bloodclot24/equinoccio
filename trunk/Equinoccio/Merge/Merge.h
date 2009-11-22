@@ -57,7 +57,7 @@ int Merger<t>::Merge(const std::vector<std::string>& nombreParticiones, \
 	delete archivo;
   }
 
-  /* Si la cantidad de archivos agregados es mayor a 1 */
+  /* Si la cantidad de archivos agregados es mayor aa 1 */
   if(particiones.size() > 0){
     /* lectura inicial de registros de cada particion */
     for(unsigned i=0;i<particiones.size();i++){
