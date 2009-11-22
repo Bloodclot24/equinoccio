@@ -205,10 +205,14 @@ private:
      }
 
      Equinoccio(){
+    	 FileManager::cargarConfiguracion();
     	 FileManager::crearJerarquias();
+    	 FileManager::crearAlertaFallo();
      };
      Equinoccio(const Equinoccio&){};
-     ~Equinoccio(){};
+     ~Equinoccio(){
+    	 FileManager::crearConfiguracion();
+     };
      
 public:
      static int main(int argc, char** argv){

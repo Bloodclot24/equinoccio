@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <stdint.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <errno.h>
@@ -39,9 +40,11 @@ public:
 		 */
 		static int crearJerarquias();
 
+		static void crearAlertaFallo();
 
+		static void crearConfiguracion();
 
-
+		static void cargarConfiguracion();
 };
 #endif /*FILEMANAGER_H_*/
 
