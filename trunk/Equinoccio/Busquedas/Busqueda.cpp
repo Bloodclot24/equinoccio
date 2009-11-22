@@ -14,6 +14,7 @@ Busqueda::~Busqueda() {
 std::list<std::string> Busqueda::buscar(std::string& consulta, std::string catalogo) {
 
 	std::list<std::string> paths;
+	uint32_t cant_listas = 0;
 	if (consulta.size() != 0) {
 
 		size_t pos = 0;
@@ -33,8 +34,49 @@ std::list<std::string> Busqueda::buscar(std::string& consulta, std::string catal
 		}
 		else {
 			//hacer un AND de todos los punteros y guardarlos en punteros_match
-//...
-			std::cout<<"HACER AND"<<std::endl;
+//punteros_match list
+//punteros es un vector listas...
+
+			cant_listas= punteros.size();
+			uint32_t pos_min=0,cont_min=0;
+			uint32_t min=0;
+			std::vector<uint32_t> vec_min;
+			while(cant_listas>0){
+				for (uint32_t i=0;i<cant_listas;i++){
+					std::list<uint32_t>::iterator it;
+					it=punteros[i]->begin();
+					if(min > it.front()){
+						//vec_min.clear();
+						cont_min=0;
+						min = it.front();
+						pos_min=i;
+					}else if (min==it.front())
+								//vec_min.push_back(i);
+								cont_min++;
+				}
+		/*		for (uint32_t i=0;i<vec_min.size();i++){
+					uint32_t pos=vec_min[i];
+					std::list<uint32_t>::iterator it;
+					it = punteros[pos]->begin();
+					it.pop();
+				}*/
+				if (cont_min)
+					for (uint32_t i=pos_min;i<cant_listas;i++){
+						std::list<uint32_t>::iterator it;
+						it=punteros[i]->begin();
+						if(min == it.front())
+							it.pop();
+					}
+					punteros_match.push_back(min);
+					std::list<uint32_t>::iterator it;
+					it=punteros[pos_min]->pop();
+					if (punteros[pos_min]->size()==0){
+						cant_listas--;
+						punteros[pos_min]=punteros[punteros.size()-1];
+						punteros.pop_back();
+					}
+			}
+			//std::cout<<"HACER AND"<<std::endl;
 
 			std::list<uint32_t>::iterator it;
 			std::list<uint32_t>::iterator end = punteros_match.end();
