@@ -14,6 +14,8 @@
 #include "Parsers/ParserCPHP/ParserCPHP.h"
 #include "Parsers/ParserPython/ParserPython.h"
 #include "Parsers/ParserTXT/ParserTxt.h"
+#include "FileManager/FileManager.h"
+
 
 
 #define ARG_LIST   "-pl"
@@ -202,7 +204,9 @@ private:
 	  return ERROR_NO_ERROR;
      }
 
-     Equinoccio(){};
+     Equinoccio(){
+    	 FileManager::crearJerarquias();
+     };
      Equinoccio(const Equinoccio&){};
      ~Equinoccio(){};
      

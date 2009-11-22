@@ -15,7 +15,8 @@ SOURCES=CodigoGamma/TDA_Codigos.cpp \
 	Sort/Sort.cpp \
 	Merge/Merge.cpp \
 	Busqueda\ Binaria/Buscador.cpp \
-	Busquedas/Busqueda.cpp
+	Busquedas/Busqueda.cpp \
+	FileManager/FileManager.cpp
 
 
 TESTSOURCES=Arbol/arbol.cpp\
