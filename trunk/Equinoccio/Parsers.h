@@ -66,6 +66,7 @@ public:
 	       const std::string &cat = (*it)->getNombreCatalogo();
 	       encontrado = (*it)->parsear(nombreArchivo, documentos[cat]);
 	       if(encontrado){
+		    std::cout << "Documento: " << documentos[cat] << std::endl;
 		    documentos[cat]++;
 		    char* nombre = strdup(nombreArchivo.c_str());
 		    char* final = basename(nombre);

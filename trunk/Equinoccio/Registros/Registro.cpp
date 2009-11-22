@@ -40,7 +40,7 @@ Registro* Registro::leer(std::ifstream &archivo, int compresion){
 
 	  char byte=0;
 	  unsigned bit=1<<7;
-	  uint32_t docAnterior = 0;
+	  uint32_t docAnterior = (uint32_t)-1;
 	  unsigned bits=0;
 	  unsigned indice=0;
 	  uint32_t valores[2];
@@ -64,6 +64,7 @@ Registro* Registro::leer(std::ifstream &archivo, int compresion){
 	       if(indice==2){
 		    docAnterior = p.documento = valores[0]+docAnterior;
 		    p.frecuencia=valores[1];
+		    p.documento--;
 		    r->punteros.push_back(p);
 		    indice=0;
 		    contador--;
@@ -100,14 +101,14 @@ int Registro::escribir(std::ofstream &archivo, int compresion){
 	  std::string str1, str2;
 	  char byte=0;
 	  unsigned bit=1<<7;
-	  uint32_t docAnterior = 0;
+	  uint32_t docAnterior = (uint32_t)-1;
 	  unsigned bits=0;
 
 	  for(it=punteros.begin(); it != punteros.end(); it++){
 	       Registro::Punteros p;
 	       p = *it;
 
-	       str1= TDA_Codigos::getCGamma(p.documento-docAnterior+1);
+	       str1= TDA_Codigos::getCGamma(p.documento-docAnterior);
 	       docAnterior=p.documento;
 
 	       str2=TDA_Codigos::getCGamma(p.frecuencia);
@@ -150,7 +151,7 @@ std::string Registro::obtenerPunterosComprimidos(){
      std::string str1, str2;
      char byte=0;
      unsigned bit=1<<7;
-     uint32_t docAnterior = 0;
+     uint32_t docAnterior = (uint32_t) -1;
      unsigned bits=0;
      
      std::string resultado;
@@ -159,9 +160,12 @@ std::string Registro::obtenerPunterosComprimidos(){
 	  Registro::Punteros p;
 	  p = *it;
 	  
-	  str1= TDA_Codigos::getCGamma(p.documento-docAnterior+1);
+
+	  std::cout << "Comprimo " << p.documento << " = " << p.documento-docAnterior;
+
+	  str1= TDA_Codigos::getCGamma(p.documento-docAnterior);
 	  docAnterior=p.documento;
-	  
+	  p.frecuencia = 1;
 	  str2=TDA_Codigos::getCGamma(p.frecuencia);
 	  
 	  str1+=str2;
@@ -253,7 +257,7 @@ void Registro::obtenerPunterosEnLista(std::ifstream& archivo, uint32_t offset, u
 
 	char byte=0;
 	unsigned bit=1<<7;
-	uint32_t docAnterior = 0;
+	uint32_t docAnterior = (uint32_t)-1;
 	unsigned bits=0;
 	unsigned indice=0;
 	uint32_t valores[2];
@@ -280,7 +284,7 @@ void Registro::obtenerPunterosEnLista(std::ifstream& archivo, uint32_t offset, u
 	   if(indice==2){
 		docAnterior = valores[0]+docAnterior;
 		std::cout << "\ndocumento: " << docAnterior << std::endl;
-		lista_punteros->push_back(docAnterior-1);
+		lista_punteros->push_back(docAnterior);
 		indice=0;
 		frec--;
 	   }

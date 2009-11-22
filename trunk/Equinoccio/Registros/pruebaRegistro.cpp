@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+// a 
+
 int main(int argc, char** argv){
     if(argc<2){
 	  std::cout << "La sintaxis es: " << argv[0] << " <archivo>\n";

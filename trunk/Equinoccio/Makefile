@@ -12,8 +12,6 @@ SOURCES=CodigoGamma/TDA_Codigos.cpp \
 	Registros/Registro.cpp \
 	Registros/RegistroNGramas.cpp \
 	Util/Util.cpp \
-	Sort/Sort.cpp \
-	Merge/Merge.cpp \
 	Busqueda\ Binaria/Buscador.cpp \
 	Busquedas/Busqueda.cpp \
 	FileManager/FileManager.cpp

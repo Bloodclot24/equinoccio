@@ -121,7 +121,7 @@ bool Busqueda::buscarEnIndice(std::string consulta, std::string catalogo) {
 		//obtener los punteros
 		std::ifstream arch_punteros(catalogo.append(".pun").c_str(), std::ios::in | std::ios::binary);
 		if (arch_punteros.good()){
-		     std::cout << "Offset : " << reg.pDocs << std::endl;
+		     std::cout << "Archivo: " << catalogo <<" Offset : " << reg.pDocs << std::endl;
 		     Registro::obtenerPunterosEnLista(arch_punteros, reg.pDocs , reg.frec, puntDocs);
 			punteros.push_back(puntDocs);
 			size++;
