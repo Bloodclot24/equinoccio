@@ -1,4 +1,5 @@
 #include "Registro.h"
+#include <sstream>
 
 Registro::Registro(const std::string& termino, uint32_t documento){
      Registro::Punteros puntero;
@@ -155,7 +156,18 @@ std::string Registro::obtenerPunterosComprimidos(){
      unsigned bits=0;
      
      std::string resultado;
-     
+
+     for(it=punteros.begin(); it != punteros.end(); it++){
+	  Registro::Punteros p;
+	  p = *it;
+	  resultado.append((char*)&(p.documento),4);
+	  resultado.append((char*)&(p.frecuencia),4);
+	  std::cout << "obtengo: " << p.documento << " " << p.frecuencia << std::endl;
+     }     
+
+     std::cout << "Resultado: " << resultado << std::endl;
+     return resultado;
+
      for(it=punteros.begin(); it != punteros.end(); it++){
 	  Registro::Punteros p;
 	  p = *it;
@@ -165,7 +177,6 @@ std::string Registro::obtenerPunterosComprimidos(){
 
 	  str1= TDA_Codigos::getCGamma(p.documento-docAnterior);
 	  docAnterior=p.documento;
-	  p.frecuencia = 1;
 	  str2=TDA_Codigos::getCGamma(p.frecuencia);
 	  
 	  str1+=str2;
@@ -230,6 +241,7 @@ int Registro::unir(const Registro& registro){
 	       Registro::Punteros p;
 	       p.documento = (*it1).documento;
 	       p.frecuencia = (*it1).frecuencia + (*it2).frecuencia ;
+	       p.frecuencia = 1; //TODO: OJO
 	       final.push_back(p);
 	       it1++;
 	       it2++;
@@ -264,6 +276,13 @@ void Registro::obtenerPunterosEnLista(std::ifstream& archivo, uint32_t offset, u
 	std::string aux;
 
 	archivo.seekg(offset);
+
+	uint32_t auxi;
+	archivo.read((char*)&auxi, sizeof(uint32_t));
+	lista_punteros->push_back(auxi);
+	std::cout << "Documento: " << auxi << std::endl;
+	archivo.read((char*)&auxi, sizeof(uint32_t));
+	return;
 
 	while(archivo.good() && frec > 0){
 	   if(bits==0){

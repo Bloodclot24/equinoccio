@@ -137,8 +137,8 @@ int Merger<t>::Merge(const std::vector<std::string>& nombreParticiones, \
     delete particiones[i];
 
   /* elimino las particiones */
-  // for(unsigned i=0;i<nombreParticiones.size();i++)
-  //      remove(nombreParticiones[i].c_str());
+  for(unsigned i=0;i<nombreParticiones.size();i++)
+       remove(nombreParticiones[i].c_str());
 
   return 0;
 }

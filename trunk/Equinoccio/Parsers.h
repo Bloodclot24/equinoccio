@@ -234,7 +234,7 @@ public:
 	       delete r;
 	  }
 
-	  remove(nombre.c_str());
+	  //remove(nombre.c_str());
 	  
 	  if(contador >= 1){
 	       contador = 0;
