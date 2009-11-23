@@ -277,11 +277,13 @@ void Registro::obtenerPunterosEnLista(std::ifstream& archivo, uint32_t offset, u
 
 	archivo.seekg(offset);
 
-	uint32_t auxi;
-	archivo.read((char*)&auxi, sizeof(uint32_t));
-	lista_punteros->push_back(auxi);
-	std::cout << "Documento: " << auxi << std::endl;
-	archivo.read((char*)&auxi, sizeof(uint32_t));
+	while(frec-->0){
+	     uint32_t auxi;
+	     archivo.read((char*)&auxi, sizeof(uint32_t));
+	     lista_punteros->push_back(auxi);
+	     std::cout << "Documento: " << auxi << std::endl;
+	     archivo.read((char*)&auxi, sizeof(uint32_t));
+	}
 	return;
 
 	while(archivo.good() && frec > 0){

@@ -15,7 +15,6 @@ Busqueda::~Busqueda() {
 std::list<std::string> Busqueda::buscar(std::string& consulta, std::string catalogo) {
 
 	std::list<std::string> paths;
-	uint32_t cant_listas = 0;
 	if (consulta.size() != 0) {
 
 		size_t pos = 0;
@@ -34,72 +33,72 @@ std::list<std::string> Busqueda::buscar(std::string& consulta, std::string catal
 			std::cout<<" * NO MATCH * "<<std::endl;
 		}
 		else {
-			//hacer un AND de todos los punteros y guardarlos en punteros_match
-//punteros_match list
-//punteros es un vector listas...
+		     if (punteros.size() > 1){
+			  //hacer un AND de todos los punteros y guardarlos en punteros_match
+			  //punteros_match list
+			  //punteros es un vector listas...
 
-			cant_listas= punteros.size();
-			uint32_t pos_min=0,cont_min=0;
-			uint32_t min=0;
-			std::vector<uint32_t> vec_min;
-			while(cant_listas>0){
-				for (uint32_t i=0;i<cant_listas;i++){
-					std::list<uint32_t>::iterator it;
-					it=punteros[i]->begin();
-					if(min > (*it)){
-						//vec_min.clear();
-						cont_min=0;
-						min = punteros[i]->front();
-						pos_min=i;
-					}else if (min==(*it))
-								//vec_min.push_back(i);
-								cont_min++;
-				}
-		/*		for (uint32_t i=0;i<vec_min.size();i++){
-					punteros[pos]->pop_front();;
-				}*/
-				if (cont_min)
-					for (uint32_t i=pos_min;i<cant_listas;i++){
-						if(min == punteros[i]->front())
-							punteros[i]->pop_front();
-					}
-					punteros_match.push_back(min);
-					punteros[pos_min]->pop_front();
-					if (punteros[pos_min]->size()==0){
-						cant_listas--;
-						punteros[pos_min]=punteros[punteros.size()-1];
-						punteros.pop_back();
-					}
-			}
-			//std::cout<<"HACER AND"<<std::endl;
-
-			std::list<uint32_t>::iterator it;
-			std::list<uint32_t>::iterator end = punteros_match.end();
-
-			//agregar los paths a la lista
-			for (it = punteros_match.begin(); it != end; it++)
-				paths.push_back(buscarPath(*it, catalogo));
-
-			//TODO.. por ahora sin el and =P
-			for (unsigned int i = 0; i<size; i++){
-				std::cout<<"lista: "<<i<<std::endl;
-				std::list<uint32_t>::iterator it;
-				std::list<uint32_t>::iterator end = punteros[i]->end();
-				for (it = punteros[i]->begin(); it != end; it++){
-					std::cout<<"MATCH sin and: "<<buscarPath(*it, catalogo)<<std::endl;
-				}
-			}
-
+			  std::cout << punteros.size() << " listas\n";
+			  uint32_t pos_min=0;
+			  uint32_t min=(uint32_t)-1;
+			  std::vector<uint32_t> vec_min;
+			  uint32_t palabrasBuscadas = punteros.size();
+			  while(punteros.size()>0){
+			       vec_min.clear();
+			       min = (uint32_t)-1;
+			       for (uint32_t i=0;i<punteros.size();i++){
+				    if(min > punteros[i]->front()){
+					 vec_min.clear();
+					 min = punteros[i]->front();
+					 std::cout << "minimo: " << min << " posicion " << i<<std::endl;
+					 pos_min=i;
+					 vec_min.push_back(i);
+				    }else if (min==punteros[i]->front()){
+					 vec_min.push_back(i);
+				    }
+			       }
+			       if(vec_min.size() == palabrasBuscadas) //es un AND, todas tienen que ser menores
+				    punteros_match.push_back(min);
+			       for (uint32_t i=0;i<vec_min.size();i++){
+				    punteros[vec_min[i]]->pop_front();
+			       }
+			       for (uint32_t i=0;i<punteros.size();i++){
+				    if(punteros[i]->size() == 0){
+					 delete punteros[i];
+					 punteros[i] = punteros[punteros.size() -1];
+					 i--; //debe ser la tercera vez que lo hago en este TP
+					 punteros.pop_back();
+				    }
+			       }
+			       std::cout << "MATCH: (min) " << min << std::endl;
+			  }
+		     }
+		     else{
+			  std::cout << "Se busco una sola palabra, se saltea el AND\n";
+			  punteros_match = *punteros[0];
+		     }
+		     std::cout << "tamanio de la lista final: " << punteros_match.size() << std::endl;
+		     std::list<uint32_t>::iterator it;
+		     std::list<uint32_t>::iterator end = punteros_match.end();
+		     
+		     //agregar los paths a la lista
+		     for (it = punteros_match.begin(); it != end; it++)
+			  paths.push_back(buscarPath(*it, catalogo));
+		     
+		     while(punteros_match.size()>0){
+			  std::cout<<"MATCH: "<<buscarPath(punteros_match.front(), catalogo)<<std::endl;
+			  punteros_match.pop_front();
+		     }
 		}
 	}
-
+		
 	//borrarListas();
 	std::cout<<"Fin buscar"<<std::endl;
 	return paths;
 }
-
-bool Busqueda::buscarEnIndice(std::string consulta, std::string catalogo) {
-
+	
+	bool Busqueda::buscarEnIndice(std::string consulta, std::string catalogo) {
+	     
 	RegistroIndice reg;
 
 	if (consulta.find('*') == std::string::npos) {
@@ -199,7 +198,7 @@ std::string Busqueda::buscarPath(uint32_t puntero,std::string catalogo ) {
 
 void Busqueda::borrarListas() {
 	for (unsigned int i = 0; i<size; i++) {
-		delete punteros[i];
+//		delete punteros[i];
 	}
 	size = 0;
 	punteros.clear();
