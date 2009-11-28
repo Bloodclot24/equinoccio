@@ -97,23 +97,54 @@ std::list<std::string> Busqueda::buscar(std::string& consulta, std::string catal
 	return paths;
 }
 	
-	bool Busqueda::buscarEnIndice(std::string consulta, std::string catalogo) {
+bool Busqueda::buscarEnIndice(std::string consulta, std::string catalogo) {
 	     
 	RegistroIndice reg;
-
-	if (consulta.find('*') == std::string::npos) {
+	if ( consulta.find('*') == std::string::npos) {
 		consulta = Parser::aMinuscSinInvalidos(consulta);
 		std::cout<<"Busqueda simple: \""<<consulta<<"\""<<std::endl;
 		if (consulta.size() != 0)
 			reg = Buscador::buscar(consulta, catalogo);
 	}
 	else {
-		reg.frec = 0; //bla
-		std::cout<<"busqueda con comodines: "<<consulta<<std::endl;
 		//consulta con comodines
-		//Parser::aMinuscSinInvalidos(consulta)
-		//armo bigramas y llamo a buscar para cada uno
-		//obtengo registro con los punteros... continuara
+		std::cout<<"busqueda con comodines: "<<consulta<<std::endl;
+		std::string str;
+		str = '$';
+		size_t pos = 0;
+		size_t where = 0;
+		RegistroNGrama regN;
+		do {
+			//separo por asteriscos
+			where = consulta.find('*', pos);
+
+			str += Parser::aMinuscSinInvalidos(consulta.substr(pos, where - pos));
+
+			//no me gusta pero buen XD
+			if (where == std::string::npos) {
+				str +='$';
+			}
+			std::cout<<"substr: "<<str<<std::endl;
+			if (str.size() >= 2){
+				//armo bigramas y llamo a buscar para cada uno
+				for (size_t car=0; car<(str.size()-1) ;car++) {
+					std::cout<<"bigrama: "<<str.substr(car,2)<<std::endl;
+					//regN = Buscador::buscarNgrama(str.substr(car,2),catalogo);
+				}
+
+				//
+				//obtengo registro con los punteros... continuara
+			}
+			else {
+				if (str.size() == 1 && str[0] != '$')
+					std::cout<<"caracter solo: "<<str[0]<<std::endl;
+				else
+					std::cout<<"no hay caracteres validos antes del *"<<std::endl;
+			}
+			str.clear();
+			pos = where+1;
+		}while(where != std::string::npos); //tampoco me gusta este and
+		reg.frec = 0;
 	}
 	std::cout<<"Frecuencia: "<<reg.frec<<std::endl;
 	if ( reg.frec != 0) {
