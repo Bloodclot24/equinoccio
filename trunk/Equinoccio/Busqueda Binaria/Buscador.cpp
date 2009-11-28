@@ -88,9 +88,9 @@ RegistroNGrama Buscador::buscarNgrama(const std::string& ngrama,const std::strin
 		
 		}else{
 			
-			if(ngrama.compare(regNgrama.ngrama) < 0) derecha = medio;
+			if(ngrama.compare(regNgrama.ngrama) < 0) derecha = medio -1;
 			else 
-				izquierda = medio;
+				izquierda = medio +1;
 		}		
 	} 
 	//si no lo encontre, o se produjo un error, devuelvo la estructura cargada de 0's

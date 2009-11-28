@@ -129,7 +129,7 @@ bool Busqueda::buscarEnIndice(std::string consulta, std::string catalogo) {
 				//armo bigramas y llamo a buscar para cada uno
 				for (size_t car=0; car<(str.size()-1) ;car++) {
 					std::cout<<"bigrama: "<<str.substr(car,2)<<std::endl;
-					//regN = Buscador::buscarNgrama(str.substr(car,2),catalogo);
+					regN = Buscador::buscarNgrama(str.substr(car,2),catalogo);
 				}
 
 				//
