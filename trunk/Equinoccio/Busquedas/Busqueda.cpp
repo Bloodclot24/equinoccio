@@ -23,7 +23,6 @@ std::list<std::string> Busqueda::buscar(std::string& consulta, std::string catal
 		do {
 			//tomo la palabra y la busco en el indice
 			where = consulta.find(' ', pos);
-			std::cout<<"Buscar: "<<consulta.substr(pos, where-pos)<<" where: "<<where<<" pos: "<<pos<<std::endl;
 			encontrado = buscarEnIndice(consulta.substr(pos, where-pos), catalogo);
 			pos = where+1;
 		}while (where != std::string::npos && encontrado);
@@ -140,6 +139,21 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 	size_t pos = 0;
 	size_t where = 0;
 	RegistroNGrama regN;
+	RegistroIndice reg;
+	std::string idx_path = IDX_ARCH;
+	idx_path += catalogo;
+	std::ifstream indice(idx_path.c_str(), std::ios::in | std::ios::binary);//checkear good
+	std::string path_punng = PATH_RES;
+	path_punng += catalogo;
+	path_punng += EXT_PUN_NG;
+	std::ifstream pun_ng(path_punng.c_str(),  std::ios::in | std::ios::binary);
+	std::string path_lex = PATH_RES;
+	path_lex += catalogo;
+	path_lex += ".lex";
+	std::ifstream lexico (path_lex.c_str(), std::ios::in | std::ios::binary);
+	std::vector<std::list<RegIndice*>* > reg_bigrama;
+	std::list<uint32_t> pun;	//punteros a los archivos
+
 	do {
 		//separo por asteriscos
 		where = consulta.find('*', pos);
@@ -151,15 +165,47 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 		std::cout<<"substr: "<<str<<std::endl;
 		if (str.size() >= 2){
 			//armo bigramas y llamo a buscar para cada uno
+
 			for (size_t car=0; car<(str.size()-1) ;car++) {
+
 				std::cout<<"bigrama: "<<str.substr(car,2)<<std::endl;
 				regN = Buscador::buscarNgrama(str.substr(car,2),catalogo);
-				//std::cout<<"regN.frec: "<<regN.frec<<"	regN.pun: "<<regN.pDocs<<std::endl;
 				//en pDocs esta el offset al archivo con los offsets al indice general
-				// entro al indice
-				//obtengo el termino, la frec, y el puntero a los docs y los agrego a la lista
-				//sort de terminos del bigrama
+
+				if (regN.frec > 0) {
+					std::list<RegIndice*>* lista = new std::list<RegIndice*>;
+					//obtener punteros al indice desde archivo
+					pun_ng.seekg(regN.pDocs);
+					pun.clear();
+					Registro::obtenerPunterosEnLista(pun_ng,regN.pDocs, regN.frec, &pun);
+					while (!pun.empty()) {
+						// entro al indice
+						//obtengo el termino, la frec, y el puntero a los docs y los agrego a la lista
+						indice.seekg(pun.front()*sizeof(RegistroIndice));
+						indice.read((char*)&reg, sizeof(RegistroIndice)); //leo del indice
+						RegIndice* r = new RegIndice;
+						r->frec = reg.frec;
+						r->pun = reg.pDocs;
+						//busco el termino en el archivo de lexico
+						lexico.seekg(reg.pDocs);
+					    char c;
+					    while(lexico.good() && (c = lexico.get()) != 0){
+						  r->termino += c;
+					    }
+					    std::cout<<"Termino encontrado: "<<r->termino<<std::endl;
+						lista->push_back(r);
+						pun.pop_front();
+					}
+					reg_bigrama.push_back(lista);
+				}
+				else {
+					//liberar listas
+					std::cout<<"no existe el bigrama: "<<str.substr(car,2)<<std::endl;
+					return false;
+				}
+			//sort de terminos del bigrama (hace falta o vienen ordenados?)
 			}
+
 		}
 		else {
 			if (str.size() == 1 && str[0] != '$')
@@ -171,13 +217,96 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 		pos = where+1;
 	}while(where != std::string::npos);
 
+	lexico.close();
+	indice.close();
+	pun_ng.close();
 	//AND de todos los terminos de los bigramas
+	std::list<RegIndice*> registros;
+	andTerminos(reg_bigrama,registros);
+	//libero reg_bigrama
 	//obtengo la lista de punteros de cada termino
+
 	//chequear falsos positivos
-	//"mostrar" termino y doc en el que aparece
 	//agregarlos docs al vector punteros
+	//liberar todos
+
+	//por ahora asi
+	std::string path_pun = PATH_RES;
+	path_pun += catalogo;
+	path_pun += ".pun";
+	std::ifstream pun_docs(path_pun.c_str(), std::ios::in | std::ios::binary);
+	if (pun_docs.good()){
+//		std::list<uint32_t>* puntDocs = new std::list<uint32_t>;
+//		while (!registros.empty()) {
+//			pun.clear();
+//			Registro::obtenerPunterosEnLista(pun_docs,registros.front()->pDoc,registros.front()->frecuencia,pun);
+//		}
+//		punteros.push_back(puntDocs);
+//		size++;
+//		pun_docs.close();
+//		return true;
+
+
+		while (!registros.empty()) {
+			pun.clear();
+			Registro::obtenerPunterosEnLista(pun_docs,registros.front()->pun,registros.front()->frec,&pun);
+			std::cout<<"*********** "<<registros.front()->termino<<std::endl;
+			while (!pun.empty()){
+				std::cout<<"	doc: "<<buscarPath(pun.front(), catalogo);
+				pun.pop_front();
+			}
+			registros.pop_front();
+		}
+		pun_docs.close();
+	}
+	std::cout<<"error al abrir el arch de punteros: "<<path_pun<<std::endl;
 
 	return false;
+}
+
+void Busqueda::andTerminos(std::vector<std::list<RegIndice*>*> &reg_bigrama, std::list<RegIndice*>& reg_and) {
+
+    if (reg_bigrama.size() > 1){
+
+	  std::cout << reg_bigrama.size() << " listas\n";
+	  uint32_t pos_min=0;
+	  RegIndice *min;
+	  std::vector<uint32_t> vec_min;
+	  uint32_t palabrasBuscadas = reg_bigrama.size();
+	  while(reg_bigrama.size()>0){
+	       vec_min.clear();
+	       min = reg_bigrama[0]->front();
+	       for (uint32_t i=0;i<reg_bigrama.size();i++){
+		    if(min->termino > reg_bigrama[i]->front()->termino){
+			 vec_min.clear();
+			 min = reg_bigrama[i]->front();
+			 std::cout << "minimo: " << min << " posicion " << i<<std::endl;
+			 pos_min=i;
+			 vec_min.push_back(i);
+		    }else if (min->termino==reg_bigrama[i]->front()->termino){
+			 vec_min.push_back(i);
+		    }
+	       }
+	       if(vec_min.size() == palabrasBuscadas) //es un AND, todas tienen que ser menores
+		    reg_and.push_back(min);
+	       for (uint32_t i=0;i<vec_min.size();i++){
+		    reg_bigrama[vec_min[i]]->pop_front();
+	       }
+	       for (uint32_t i=0;i<reg_bigrama.size();i++){
+		    if(reg_bigrama[i]->size() == 0){
+			 delete reg_bigrama[i];
+			 reg_bigrama[i] = reg_bigrama[reg_bigrama.size() -1];
+			 i--; //debe ser la tercera vez que lo hago en este TP
+			 reg_bigrama.pop_back();
+		    }
+	       }
+	       std::cout << "MATCH: (min) " << min << std::endl;
+	  }
+    }
+    else{
+	  std::cout << "un solo bigrama\n";
+	  reg_and = *reg_bigrama[0];
+    }
 }
 
 std::string Busqueda::buscarPath(uint32_t puntero,std::string catalogo ) {
@@ -239,10 +368,11 @@ std::string Busqueda::buscarPath(uint32_t puntero,std::string catalogo ) {
 }
 
 void Busqueda::borrarListas() {
-	for (unsigned int i = 0; i<size; i++) {
-//		delete punteros[i];
-	}
+//	while (!punteros.empty()) {
+//		punteros.back()->clear();
+//		delete punteros.back();
+//		punteros.pop_back();
+//	}
 	size = 0;
-	punteros.clear();
 	punteros_match.clear();
 }

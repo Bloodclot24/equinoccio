@@ -10,6 +10,7 @@
 #define LEX_ARCH "Resources/LEX_ARCH.lex."
 #define IDX_DIRS "Resources/IDX_DIRS.idx"
 #define LEX_DIRS "Resources/LEX_DIRS.lex"
+#define EXT_PUN_NG ".pun.ng"
 
 #define AUDIO_PATH_STOP_WORD "Resources/stop_words_audio"
 #define C_PATH_STOP_WORD "Resources/stop_words_c"
