@@ -16,6 +16,7 @@ private:
 
 
 	void borrarListas();
+
 	/* Busca la palabra en el catalogo indicado
 	 * agrega la lista de punteros obtenidas en el vector de punteros
 	 * devuelve false si NO se encontro en el indice
@@ -23,8 +24,21 @@ private:
 	 * */
 	bool buscarEnIndice(std::string consulta, std::string catalogo);
 
-	//dado un puntero devuelve el path del archivo
-	std::string buscarPath(uint32_t, std::string catalogo);
+	/*
+	 * Dado un puntero devuelve el path del documento
+	 *
+	 * @param puntero: puntero al indice de documentos
+	 * @param catalogo: catalogo al que pertenece el documento
+	 *
+	 * @return: path del documento
+	 * */
+	std::string buscarPath(uint32_t puntero, std::string catalogo);
+
+	/* realiza la consulta con ngramas
+	 * @return: false si no hay match
+	 *  */
+	bool consultaNgramas(std::string& consulta, std::string catalogo);
+
 
 public:
 	Busqueda();

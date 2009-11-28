@@ -99,73 +99,84 @@ std::list<std::string> Busqueda::buscar(std::string& consulta, std::string catal
 	
 bool Busqueda::buscarEnIndice(std::string consulta, std::string catalogo) {
 	     
-	RegistroIndice reg;
 	if ( consulta.find('*') == std::string::npos) {
+		//busqueda simple
 		consulta = Parser::aMinuscSinInvalidos(consulta);
 		std::cout<<"Busqueda simple: \""<<consulta<<"\""<<std::endl;
-		if (consulta.size() != 0)
-			reg = Buscador::buscar(consulta, catalogo);
+		if (consulta.size() != 0) {
+			RegistroIndice reg = Buscador::buscar(consulta, catalogo);
+			std::cout<<"Frecuencia: "<<reg.frec<<std::endl;
+			if ( reg.frec != 0) {
+				//obtener los punteros
+				std::string nombre_pun = PATH_RES;
+				nombre_pun += catalogo;
+				nombre_pun += ".pun";
+				std::ifstream arch_punteros(nombre_pun.c_str(), std::ios::in | std::ios::binary);
+				if (arch_punteros.good()){
+					std::list<uint32_t>* puntDocs = new std::list<uint32_t>;
+					Registro::obtenerPunterosEnLista(arch_punteros, reg.pDocs , reg.frec, puntDocs);
+					punteros.push_back(puntDocs);
+					size++;
+					arch_punteros.close();
+					return true;
+				}
+				std::cout<<"error al abrir el arch de punteros: "<<nombre_pun<<std::endl;
+				return false;
+			}
+			std::cout<<"frecuencia igual cero"<<std::endl;
+		}
 	}
 	else {
 		//consulta con comodines
 		std::cout<<"busqueda con comodines: "<<consulta<<std::endl;
-		std::string str;
-		str = '$';
-		size_t pos = 0;
-		size_t where = 0;
-		RegistroNGrama regN;
-		do {
-			//separo por asteriscos
-			where = consulta.find('*', pos);
-
-			str += Parser::aMinuscSinInvalidos(consulta.substr(pos, where - pos));
-
-			//no me gusta pero buen XD
-			if (where == std::string::npos) {
-				str +='$';
-			}
-			std::cout<<"substr: "<<str<<std::endl;
-			if (str.size() >= 2){
-				//armo bigramas y llamo a buscar para cada uno
-				for (size_t car=0; car<(str.size()-1) ;car++) {
-					std::cout<<"bigrama: "<<str.substr(car,2)<<std::endl;
-					regN = Buscador::buscarNgrama(str.substr(car,2),catalogo);
-				}
-
-				//
-				//obtengo registro con los punteros... continuara
-			}
-			else {
-				if (str.size() == 1 && str[0] != '$')
-					std::cout<<"caracter solo: "<<str[0]<<std::endl;
-				else
-					std::cout<<"no hay caracteres validos antes del *"<<std::endl;
-			}
-			str.clear();
-			pos = where+1;
-		}while(where != std::string::npos); //tampoco me gusta este and
-		reg.frec = 0;
+		return consultaNgramas(consulta, catalogo);
 	}
-	std::cout<<"Frecuencia: "<<reg.frec<<std::endl;
-	if ( reg.frec != 0) {
-		std::list<uint32_t>* puntDocs = new std::list<uint32_t>;
-		//obtener los punteros
-		std::string nombre_pun = PATH_RES;
-		nombre_pun += catalogo;
-		std::ifstream arch_punteros(nombre_pun.append(".pun").c_str(), std::ios::in | std::ios::binary);
-		if (arch_punteros.good()){
-		     std::cout << "Archivo: " << catalogo <<" Offset : " << reg.pDocs << std::endl;
-		     Registro::obtenerPunterosEnLista(arch_punteros, reg.pDocs , reg.frec, puntDocs);
-			punteros.push_back(puntDocs);
-			size++;
-			arch_punteros.close();
-			return true;
+	return false;
+}
+
+bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
+	std::string str;
+	str = '$';
+	size_t pos = 0;
+	size_t where = 0;
+	RegistroNGrama regN;
+	do {
+		//separo por asteriscos
+		where = consulta.find('*', pos);
+		str += Parser::aMinuscSinInvalidos(consulta.substr(pos, where - pos));
+
+		if (where == std::string::npos) {
+			str +='$';
 		}
-		else{
-			std::cout<<"error al abrir el arch de punteros"<<std::endl;
+		std::cout<<"substr: "<<str<<std::endl;
+		if (str.size() >= 2){
+			//armo bigramas y llamo a buscar para cada uno
+			for (size_t car=0; car<(str.size()-1) ;car++) {
+				std::cout<<"bigrama: "<<str.substr(car,2)<<std::endl;
+				regN = Buscador::buscarNgrama(str.substr(car,2),catalogo);
+				//std::cout<<"regN.frec: "<<regN.frec<<"	regN.pun: "<<regN.pDocs<<std::endl;
+				//en pDocs esta el offset al archivo con los offsets al indice general
+				// entro al indice
+				//obtengo el termino, la frec, y el puntero a los docs y los agrego a la lista
+				//sort de terminos del bigrama
+			}
 		}
-	}
-	std::cout<<"frecuencia igual cero"<<std::endl;
+		else {
+			if (str.size() == 1 && str[0] != '$')
+				std::cout<<"caracter solo: "<<str[0]<<std::endl;
+			else
+				std::cout<<"no hay caracteres validos antes del *"<<std::endl;
+		}
+		str.clear();
+		pos = where+1;
+	}while(where != std::string::npos);
+
+	//AND de todos los terminos de los bigramas
+	//obtengo la lista de punteros de cada termino
+	//chequear falsos positivos
+	//"mostrar" termino y doc en el que aparece
+	//agregarlos docs al vector punteros
+
 	return false;
 }
 

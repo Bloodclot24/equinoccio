@@ -230,7 +230,8 @@ public:
 	       	    ngramas.close();
 	       	    generadas += Sorter<RegistroNGramas>::Sort((ngramasBase + Util::intToString(particiones)), nombreBase+".sorted", generadas,NUMERO_REGISTROS_SORT);
 	       	    particiones++;
-	       	    ngramas.open((ngramasBase + Util::intToString(particiones)).c_str());	       }
+	       	    ngramas.open((ngramasBase + Util::intToString(particiones)).c_str());
+	       }
 	       delete r;
 	  }
 
