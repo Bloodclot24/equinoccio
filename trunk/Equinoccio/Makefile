@@ -14,7 +14,8 @@ SOURCES=CodigoGamma/TDA_Codigos.cpp \
 	Util/Util.cpp \
 	Busqueda\ Binaria/Buscador.cpp \
 	Busquedas/Busqueda.cpp \
-	FileManager/FileManager.cpp
+	FileManager/FileManager.cpp \
+	Interfaz/Interfaz.cpp
 
 
 TESTSOURCES=Arbol/arbol.cpp\
@@ -32,12 +33,13 @@ TESTSOURCES=Arbol/arbol.cpp\
 	Sort/testSort.cpp\
 	Merge/testMerge.cpp \
 	Busqueda\ Binaria/testBusquedaBinaria.cpp \
-	Busquedas/testBusqueda.cpp
+	Busquedas/testBusqueda.cpp \
+	Interfaz/testVista.cpp
 
 MAIN=Equinoccio.cpp
 
-CFLAGS+=-g -Wall
-LDFLAGS=-lextractor
+CFLAGS+=-g -Wall `pkg-config --cflags --libs gtkmm-2.4`
+LDFLAGS=-lextractor `pkg-config --cflags --libs gtkmm-2.4`
 CC=g++
 EXECUTABLE=Equinoccio
 

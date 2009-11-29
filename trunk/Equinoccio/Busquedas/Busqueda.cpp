@@ -142,7 +142,7 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 	RegistroIndice reg;
 	std::string idx_path = IDX_ARCH;
 	idx_path += catalogo;
-	std::ifstream indice(idx_path.c_str(), std::ios::in | std::ios::binary);//checkear good
+	std::ifstream indice(idx_path.c_str(), std::ios::in | std::ios::binary);
 	std::string path_punng = PATH_RES;
 	path_punng += catalogo;
 	path_punng += EXT_PUN_NG;
@@ -153,6 +153,11 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 	std::ifstream lexico (path_lex.c_str(), std::ios::in | std::ios::binary);
 	std::vector<std::list<RegIndice*>* > reg_bigrama;
 	std::list<uint32_t> pun;	//punteros a los archivos
+	if (!indice.good() || !pun_ng.good() || !lexico.good()) {
+		std::cout << "error al abrir los archivos de ngramas"<<std::endl;
+		return false;
+	}
+
 
 	do {
 		//separo por asteriscos
