@@ -48,12 +48,17 @@ private:
 
 	/*
 	 * realiza un and de las listas de registros de los bigramas
-	 * comparando los terminos
+	 * comparando los terminos.
 	 *
 	 * @param reg_bigrama 	contiene las listas de registros con los terminos para el and
 	 * @param reg_and 		lista resultante con el AND de los registros
 	 * */
 	void andTerminos(std::vector<std::list<RegIndice*>*> &reg_bigrama, std::list<RegIndice*>& reg_and);
+
+	/*
+	 * Guarda en la lista filtrada los elementos de la lista original que contengan a los terminos
+	 * */
+	void filtrarFalsosPositivos(std::list<std::string>& consulta, std::list<RegIndice*>& lista, std::list<RegIndice*>& filtrada);
 
 
 public:
