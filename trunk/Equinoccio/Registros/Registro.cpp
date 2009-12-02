@@ -160,17 +160,17 @@ std::string Registro::obtenerPunterosComprimidos(){
      //    Devuelvo sin comprimir porque GAMMA no funciona del todo bien
      // *******************************************************************
      // recorro todos los punteros y los pongo en el string 
-     // for(it=punteros.begin(); it != punteros.end(); it++){
-     // 	  Registro::Punteros p;
-     // 	  p = *it;
-     // 	  resultado.append((char*)&(p.documento),4);
-     // 	  resultado.append((char*)&(p.frecuencia),4);
-     // 	  std::cout << "obtengo: " << p.documento << " " << p.frecuencia << std::endl;
-     // }     
+     for(it=punteros.begin(); it != punteros.end(); it++){
+     	  Registro::Punteros p;
+     	  p = *it;
+     	  resultado.append((char*)&(p.documento),4);
+     	  resultado.append((char*)&(p.frecuencia),4);
+     	  std::cout << "obtengo: " << p.documento << " " << p.frecuencia << std::endl;
+     }     
 
-     // std::cout << "Resultado: " << resultado << std::endl;
+     std::cout << "Resultado: " << resultado << std::endl;
      
-     //return resultado;
+     return resultado;
      // ******************************************************************
 
 
