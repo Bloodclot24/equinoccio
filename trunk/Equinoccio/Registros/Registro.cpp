@@ -90,7 +90,6 @@ Registro* Registro::leer(std::ifstream &archivo, int compresion){
 		    docAnterior = p.documento = valores[0]+docAnterior;
 		    // asigno la frecuencia
 		    p.frecuencia=valores[1];
-	
 		    // agrego los punteros.
 		    r->punteros.push_back(p);
 		    indice=0;
@@ -156,36 +155,18 @@ std::string Registro::obtenerPunterosComprimidos(){
      
      std::string resultado;
 
-     // *******************************************************************
-     //    Devuelvo sin comprimir porque GAMMA no funciona del todo bien
-     // *******************************************************************
-     // recorro todos los punteros y los pongo en el string 
-     for(it=punteros.begin(); it != punteros.end(); it++){
-     	  Registro::Punteros p;
-     	  p = *it;
-     	  resultado.append((char*)&(p.documento),4);
-     	  resultado.append((char*)&(p.frecuencia),4);
-     	  std::cout << "obtengo: " << p.documento << " " << p.frecuencia << std::endl;
-     }     
-
-     std::cout << "Resultado: " << resultado << std::endl;
-     
-     return resultado;
-     // ******************************************************************
-
-
      // recorro todos los punteros
      for(it=punteros.begin(); it != punteros.end(); it++){
 	  Registro::Punteros p;
 	  p = *it;
-	    
+	  
 	  // convierto el puntero a distancia y despues a GAMMA
 	  str1= TDA_Codigos::getCGamma(p.documento-docAnterior);
 	  docAnterior=p.documento; // almaceno el documento anterior
 
 	  // Convierto la frecuencia a GAMMA
 	  str2=TDA_Codigos::getCGamma(p.frecuencia);
-	  
+
 	  // concateno ambos codigos
 	  str1+=str2;
 	  
@@ -254,9 +235,6 @@ int Registro::unir(const Registro& registro){
 	       Registro::Punteros p;
 	       p.documento = (*it1).documento;
 	       p.frecuencia = (*it1).frecuencia + (*it2).frecuencia ;
-	       // **************************************************************
-//	       p.frecuencia = 1; //TODO: OJO (para probar GAMMA)
-	       // **************************************************************
 	       final.push_back(p);
 	       it1++;
 	       it2++;
@@ -292,34 +270,23 @@ void Registro::obtenerPunterosEnLista(std::ifstream& archivo, uint32_t offset, u
 
 	archivo.seekg(offset);
 
-	while(frec-->0){
-	     uint32_t auxi;
-	     archivo.read((char*)&auxi, sizeof(uint32_t));
-	     lista_punteros->push_back(auxi);
-	     std::cout << "Documento: " << auxi << std::endl;
-	     archivo.read((char*)&auxi, sizeof(uint32_t));
-	}
-	return;
-
 	while(archivo.good() && frec > 0){
 	   if(bits==0){
 		archivo.read(&byte, 1);
 		bits=8;
 		bit=1<<7;
 	   }
-	   std::cout << "Distancia: ";
+
 	   for(;bit!=0 && bits > 0 && indice < 2; bit >>= 1, bits--){
 		aux += ((byte)&(bit))>0?'1':'0';
 		
 		if((valores[indice] = TDA_Codigos::getNGamma(aux)) != (uint32_t)-1){
-		 indice++;
-		 std::cout << aux << " ";
-		 aux.clear();
+		     indice++;
+		     aux.clear();
 		}
 	   }
 	   if(indice==2){
 		docAnterior = valores[0]+docAnterior;
-		std::cout << "\ndocumento: " << docAnterior << std::endl;
 		lista_punteros->push_back(docAnterior);
 		indice=0;
 		frec--;
