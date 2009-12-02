@@ -345,8 +345,44 @@ public:
 	       /* uno las particiones quedandome el
 		* auxiliar ordenado */
 	       merge<RegistroNGramas>(nombreBase+".sorted",0,generadas-1, nombreBase+".ng");
+	       std::string nombreNgramas = nombreBase + ".ng";
+
+	       // separo los N-gramas en 2
+	       separarNgramas(nombreNgramas ,nombreNgramas);
+	  }
+     }
+
+     void separarNgramas(const std::string& nombre, const std::string& nombreBase){
+	  std::cout << "Separando Ngramas " << nombre << std::endl;
+	  // creo el archivo destino
+	  std::ifstream archivo(nombre.c_str());
+	  RegistroNGramas *rn;
+	  // creo los archivos de indice y punteros
+	  std::ofstream indice((nombreBase+".idx").c_str());
+	  std::ofstream punteros((nombreBase+".pun").c_str());
+
+	  uint32_t idxPunteros=0;
+
+	  // por cada registro que leo
+	  for(rn=RegistroNGramas::leer(archivo, 0);rn!=NULL;rn=RegistroNGramas::leer(archivo, 0)){
+	       // extraigo los punteros
+	       std::string punterosComprimidos = rn->obtenerPunterosComprimidos();
+	       std::string termino = rn->obtenerTermino();
+	       uint32_t freq = rn->obtenerFrecuencia();
+
+	       // escribo el termino con el \0
+	       indice.write(termino.c_str(), termino.size()+1);
+	       // escribo la frecuencia
+	       indice.write((char*)&freq, sizeof(freq));
+	       // escribo el puntero a los punteros
+	       indice.write((char*)&idxPunteros, sizeof(idxPunteros));
+
+	       // escribo los punteros
+	       punteros.write(punterosComprimidos.c_str(), punterosComprimidos.size());
+	       idxPunteros += punterosComprimidos.size();
 	  }
 
+	  //remove(nombre.c_str());
 
      }
 

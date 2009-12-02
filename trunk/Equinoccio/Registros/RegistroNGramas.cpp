@@ -104,39 +104,47 @@ int RegistroNGramas::escribir(std::ofstream &archivo, int compresion){
 	  }
      }
      else{
-	  const char* ptr;
-	  std::string str;
-	  char byte=0;
-	  unsigned bit=1<<7;
-	  uint32_t docAnterior = 0;
-	  unsigned bits=0;
-
-	  for(it=punteros.begin(); it != punteros.end(); it++){
-	       uint32_t p;
-	       p = *it;
-
-	       str = TDA_Codigos::getCGamma(p-docAnterior+1);
-	       docAnterior=p;
-
-	       ptr  = str.c_str();
-	       bits = str.length();
-	       while(bits > 0){
-		    for(;bit!=0 && bits > 0; bit >>= 1, bits--, ptr++){
-			 byte |= *ptr!='0'?bit:0;
-		    }
-		    if(bit==0){
-			 /* escribir el byte a disco */
-			 archivo.write(&byte,1);
-			 bit=1<<7;
-			 byte=0;
-		    }
-	       }
-	  }
-	  if(bit != 1<<7){
-	       archivo.write(&byte,1);
-	  }
+	  std::string punteros = obtenerPunterosComprimidos();
+	  archivo.write(punteros.c_str(), punteros.size());
      }
      return 1;
+}
+
+
+std::string RegistroNGramas::obtenerPunterosComprimidos(){
+     const char* ptr;
+     std::string str;
+     char byte=0;
+     unsigned bit=1<<7;
+     uint32_t docAnterior = 0;
+     unsigned bits=0;
+     std::string resultado;
+     std::list<uint32_t>::iterator it;     
+     for(it=punteros.begin(); it != punteros.end(); it++){
+	  uint32_t p;
+	  p = *it;
+	  
+	  str = TDA_Codigos::getCGamma(p-docAnterior+1);
+	  docAnterior=p;
+	  
+	  ptr  = str.c_str();
+	  bits = str.length();
+	  while(bits > 0){
+	       for(;bit!=0 && bits > 0; bit >>= 1, bits--, ptr++){
+		    byte |= *ptr!='0'?bit:0;
+	       }
+	       if(bit==0){
+		    /* escribir el byte a disco */
+		    resultado += byte;
+		    bit=1<<7;
+		    byte=0;
+	       }
+	  }
+     }
+     if(bit != 1<<7){
+	  resultado += byte;
+     }
+     return resultado;
 }
 
 uint32_t RegistroNGramas::obtenerFrecuencia(){
