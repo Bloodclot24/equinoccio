@@ -20,20 +20,36 @@
 
 #define NUMERO_PARTICIONES  20
 #define NUMERO_REGISTROS_SORT  1000
-#define NUMERO_NGRAMAS 5000 //10000
+#define NUMERO_NGRAMAS 5000 
 
+/** 
+ * Esta clase contiene una cadena de parsers que intentan parsear los
+ * archivos que se nos pasan. Ademas de eso, cuando se termina de
+ * parsear, arma el indice invertido y los n-gramas.
+ * 
+ */
 class Parsers{
      std::list<Parser*> cadena;	/**< Lista de parsers */
-     unsigned long documento;
-     std::map<std::string, unsigned long> documentos;
-     std::map<std::string, std::fstream*> lexico;
-     std::map<std::string, std::fstream*> indice;
+     unsigned long documento;   /**< Numero de documentos que llevamos
+				 * parseados en total*/
+     std::map<std::string, unsigned long> documentos; /**< numero de
+						       * documentos
+						       * que llevamos
+						       * parseados por
+						       * catalogo */
+     std::map<std::string, std::fstream*> lexico; /**< Archivo de
+						   * lexico de
+						   * archivos segun
+						   * catalogo */
+     std::map<std::string, std::fstream*> indice; /**< Archivode
+						   * indice de
+						   * archivos segun
+						   * catalogo */
 
      Parsers(const Parsers&){};
 public:
      /** 
       * Crea una 'cadena' de parsers vacia.
-      * 
       */
      Parsers(){};
 
@@ -44,11 +60,15 @@ public:
       */
      void agregarParser(Parser* p){
 	  cadena.push_back(p);
+	  /* me fijo a que catalogo pertenece */
 	  if(documentos.count(p->getNombreCatalogo()) == 0){
+	       /* si es un catalogo nuevo, lo registro*/
 	       documentos[p->getNombreCatalogo()] = 0;
 	       std::fstream* f = new std::fstream();
+	       /* registro el archivo de lexico */
 	       lexico[p->getNombreCatalogo()] = f;
 	       f = new std::fstream();
+	       /* registro el archivo de indice */
 	       indice[p->getNombreCatalogo()] = f;
 	  }
      }
@@ -63,14 +83,20 @@ public:
      bool parsear(const std::string& nombreArchivo, uint32_t dir){
 	  std::list<Parser*>::iterator it;
 	  bool encontrado = false;
+	  /* recorro toda la lista de parsers */
 	  for(it=cadena.begin();(it!=cadena.end()) && !encontrado;it++){
 	       const std::string &cat = (*it)->getNombreCatalogo();
+	       /* intento parsearlos coneste parser */
 	       encontrado = (*it)->parsear(nombreArchivo, documentos[cat]);
 	       if(encontrado){
 		    std::cout << "Documento: " << documentos[cat] << std::endl;
+		    /* si pudo, aumento la cantidad de documentos
+		     * parseados en ese catalogo */
 		    documentos[cat]++;
 		    char* nombre = strdup(nombreArchivo.c_str());
 		    char* final = basename(nombre);
+		    /* guardo los datos del archivo en el indice de
+		     * archivos */
 		    guardarArchivo(cat, final, dir);
 		    free(nombre);
 	       }
@@ -78,31 +104,67 @@ public:
 	  return encontrado;
      }
 
+     
+     /** 
+      * Agrega un archivo al indice de archivos (tanto en el lexico
+      * como en el indice).
+      * 
+      * @param catalogo Catalogo al que pertenece el archivo.
+      * @param nombre Nombre del archivo.
+      * @param dir Numero de directorio al que pertenece.
+      * 
+      * @return 0
+      */
      uint32_t guardarArchivo(const std::string& catalogo, const std::string& nombre, uint32_t dir){
+	  // Obtengo el archivo de lexico e indice (de archivos) segun el catalogo
 	  std::fstream &idxArchivos = *indice[catalogo];
 	  std::fstream &lexArchivos = *lexico[catalogo];
 
+	  // Si el archivo auno no fue abierto
 	  if(!idxArchivos.is_open()){
+	       // formo el nombre del archivo utilizando el nombre
+	       // base de los indices de archivo y concatenandole '.'
+	       // y el nombre del catalogo
 	       std::string nombre = NOMBRE_IDX_ARCHIVOS;
 	       nombre+= '.';
 	       nombre+=catalogo;
+	       // abro el archivo
 	       idxArchivos.open(nombre.c_str(), std::fstream::in | std::fstream::out | std::fstream::trunc);
 	       
+	       // formo el nombre del archivo utilizando el nombre
+	       // base del lexico de archivos y concatenandole '.' y el nombre del
+	       // catalogo
 	       nombre=NOMBRE_LEX_ARCHIVOS;
 	       nombre+= '.';
 	       nombre+=catalogo;
+	       // abro el archivo
 	       lexArchivos.open(nombre.c_str(), std::fstream::in | std::fstream::out | std::fstream::trunc);
 	  }
+	  // obtengo el tamaño del archivo (la posicion donde estoy
+	  // parado)
 	  uint32_t p = lexArchivos.tellp();
-	  idxArchivos.write((char*)&p,sizeof(p));
-	  idxArchivos.write((char*)&dir, sizeof(dir));
+	  // escribo el nombre en el archivo de lexico de archivos
 	  lexArchivos.write(nombre.c_str(), nombre.size()+1);
+	  // el archivo de indice guarda la posicion donde
+	  // se escribió el término
+	  idxArchivos.write((char*)&p,sizeof(p));
+	  // guardo tambien el numero de directorio en el indice
+	  idxArchivos.write((char*)&dir, sizeof(dir));
+	  
 	  return 0;
      }
      
 
+     /** 
+      * Recorre todos los catalogos y une todos los archivos generados
+      * en cada uno en diferentes indices auxiliares, despues, llama a
+      * separarAuxiliar y lo separa en 3 partes.
+      * 
+      * @return 0
+      */
      int armarIndices(){
 	  std::list<Parser*>::iterator it;
+	  // separo los parsers segun catalogo
 	  std::map<std::string, std::list<Parser*> > catalogos;
 	  for(it=cadena.begin();it!=cadena.end();it++){
 	       std::string catalogo = (*it)->getNombreCatalogo();
@@ -111,16 +173,22 @@ public:
 	       catalogos[catalogo].push_back((*it));
 	  }
 	  
+	  // por cada grupo de parsers
 	  std::map<std::string, std::list<Parser*> >::iterator it2;
 	  for(it2=catalogos.begin(); it2!= catalogos.end();it2++){
 	       std::cout << "Catalogo: " << (*it2).first << "\n";
 	       std::list<Parser*> parsers;
 	       /* Obtengo el nombre del indice del catalogo */
-	       std::string nombreIndice = PATH_RES;
-	       nombreIndice += "IDX_";
+	       std::string nombreIndice = PATH_RES; // primero el path
+						    // donde se guarda
+
+	       nombreIndice += "IDX_"; // prefijo de los indices
+
 	       std::list<Parser*> &lista = (*it2).second;
 	       Parser* p = lista.front();
+	       // por ultimo el nombre del catalogo
 	       nombreIndice += p->getNombreCatalogo() + ".aux";
+
 	       uint32_t generadas=0; /* n de particiones generadas */
 	       do{
 		    /* Obtego uno de los parsers de el catalogo */
@@ -133,27 +201,35 @@ public:
 		    /* y obtengo la cantidad de archivos creados por
 		     * el parser */
 		    ultimo = p->getCantArchivosParseados();
+
 		    /* y que nombre base tiene cada uno */
 		    std::string nombreBase = p->getNombreBase();
 
 		    std::cout << "Primero,Ultimo: " << primero << " " << ultimo << std::endl;
+		    // hasta parsear el ultimo...
 		    for(;primero<=ultimo;primero++){
+			 // armo el nombre de la particion
 			 std::string particion=nombreBase + Util::intToString(primero);
+
 			 /* ordeno cada paricion y cuento cuantas
 			  * particiones resultan */
 			 std::cout << "particion:" << particion <<" \n";
 			 generadas += Sorter<Registro>::Sort(particion,nombreIndice+".sorted", generadas,NUMERO_REGISTROS_SORT);
 			 std::cout << " Particiones: " << particion << " generadas: " << generadas << std::endl;
 		    }
-	       }while(lista.size()>0);
-	       if(generadas > 0){
+	       }while(lista.size()>0); // repito hasta quedarme sin
+				       // parsers en esta catalogo
+
+	       if(generadas > 0){ // si por lo menos se generó 1
 		    /* uno las particiones quedandome el
 		     * auxiliar ordenado */
 		    std::cout << "ordenando: \n";
 		    merge<Registro>(nombreIndice+".sorted",0,generadas-1, nombreIndice);
 	       }
+	       // armo el nombre del indice final del catalogo
 	       std::string nombreCat = PATH_RES;
 	       nombreCat += p->getNombreCatalogo();
+	       // y lo armo (separo el auxiliar)
 	       separarAuxiliar(nombreIndice,nombreCat);
 	  }
 
@@ -198,8 +274,10 @@ public:
       */
      void separarAuxiliar(const std::string& nombre, const std::string& nombreBase){
 	  std::cout << "Separando " << nombre << std::endl;
+	  // creo el archivo destino
 	  std::ifstream archivo(nombre.c_str());
 	  Registro *r;
+	  // creo los archivos de lexico, indice y punteros
 	  std::ofstream lexico((nombreBase+".lex").c_str());
 	  std::ofstream indice((nombreBase+".idx").c_str());
 	  std::ofstream punteros((nombreBase+".pun").c_str());
@@ -209,22 +287,42 @@ public:
 	  uint32_t particiones=0;
 	  uint32_t generadas = 0;
 	  uint32_t offsetIndice =0;
+
+	  // creo un archivo para los ngramas
 	  std::string ngramasBase = nombreBase+".ng.aux";
 	  std::ofstream ngramas((ngramasBase + Util::intToString(particiones)).c_str());
 
+	  // por cada registro que leo
 	  for(r=Registro::leer(archivo, 0);r!=NULL;r=Registro::leer(archivo, 0)){
+	       // extraigo el termino
 	       std::string termino = r->obtenerTermino();
+	       // extraigo la frecuencia
 	       uint32_t freq=r->obtenerFrecuencia();
+	       // extraigo los punteros ya comprimidos
 	       std::string spunteros = r->obtenerPunterosComprimidos();
+
+	       // en el lexico, guardo el termino (incluido el \0)
 	       lexico.write(termino.c_str(), termino.length()+1);
+	       // en el archivod de punteros, los punteros
 	       punteros.write(spunteros.c_str(), spunteros.size());
+	       
+	       // en el indice, promero se escribe el puntero al
+	       // archivo de lexico, luego la frecuencia y por ultimo
+	       // el puntero a los punteros
 	       indice.write((char*)&idxLexico, sizeof(idxLexico));
 	       indice.write((char*)&freq, sizeof(freq));
 	       indice.write((char*)&idxPunteros, sizeof(idxPunteros));
+
+	       // calculo el proximo puntero a lexico (+1 por el \0)
 	       idxLexico += termino.size()+1;
+
+	       // calculo el proximo puntero a punteros
 	       idxPunteros += spunteros.size();
+
+	       // Genero los N-gramas y llevo la cuenta de cuantos van
 	       contador+=RegistroNGramas::generarEscribir(ngramas,0,*r,offsetIndice);
 	       offsetIndice += sizeof(idxLexico) + sizeof(freq) + sizeof(idxPunteros);
+	       // si supero el limite, creo otra particion de N-gramas
 	       if(contador > NUMERO_NGRAMAS){
 	       	    contador = 0;
 	       	    ngramas.close();

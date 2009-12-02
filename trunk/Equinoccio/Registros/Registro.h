@@ -141,10 +141,39 @@ public:
 	  }
      }
 
+     /** 
+      * Dado un archivo, un offset, una frecuencia y una lista
+      * destino, lee n pares de punteros codificados en GAMMA y los
+      * almacena en la lista. En este caso n = frecuencia.
+      * 
+      * @param arch Archivo dedonde se leen lpos punteros.
+      * @param offset Offset desde donde se empieza a leer.
+      * @param frec Cantidad de pares de punteros a leer.
+      * @param lista_punteros Lista donde almaceno los pares leidos.
+      */
      static void obtenerPunterosEnLista(std::ifstream& arch,uint32_t offset, uint32_t frec, std::list<uint32_t>* lista_punteros);
 
+     /** 
+      * Devuelve la lista de documentos asociados a este registro.
+      * 
+      * @return La lista.
+      */
      std::list<uint32_t> obtenerDocumentos();
+
+     /** 
+      * Comprime los punteros en GAMMA y los devuelve en un string.
+      * 
+      * @return Los punteros comprimidos.
+      */
      std::string obtenerPunterosComprimidos();
+     
+     /** 
+      * Devuelve la frecuencia del termino (la cantidad de punteros
+      * que almacena, en otras palabras, la cantidad de documentos en
+      * donde aparece)
+      * 
+      * @return 
+      */
      uint32_t obtenerFrecuencia();
 
 };
