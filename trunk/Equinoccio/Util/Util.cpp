@@ -10,3 +10,7 @@ std::string Util::intToString(uint32_t numero) {
 	
   return snumero;
 }
+
+void Util::aMinusculas(std::string& str){
+     std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+}

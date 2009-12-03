@@ -78,13 +78,7 @@ protected:
       */ 
      bool esStopWord(const std::string& palabra);
 	
-     /** 
-      * Transforma un string a minusculas.
-      * 
-      * @param str El string a transformar.
-      */
-     void aMinusculas(std::string& str);
-		
+
      /**
       * La funcion toma una cadena, filtra los espacios y guarda palabra a
       * palabra, en una lista auxiliar.

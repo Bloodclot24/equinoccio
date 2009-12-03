@@ -65,9 +65,6 @@ std::string Parser::aMinuscSinInvalidos(const std::string& informacion) {
 	return palabraFiltrada;
 }
 
-void Parser::aMinusculas(std::string& str){
-     std::transform(str.begin(), str.end(), str.begin(), ::tolower);
-}
 
 /*--------------------------------------------------------------------------*/
 void Parser::guardarPalabras(const std::string& palabras) {
@@ -106,7 +103,7 @@ bool Parser::verificarExtension(const std::string& nombre, const char **validas)
 	  return false;
 
      std::string extMinus(nombre,t);
-     aMinusculas(extMinus);
+     Util::aMinusculas(extMinus);
 
      bool encontrado=false;
 

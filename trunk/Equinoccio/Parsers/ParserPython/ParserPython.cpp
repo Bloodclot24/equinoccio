@@ -88,7 +88,7 @@ bool ParserPython::parsear(std::string nombre, uint32_t documento){
 	  }
 	  else if(!cr){
 	       cr=true;
-	       aMinusculas(termino);
+	       Util::aMinusculas(termino);
 	       if(termino[0] < '0' || termino[0] > '9')
 		    guardarTermino(termino, documento);
 	       termino.clear();

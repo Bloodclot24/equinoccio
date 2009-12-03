@@ -16,7 +16,7 @@ bool ParserCPHP::parsear(std::string nombre, uint32_t documento){
 	bool ret=true;
 	if (punt >0){
 		std::string sub= nombre.substr(punt+1,nombre.size()-punt);
-		aMinusculas(sub);
+		Util::aMinusculas(sub);
 		if ((sub.compare("c")==0)||(sub.compare("cpp")==0)||(sub.compare("h")==0)){
 			opc=1; /*Archivo de C / C++*/
 			cargarStopWord(C_PATH_STOP_WORD);

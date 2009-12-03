@@ -100,7 +100,7 @@ bool Busqueda::buscarEnIndice(std::string consulta, std::string catalogo) {
 	     
 	if ( consulta.find('*') == std::string::npos) {
 		//busqueda simple
-		consulta = Parser::aMinuscSinInvalidos(consulta);
+		consulta = (consulta);
 		std::cout<<"Busqueda simple: \""<<consulta<<"\""<<std::endl;
 		if (consulta.size() != 0) {
 			RegistroIndice reg = Buscador::buscar(consulta, catalogo);
