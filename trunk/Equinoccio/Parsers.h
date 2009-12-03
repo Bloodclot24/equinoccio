@@ -375,8 +375,8 @@ public:
 	       std::string termino = rn->obtenerTermino();
 	       uint32_t freq = rn->obtenerFrecuencia();
 
-	       // escribo el termino con el \0
-	       indice.write(termino.c_str(), termino.size()+1);
+	       // escribo el termino SIN el \0 (son de longitud fija)
+	       indice.write(termino.c_str(), termino.size());
 	       // escribo la frecuencia
 	       indice.write((char*)&freq, sizeof(freq));
 	       // escribo el puntero a los punteros
