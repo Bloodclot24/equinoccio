@@ -85,6 +85,8 @@ private:
 
 	  std::cout << "Directorio absouto: " << directorio << "\n";
 
+	  std::list<std::string> subdir;
+
 	  if(esDirectorio(directorio)){  
 	       if( (directory =opendir(directorio.c_str())) ==NULL)
 		    return;
@@ -98,10 +100,14 @@ private:
 		    }
 		    else if(esDirectorio(nombreCompleto) && strncmp(entry->d_name,".",1)!=0){
 			 //agrego directorios recursivamente
-			 agregarDirectorio(nombreCompleto);
+			 subdir.push_back(nombreCompleto);
 		    }
 	       }
 	       closedir(directory);
+	  }
+	  while(subdir.size()>0){
+	       agregarDirectorio(subdir.front());
+	       subdir.pop_front();
 	  }
      }
 
