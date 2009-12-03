@@ -154,7 +154,7 @@ std::string Registro::obtenerPunterosComprimidos(){
      unsigned bits=0;
      
      std::string resultado;
-
+     
      // recorro todos los punteros
      for(it=punteros.begin(); it != punteros.end(); it++){
 	  Registro::Punteros p;
@@ -208,40 +208,56 @@ int Registro::unir(const Registro& registro){
      std::list<Registro::Punteros> final;
      std::list<Registro::Punteros>::const_iterator it1, it2;
 
-     if(termino != registro.termino)
-	  return 0;
+     // if(termino != registro.termino)
+     // 	  return 0;
 
-     if(punteros.size() == 0)
-	  return 0;
+     // if(punteros.size() == 0)
+     // 	  return 0;
 
-     if(registro.punteros.size() == 0)
-	  return 0;
+     // if(registro.punteros.size() == 0)
+     // 	  return 0;
      
      it1 = punteros.begin();
      it2 = registro.punteros.begin();
 
+     // inicializo la frecuencia a cero
      frecuencia=0;
 
+
+     // recorro las 2 listas de punteros
      while(it1!= punteros.end() && it2 != registro.punteros.end()){
+	  // si la primera es menor que la segunda
 	  if((*it1).documento < (*it2).documento){
+	       // escribo la primera y avanzo
 	       final.push_back(*it1);
 	       it1++;
 	  }
+	  // si la segunda es menor que la primera
 	  else if((*it1).documento > (*it2).documento){
+
+	       // escribo la segunda y avanzo
 	       final.push_back(*it2);
 	       it2++;
 	  }
 	  else{
+
+	       // si son iguales, sumo las frecuencias y avanzo en las
+	       // dos listas
 	       Registro::Punteros p;
 	       p.documento = (*it1).documento;
 	       p.frecuencia = (*it1).frecuencia + (*it2).frecuencia ;
+
 	       final.push_back(p);
 	       it1++;
 	       it2++;
 	  }
+
+	  // en cualquiera de los casos, aumento la frecuencia
 	  frecuencia++;
      }
      
+     // termino de procesar los elementos que puedan quedar en la
+     // lista
      while(it1!= punteros.end()){
 	  final.push_back(*it1);
 	  it1++;

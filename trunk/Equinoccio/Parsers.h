@@ -22,6 +22,11 @@
 #define NUMERO_REGISTROS_SORT  1000
 #define NUMERO_NGRAMAS 5000 
 
+// #define NUMERO_PARTICIONES  2
+// #define NUMERO_REGISTROS_SORT  4
+// #define NUMERO_NGRAMAS 5000 
+
+
 /** 
  * Esta clase contiene una cadena de parsers que intentan parsear los
  * archivos que se nos pasan. Ademas de eso, cuando se termina de
@@ -176,7 +181,7 @@ public:
 	  // por cada grupo de parsers
 	  std::map<std::string, std::list<Parser*> >::iterator it2;
 	  for(it2=catalogos.begin(); it2!= catalogos.end();it2++){
-	       std::cout << "Catalogo: " << (*it2).first << "\n";
+	       std::cerr << "Catalogo: " << (*it2).first << "\n";
 	       std::list<Parser*> parsers;
 	       /* Obtengo el nombre del indice del catalogo */
 	       std::string nombreIndice = PATH_RES; // primero el path
@@ -205,7 +210,7 @@ public:
 		    /* y que nombre base tiene cada uno */
 		    std::string nombreBase = p->getNombreBase();
 
-		    std::cout << "Primero,Ultimo: " << primero << " " << ultimo << std::endl;
+		    std::cerr << "Primero,Ultimo: " << primero << " " << ultimo << std::endl;
 		    // hasta parsear el ultimo...
 		    for(;primero<=ultimo;primero++){
 			 // armo el nombre de la particion
@@ -213,9 +218,9 @@ public:
 
 			 /* ordeno cada paricion y cuento cuantas
 			  * particiones resultan */
-			 std::cout << "particion:" << particion <<" \n";
+			 std::cerr << "particion: " << particion <<" \n";
 			 generadas += Sorter<Registro>::Sort(particion,nombreIndice+".sorted", generadas,NUMERO_REGISTROS_SORT);
-			 std::cout << " Particiones: " << particion << " generadas: " << generadas << std::endl;
+			 std::cerr << " Particiones: " << particion << " generadas: " << generadas << std::endl;
 		    }
 	       }while(lista.size()>0); // repito hasta quedarme sin
 				       // parsers en esta catalogo
@@ -223,7 +228,7 @@ public:
 	       if(generadas > 0){ // si por lo menos se generó 1
 		    /* uno las particiones quedandome el
 		     * auxiliar ordenado */
-		    std::cout << "ordenando: \n";
+		    std::cerr << "ordenando: \n";
 		    merge<Registro>(nombreIndice+".sorted",0,generadas-1, nombreIndice);
 	       }
 	       // armo el nombre del indice final del catalogo
@@ -239,20 +244,20 @@ public:
      template <class t>
      std::string merge(const std::string& nombreBase, uint32_t primero, \
 		       uint32_t ultimo, const std::string& nombreSalida){
-	  std::cout << "nombreBase: " << nombreBase << " primero: " << primero << " ultimo: " << ultimo << std::endl;
+	  std::cerr << "nombreBase: " << nombreBase << " primero: " << primero << " ultimo: " << ultimo << std::endl;
 	  std::vector<std::string> particiones;
 	  if(ultimo-primero <= NUMERO_PARTICIONES+1){
 	       for(;primero<=ultimo;primero++){
-		    std::cout << "Merge final" << std::endl;
+		    std::cerr << "Merge final" << std::endl;
 		    std::string particion=nombreBase + Util::intToString(primero);
 		    particiones.push_back(particion);
 	       }
-	       std::cout << "nombreSalida: " << nombreSalida << " particiones.size:" << particiones.size()<<"\n";
+	       std::cerr << "nombreSalida: " << nombreSalida << " particiones.size:" << particiones.size()<<"\n";
 	       Merger<t>::Merge(particiones,nombreSalida);
 	  }
 	  else{
 	       uint32_t cantidad=(ultimo-primero+1)/NUMERO_PARTICIONES;
-	       std::cout << "merge parcial: "<< cantidad << std::endl;
+	       std::cerr << "merge parcial: "<< cantidad << std::endl;
 	       uint32_t i;
 	       for(i=0;i<cantidad;i++){
 		    merge<t>(nombreBase, primero+i*NUMERO_PARTICIONES, primero+(i+1)*NUMERO_PARTICIONES-1, nombreBase+"."+Util::intToString(i));
@@ -320,7 +325,7 @@ public:
 	       idxPunteros += spunteros.size();
 
 	       // Genero los N-gramas y llevo la cuenta de cuantos van
-	       contador+=RegistroNGramas::generarEscribir(ngramas,0,*r,offsetIndice);
+	       //contador+=RegistroNGramas::generarEscribir(ngramas,0,*r,offsetIndice);
 	       offsetIndice += sizeof(idxLexico) + sizeof(freq) + sizeof(idxPunteros);
 	       // si supero el limite, creo otra particion de N-gramas
 	       if(contador > NUMERO_NGRAMAS){
@@ -348,7 +353,7 @@ public:
 	       std::string nombreNgramas = nombreBase + ".ng";
 
 	       // separo los N-gramas en 2
-	       separarNgramas(nombreNgramas ,nombreNgramas);
+	       //separarNgramas(nombreNgramas ,nombreNgramas);
 	  }
      }
 

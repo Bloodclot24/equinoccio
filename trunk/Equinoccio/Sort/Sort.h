@@ -50,12 +50,15 @@ uint32_t Sorter<t>::Sort(const std::string &nombreArchivo,		\
 		   /* leo tantos registros como tenga permitido
 		    * insertar en el arbol */
 		   while(r!=NULL&&cantidad<cantMax){
-			if(arbol.Insert(r))
+			if(arbol.Insert(r)){
 			     cantidad++;
+			}
 			/* Si devuelve NULL es porque ya existia la
 			 * clave en el arbol y hace un merge de los
 			 * registros, entonces lo liberamos. */
-			else delete r;
+			else{
+			     delete r;
+			}
 			r=t::leer(archivo,0);
 		   }
 		   if(r!=NULL){ /* si 'r' no es NULL, puede que
@@ -65,6 +68,10 @@ uint32_t Sorter<t>::Sort(const std::string &nombreArchivo,		\
 			r2 = arbol.RemoverMayorIgual(*referencia);
 			/* si existe */
 			if(r2 != NULL){
+			     while(r!= NULL && !(*r > *r2) && !(*r < *r2)){ //si son iguales
+				  r2->unir(*r);
+				  r=t::leer(archivo,0);
+			     }
 			     /* lo guardo */
 			     r2->escribir(archivos, 0);
 			     cantidad--;

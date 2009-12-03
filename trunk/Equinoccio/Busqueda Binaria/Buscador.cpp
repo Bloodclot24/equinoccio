@@ -3,9 +3,9 @@
 
 RegistroIndice Buscador::buscar(const std::string& termino,const std::string& catalogo)
 {
-	int medio = 0;
-	int izquierda = 0;
-	int derecha = 0;
+	uint32_t medio = 0;
+	uint32_t izquierda = 0;
+	uint32_t derecha = 0;
 	bool encontrado = false;
 	std::fstream archIdx;
 	std::fstream archLex;
@@ -39,6 +39,7 @@ RegistroIndice Buscador::buscar(const std::string& termino,const std::string& ca
 			encontrado = true;
 			archIdx.read((char*)&(regInd.frec),sizeof(uint32_t));
 			archIdx.read((char*)&(regInd.pDocs),sizeof(uint32_t));
+			std::cout << "La frecuencia es: " << regInd.frec << "\n";
 		
 		}else{
 			
@@ -59,9 +60,9 @@ RegistroIndice Buscador::buscar(const std::string& termino,const std::string& ca
 
 RegistroNGrama Buscador::buscarNgrama(const std::string& ngrama,const std::string& catalogo)
 {
-	int medio = 0;
-	int izquierda = 0;
-	int derecha = 0;
+	uint32_t medio = 0;
+	uint32_t izquierda = 0;
+	uint32_t derecha = 0;
 	bool encontrado = false;
 	bool error = false;
 	std::string archNgrama = PATH_RES;
