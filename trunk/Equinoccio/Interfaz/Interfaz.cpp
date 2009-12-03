@@ -19,7 +19,10 @@ Interfaz::Interfaz() {
 		button_buscar->signal_clicked().connect(sigc::mem_fun(*this,
 					&Interfaz::on_button_buscar_clicked));
 		builder->get_widget("progressbar", progress_bar);
-		builder->get_widget("combobox", combo);
+		progress_bar->hide();
+		builder->get_widget("combobox", combo_catalogo);
+		liststore_catalogo= Gtk::ListStore::create(columna_catalogo);
+		combo_catalogo->set_model(liststore_catalogo);
 		builder->get_widget("entry", entry_consulta);
 		cargarMenu();
 
@@ -124,9 +127,15 @@ void Interfaz::on_button_add_clicked() {
 
 void Interfaz::on_button_buscar_clicked() {
 	if(!activo){
-		mostrarProgreso("Buscando..");
-		std::cout<<"Consulta: "<<entry_consulta->get_text()<<std::endl;//" - Catalogo:"<<combo.get_title()<<std::endl;
-		activo = true;
+		Gtk::TreeModel::iterator iter_active= combo_catalogo->get_active();
+		if(iter_active) {
+			Gtk::TreeModel::Row row= *iter_active;
+			Glib::ustring catalogo= row[columna_catalogo.m_col_catalogo];
+			std::cout<<"Consulta: "<<entry_consulta->get_text()<<" - Catalogo: "<<catalogo<<std::endl;
+			mostrarProgreso("Buscando..");
+			activo = true;
+		} else
+			std::cout<<"Debe ingresar un catalogo"<<std::endl;
 	}
 	else {
 		detenerBarra(); //por ahora :P
@@ -139,6 +148,7 @@ void Interfaz::mostrarProgreso(Glib::ustring texto){
 	//actualiza la barra de progreso cada un determinado tiempo
 	id_activity = Glib::signal_timeout().connect(sigc::mem_fun(*this,
 		        &Interfaz::mover), 200 );
+	progress_bar->show();
 }
 
 bool Interfaz::mover() {
@@ -150,6 +160,7 @@ void Interfaz::detenerBarra() {
 	id_activity.disconnect();
 	progress_bar->set_text(" ");
 	progress_bar->set_fraction(0);
+	progress_bar->hide();
 }
 
 void Interfaz::run() {
@@ -158,3 +169,10 @@ void Interfaz::run() {
 		kit->run(*main_window);
 	}
 }
+
+void Interfaz::agregarCatalogo(const std::string& catalogo) {
+
+	Gtk::TreeModel::Row row = *(liststore_catalogo->append());
+	row[columna_catalogo.m_col_catalogo] = catalogo;
+}
+

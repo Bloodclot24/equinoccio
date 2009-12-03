@@ -15,7 +15,6 @@ private:
 	Gtk::ProgressBar *progress_bar;//barra que muestra actividad
 	sigc::connection id_activity;//id del refresh de la barra
 	Gtk::Button *button_buscar;
-	Gtk::ComboBox *combo;
 	Gtk::Entry  *entry_consulta;
 
 	bool activo;
@@ -31,11 +30,26 @@ private:
 	bool mover();
 	void mostrarProgreso(Glib::ustring texto);
 
+	//Catalogo
+	//Child widgets:
+	Gtk::ComboBox *combo_catalogo;
+	Glib::RefPtr<Gtk::ListStore> liststore_catalogo;
+	class ColumnaCatalogo: public Gtk::TreeModel::ColumnRecord { 	//modelo de columnas
+	public:
+		ColumnaCatalogo() {
+			add(m_col_catalogo);
+		}
+
+	    Gtk::TreeModelColumn<Glib::ustring> m_col_catalogo;
+	};
+	ColumnaCatalogo columna_catalogo;
+
 public:
 	Interfaz();
 	~Interfaz();
 	void run();
 	void detenerBarra();
+	void agregarCatalogo(const std::string& catalogo);
 };
 
 #endif /* INTERFAZ_H_ */
