@@ -325,7 +325,7 @@ public:
 	       idxPunteros += spunteros.size();
 
 	       // Genero los N-gramas y llevo la cuenta de cuantos van
-	       //contador+=RegistroNGramas::generarEscribir(ngramas,0,*r,offsetIndice);
+	       contador+=RegistroNGramas::generarEscribir(ngramas,0,*r,offsetIndice);
 	       offsetIndice += sizeof(idxLexico) + sizeof(freq) + sizeof(idxPunteros);
 	       // si supero el limite, creo otra particion de N-gramas
 	       if(contador > NUMERO_NGRAMAS){
@@ -338,7 +338,7 @@ public:
 	       delete r;
 	  }
 
-	  //remove(nombre.c_str());
+	  remove(nombre.c_str());
 	  
 	  if(contador >= 1){
 	       contador = 0;
@@ -353,7 +353,7 @@ public:
 	       std::string nombreNgramas = nombreBase + ".ng";
 
 	       // separo los N-gramas en 2
-	       //separarNgramas(nombreNgramas ,nombreNgramas);
+	       separarNgramas(nombreNgramas ,nombreNgramas);
 	  }
      }
 
@@ -387,7 +387,7 @@ public:
 	       idxPunteros += punterosComprimidos.size();
 	  }
 
-	  //remove(nombre.c_str());
+	  remove(nombre.c_str());
 
      }
 

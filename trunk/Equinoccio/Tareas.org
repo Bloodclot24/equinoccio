@@ -5,16 +5,16 @@
     - [ ] Bug con wildcards en nombres de directorios.
     - [ ] Definir paths.
   - [-] Armado del indice.
-    - [-] Parseo
+    - [X] Parseo
       - [X] Tener en cuenta los catalogos al parsear.
-      - [ ] Guardar numero de directorio en indice de archivos de cada
+      - [X] Guardar numero de directorio en indice de archivos de cada
             catalogo.
       - [X] Separar Parser C y PHP.
       - [X] Parseo de comentarios en PHP.
       - [X] Parser PDF.
       - [X] Probar e integrar codificacion gamma.
-      - [ ] Revision general de la clase parser.
-      - [ ] Documentar apropiadamente.
+      - [X] Revision general de la clase parser.
+      - [X] Documentar apropiadamente.
     - [X] Sort.
       - [X] Implementacion de replacement selection.
       - [X] Encapsular.
@@ -27,21 +27,21 @@
       - [X] Documentar
       - [X] Borrar archivos intermedios.
       - [X] Bug: ¿Registros perdidos?
-    - [-] Armado final del indice.
+    - [X] Armado final del indice.
       - [X] Armado inicial (integracion Sort+Merge).
       - [X] Borrar archivos intermedios.
       - [X] Separar punteros y lexico.
       - [X] Probar exhaustivamente.
       - [X] N-gramas.
-      - [ ] Documentar.
+      - [X] Documentar.
     - [ ] Logica de segmentos diferenciales.
       - [ ] Diferentes sufijos en los archivos parciales.
       - [ ] Bitmaps.
       - [ ] Merge de los segmentos.
   - [-] Algoritmo de busqueda.
     - [X] Busqueda binaria.
-    - [ ] Busqueda simple.
-    - [ ] Busqueda compuesta.
+    - [X] Busqueda simple.
+    - [X] Busqueda compuesta.
     - [ ] Busqueda rankeada.
     - [ ] Comodines.
     - [ ] Busqueda en todos los segmentos.

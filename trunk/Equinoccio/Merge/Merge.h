@@ -69,7 +69,6 @@ int Merger<t>::Merge(const std::vector<std::string>& nombreParticiones, \
 		    if(i < particiones.size()-1){
 			 particiones[i] = particiones[particiones.size()-1];
 			 registro[i] = registro[registro.size()-1];
-			 std::cout << "REGISTRO MOVIDO: " << registro[i]->obtenerTermino() << std::endl;
 			 i--; // solo bajo supervision de un adulto
 		    }
 		    particiones.pop_back();
@@ -79,8 +78,6 @@ int Merger<t>::Merge(const std::vector<std::string>& nombreParticiones, \
 		     * el menor */
 	       } else if(*registro[i] < *registro[menor]){
 
-		    std::cout << "Menor anterior: " << registro[menor]->obtenerTermino() << "(" << menor<<")"<< \
-			 " nuevo menor: " << registro[i]->obtenerTermino() << "(" << i<<")"<< "\n";
 		    menor = i;
 		    
 		    /* Si los registros son iguales los uno */
@@ -106,7 +103,6 @@ int Merger<t>::Merge(const std::vector<std::string>& nombreParticiones, \
 	       temporal->escribir(salida, 0);
 	       delete temporal;
 	       /*leo el siguiente*/
-//	       registro[menor] = t::leer(*particiones[menor],0);
 	       if(registro[menor] == NULL){
 		    delete particiones[menor];
 		    /* guardo la ultima particion y el ultimo registro
@@ -123,9 +119,6 @@ int Merger<t>::Merge(const std::vector<std::string>& nombreParticiones, \
 	       for(unsigned i=0;i<particiones.size();i++){
 		    /*Busco el menor*/
 		    if(*registro[i] < *registro[menor]){
-			 std::cout << "Menor anterior: " << registro[menor]->obtenerTermino() << "(" << menor<<")"<< \
-			      " nuevo menor: " << registro[i]->obtenerTermino() << "(" << i<<")"<< "\n";
-			 
 			 menor = i;
 
 		    } else if((i!=menor) && !(*registro[i] > *registro[menor])){
@@ -139,7 +132,6 @@ int Merger<t>::Merge(const std::vector<std::string>& nombreParticiones, \
 			      if(i < particiones.size()-1){
 				   particiones[i] = particiones[particiones.size()-1];
 				   registro[i] = registro[registro.size()-1];
-				   std::cout << "REGISTRO MOVIDO: " << registro[i]->obtenerTermino() << std::endl;
 			      }
 			      particiones.pop_back();
 			      registro.pop_back();

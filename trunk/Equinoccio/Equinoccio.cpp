@@ -43,6 +43,7 @@ private:
      std::fstream lexDirectorios;
      std::fstream idxArchivos;
      std::fstream lexArchivos;
+     uint32_t numeroDirectorio;
 
      bool esDirectorio(const std::string& nombre){
 	  struct stat sb;
@@ -81,13 +82,13 @@ private:
 	  struct dirent* entry;
 
 	  std::string directorio = parsearDirectorio(nombre);
-	  uint32_t dir=0;
 
 	  std::cout << "Directorio absouto: " << directorio << "\n";
 
-	  if(esDirectorio(directorio)){
+	  if(esDirectorio(directorio)){  
 	       if( (directory =opendir(directorio.c_str())) ==NULL)
 		    return;
+	       uint32_t dir=++numeroDirectorio;
 	       guardarDirectorio(directorio);
 	       while((entry=readdir(directory))!=NULL){
 		    std::string nombreCompleto(directorio+'/'+entry->d_name);
@@ -100,7 +101,6 @@ private:
 			 agregarDirectorio(nombreCompleto);
 		    }
 	       }
-	       dir++; //cuento el directorio
 	       closedir(directory);
 	  }
      }
@@ -208,6 +208,7 @@ private:
     	 FileManager::cargarConfiguracion();
     	 FileManager::crearJerarquias();
     	 FileManager::crearAlertaFallo();
+	 numeroDirectorio = (uint32_t) -1;
      };
      Equinoccio(const Equinoccio&){};
      ~Equinoccio(){
