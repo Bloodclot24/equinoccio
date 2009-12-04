@@ -1,9 +1,10 @@
 #include "ParserImagen.h"
 #include "../libExtractor/libExtractor.h"
+#include "../../FileManager/FileManager.h"
 
 ParserImagen::ParserImagen(uint32_t cantMaxReg):Parser(cantMaxReg) {
      nombreCatalogo = "IMG";
-     nombreBase = PATH_RES;
+     nombreBase = FileManager::obtenerPathBase();
      nombreBase+= IMAGEN_DUMP_BASENAME;
      cargarStopWord(IMAGEN_STOP_WORD_FILE);
 }
@@ -57,7 +58,7 @@ bool ParserImagen::parsear(std::string nombre, uint32_t documento) {
 		}while(keywords != NULL);
 
 		if (is_ok) {
-			std::string dump_name = PATH_RES;
+			std::string dump_name = FileManager::obtenerPathBase();
 			dump_name += IMAGEN_DUMP_BASENAME;
 			dump_name += Util::intToString(archivos);
 
@@ -77,7 +78,7 @@ bool ParserImagen::parsear(std::string nombre, uint32_t documento) {
 					archivos++;
 					dump.close();
 
-					dump_name = PATH_RES;
+					dump_name = FileManager::obtenerPathBase();
 					dump_name += IMAGEN_DUMP_BASENAME;
 					dump_name += Util::intToString(archivos);
 					dump.open(dump_name.c_str(), std::ofstream::out);

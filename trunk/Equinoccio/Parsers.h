@@ -7,6 +7,10 @@
 #include <libgen.h>  //para basename
 #include <stdio.h>   //para remove
 
+#include <sys/types.h>
+#include <sys/stat.h>
+
+
 #include "Parsers/Parser.h"
 #include "Merge/Merge.h"
 #include "Sort/Sort.h"
@@ -14,6 +18,7 @@
 
 #include "Registros/RegistroNGramas.h"
 #include "FileManager/ConstPath.h"
+#include "FileManager/FileManager.h"
 
 #define NOMBRE_IDX_ARCHIVOS "Resources/IDX_ARCH.idx"
 #define NOMBRE_LEX_ARCHIVOS "Resources/LEX_ARCH.lex"
@@ -98,12 +103,9 @@ public:
 		    /* si pudo, aumento la cantidad de documentos
 		     * parseados en ese catalogo */
 		    documentos[cat]++;
-		    char* nombre = strdup(nombreArchivo.c_str());
-		    char* final = basename(nombre);
 		    /* guardo los datos del archivo en el indice de
 		     * archivos */
-		    guardarArchivo(cat, final, dir);
-		    free(nombre);
+		    guardarArchivo(cat, nombreArchivo, dir);
 	       }
 	  }
 	  return encontrado;
@@ -115,7 +117,7 @@ public:
       * como en el indice).
       * 
       * @param catalogo Catalogo al que pertenece el archivo.
-      * @param nombre Nombre del archivo.
+      * @param nombre Nombre del archivo (con el path).
       * @param dir Numero de directorio al que pertenece.
       * 
       * @return 0
@@ -148,13 +150,41 @@ public:
 	  // obtengo el tamaño del archivo (la posicion donde estoy
 	  // parado)
 	  uint32_t p = lexArchivos.tellp();
+
+	  // obtengo el nombre del archivo sin el path
+	  char* nombreArchivoSinPath = strdup(nombre.c_str());
+	  char* final = basename(nombreArchivoSinPath);
+
+	  // ultima modificacion e inodo
+	  time_t timeStamp;
+	  ino_t inode;
+
+	  // busco los datos que necesito 
+	  struct stat sb;
+	  if (lstat(nombre.c_str(), &sb) == -1){
+	       // error (casi imposible (CASI))
+	       timeStamp=0;
+	       inode=0;
+	  }
+	  else{
+	       // extraigo los datos
+	       timeStamp=sb.st_mtime;
+	       inode = sb.st_ino;
+	  }
+
 	  // escribo el nombre en el archivo de lexico de archivos
-	  lexArchivos.write(nombre.c_str(), nombre.size()+1);
+	  lexArchivos.write(final, strlen(final)+1);
 	  // el archivo de indice guarda la posicion donde
 	  // se escribió el término
 	  idxArchivos.write((char*)&p,sizeof(p));
 	  // guardo tambien el numero de directorio en el indice
 	  idxArchivos.write((char*)&dir, sizeof(dir));
+	  // guardo la fecha de ultima modificacion
+	  idxArchivos.write((char*)&timeStamp, sizeof(timeStamp));
+	  // guardo el inodo
+	  idxArchivos.write((char*)&inode, sizeof(inode));
+
+	  free(nombreArchivoSinPath);
 	  
 	  return 0;
      }
@@ -184,7 +214,7 @@ public:
 	       std::cerr << "Catalogo: " << (*it2).first << "\n";
 	       std::list<Parser*> parsers;
 	       /* Obtengo el nombre del indice del catalogo */
-	       std::string nombreIndice = PATH_RES; // primero el path
+	       std::string nombreIndice = FileManager::obtenerPathBase(); // primero el path
 						    // donde se guarda
 
 	       nombreIndice += "IDX_"; // prefijo de los indices
@@ -232,7 +262,7 @@ public:
 		    merge<Registro>(nombreIndice+".sorted",0,generadas-1, nombreIndice);
 	       }
 	       // armo el nombre del indice final del catalogo
-	       std::string nombreCat = PATH_RES;
+	       std::string nombreCat = FileManager::obtenerPathBase();
 	       nombreCat += p->getNombreCatalogo();
 	       // y lo armo (separo el auxiliar)
 	       separarAuxiliar(nombreIndice,nombreCat);

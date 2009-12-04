@@ -1,10 +1,11 @@
 #include "ParserPdf.h"
 #include <iostream>
 #include "../libExtractor/libExtractor.h"
+#include "../../FileManager/FileManager.h"
 
 ParserPdf::ParserPdf(uint32_t cantMaxReg):Parser(cantMaxReg) {
      nombreCatalogo = "PDF";
-     nombreBase = PATH_RES;
+     nombreBase = FileManager::obtenerPathBase();
      nombreBase+= PDF_DUMP_BASENAME;
      cargarStopWord(PDF_STOP_WORD_FILE);
 }
@@ -57,7 +58,7 @@ bool ParserPdf::parsear(std::string nombre, uint32_t documento) {
 		}while(keywords != NULL);
 
 		if (is_ok) {
-			std::string dump_name = PATH_RES;
+			std::string dump_name =  FileManager::obtenerPathBase();
 			dump_name += PDF_DUMP_BASENAME;
 			dump_name += Util::intToString(archivos);
 
@@ -76,7 +77,7 @@ bool ParserPdf::parsear(std::string nombre, uint32_t documento) {
 					cantReg = 1;
 					archivos++;
 					dump.close();
-					dump_name = PATH_RES;
+					dump_name =  FileManager::obtenerPathBase();
 					dump_name += PDF_DUMP_BASENAME;
 					dump_name += Util::intToString(archivos);
 					dump.open(dump_name.c_str(), std::ofstream::out);

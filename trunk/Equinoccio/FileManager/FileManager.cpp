@@ -10,7 +10,7 @@ FileManager::~FileManager() {}
 
 int FileManager::crearJerarquias() {
 
-    mkdir(PATH_RES, PERMISO);
+     mkdir(PATH_TRES, PERMISO);
 	mkdir(PATH_SEGDIF, PERMISO);
 	mkdir(PATH_CONFIG, PERMISO);
     return 0;
@@ -69,5 +69,23 @@ void FileManager::crearConfiguracion() {
 		}
 }
 
+std::string FileManager::obtenerPathBase(){
 
+     return PATH_TRES;
+}
 
+std::string FileManager::obtenerPathIdxArch(){
+     return obtenerPathIdxArch()+IDX_ARCH2;
+}
+
+std::string FileManager::obtenerPathLexArch(){
+     return obtenerPathIdxArch()+LEX_ARCH2;
+}
+
+std::string FileManager::obtenerPathIdxDirs(){
+     return obtenerPathIdxArch()+IDX_DIRS2;
+}
+
+std::string FileManager::obtenerPathLexDirs(){
+     return obtenerPathIdxArch()+LEX_DIRS2;
+}

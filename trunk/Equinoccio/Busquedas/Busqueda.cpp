@@ -4,6 +4,7 @@
 #include "../Registros/RegistroNGramas.h"
 #include "../Parsers/Parser.h"
 #include "../FileManager/ConstPath.h"
+#include "../FileManager/FileManager.h"
 
 Busqueda::Busqueda() {}
 
@@ -65,7 +66,7 @@ bool Busqueda::buscarEnIndice(std::string consulta, std::string catalogo) {
 			std::cout<<"Frecuencia: "<<reg.frec<<std::endl;
 			if ( reg.frec != 0) {
 				//obtener los punteros
-				std::string nombre_pun = PATH_RES;
+				std::string nombre_pun =  FileManager::obtenerPathBase();
 				nombre_pun += catalogo;
 				nombre_pun += ".pun";
 				std::ifstream arch_punteros(nombre_pun.c_str(), std::ios::in | std::ios::binary);
@@ -92,15 +93,15 @@ bool Busqueda::buscarEnIndice(std::string consulta, std::string catalogo) {
 
 bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 
-	std::string path = PATH_RES;
+	std::string path = FileManager::obtenerPathBase();
 	path += catalogo;
 	path += ".idx";
 	std::ifstream indice(path.c_str(), std::ios::in | std::ios::binary);
-	path = PATH_RES;
+	path = FileManager::obtenerPathBase();
 	path += catalogo;
 	path += EXT_NG_PUN;
 	std::ifstream pun_ng(path.c_str(),  std::ios::in | std::ios::binary);
-	path = PATH_RES;
+	path = FileManager::obtenerPathBase();
 	path += catalogo;
 	path += ".lex";
 	std::ifstream lexico (path.c_str(), std::ios::in | std::ios::binary);
@@ -210,7 +211,7 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 	//agregar los docs al vector punteros
 	//liberar todas las listas auxiliares
 
-	path = PATH_RES;
+	path = FileManager::obtenerPathBase();
 	path += catalogo;
 	path += ".pun";
 	std::ifstream pun_docs(path.c_str(), std::ios::in | std::ios::binary);
@@ -320,17 +321,17 @@ std::string Busqueda::buscarPath(uint32_t puntero,std::string catalogo ) {
 
 	std::string path;
 	uint32_t par[2]; //par offsetLex - numDir
-	std::string nombre = IDX_ARCH;
+	std::string nombre = FileManager::obtenerPathIdxArch() ;
 	nombre +=catalogo;
 
 	std::ifstream indiceDocs(nombre.c_str(),  std::ios::in | std::ios::binary);
 	if (indiceDocs.good()) {
 		//obtengo el puntero al lexico de archivos
-	     indiceDocs.seekg(puntero*2*sizeof(uint32_t));
+	     indiceDocs.seekg(puntero*(2*sizeof(uint32_t)+sizeof(time_t)+sizeof(ino_t)));
 		indiceDocs.read((char*)par, 2*sizeof(uint32_t));
 		indiceDocs.close();
 
-		nombre = LEX_ARCH;
+		nombre = FileManager::obtenerPathLexArch();
 		nombre += catalogo;
 		std::ifstream lexDocs(nombre.c_str(), std::ios::in);
 		if(lexDocs.good()) {
@@ -341,7 +342,7 @@ std::string Busqueda::buscarPath(uint32_t puntero,std::string catalogo ) {
 
 			//busco el directorio
 
-			lexDocs.open(IDX_DIRS, std::ios::in | std::ios::binary);
+			lexDocs.open(FileManager::obtenerPathIdxDirs().c_str(), std::ios::in | std::ios::binary);
 			if(lexDocs.good()){
 				//obtengo el offset del directorio
 				uint32_t offset;
@@ -349,7 +350,7 @@ std::string Busqueda::buscarPath(uint32_t puntero,std::string catalogo ) {
 				lexDocs.read((char*)&offset, sizeof(uint32_t));
 				lexDocs.close();
 
-				lexDocs.open(LEX_DIRS,  std::ios::in);
+				lexDocs.open(FileManager::obtenerPathLexDirs().c_str(),  std::ios::in);
 				if (lexDocs.good()) {
 					lexDocs.seekg(offset);
 					std::getline(lexDocs, path, '\0');

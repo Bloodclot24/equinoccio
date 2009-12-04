@@ -43,6 +43,17 @@ public:
 		 * levanta la configuracion desde archivo
 		 */
 		static void cargarConfiguracion();
+
+     static std::string obtenerPathBase();
+
+     static std::string obtenerPathIdxArch();
+
+     static std::string obtenerPathLexArch();
+
+     static std::string obtenerPathIdxDirs();
+
+     static std::string obtenerPathLexDirs();
+
 };
 #endif /*FILEMANAGER_H_*/
 

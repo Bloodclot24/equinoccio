@@ -1,5 +1,6 @@
 #include "Buscador.h"
 #include "../FileManager/ConstPath.h"
+#include "../FileManager/FileManager.h"
 
 RegistroIndice Buscador::buscar(const std::string& termino,const std::string& catalogo)
 {
@@ -12,9 +13,9 @@ RegistroIndice Buscador::buscar(const std::string& termino,const std::string& ca
 	RegistroIndice regInd;
 	char cadena[50];
 	bool error = false;
-	std::string indice = PATH_RES;
+	std::string indice =  FileManager::obtenerPathBase();
 	indice += catalogo + ".idx";
-	std::string lexico = PATH_RES;
+	std::string lexico =  FileManager::obtenerPathBase();
 	lexico += catalogo + ".lex";
 	
 	// Abro los archivos para lectura
@@ -65,7 +66,7 @@ RegistroNGrama Buscador::buscarNgrama(const std::string ngrama,const std::string
 	uint32_t derecha = 0;
 	bool encontrado = false;
 	bool error = false;
-	std::string archNgrama = PATH_RES;
+	std::string archNgrama =  FileManager::obtenerPathBase();
 	archNgrama += catalogo + EXT_NG_IDX;
 	std::fstream archivo;
 	RegistroNGrama regNgrama;

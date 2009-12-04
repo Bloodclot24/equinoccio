@@ -50,7 +50,7 @@ private:
 
      bool esDirectorio(const std::string& nombre){
 	  struct stat sb;
-	  if (stat(nombre.c_str(), &sb) == -1)
+	  if (lstat(nombre.c_str(), &sb) == -1)
 	       return false;
 
 	  if((sb.st_mode & S_IFMT) == S_IFDIR)
@@ -60,7 +60,7 @@ private:
 
      bool esArchivo(const std::string& nombre){
 	  struct stat sb;
-	  if (stat(nombre.c_str(), &sb) == -1)
+	  if (lstat(nombre.c_str(), &sb) == -1)
 	       return false;
 
 	  if((sb.st_mode & S_IFMT) == S_IFREG)

@@ -1,9 +1,10 @@
 #include "ParserAudio.h"
+#include "../../FileManager/FileManager.h"
 
 /****************************************************************************/
 ParserAudio::ParserAudio(uint32_t cantMaxReg): Parser::Parser(cantMaxReg) { 
      nombreCatalogo = "SND";
-     nombreBase = PATH_RES;
+     nombreBase = FileManager::obtenerPathBase();
      nombreBase += AUDIO_DUMP_BASENAME;
      cargarStopWord(AUDIO_STOP_WORD_FILE);
 }; 
@@ -19,7 +20,7 @@ bool ParserAudio::parsear(std::string nombre, uint32_t documento) {
      EXTRACTOR_KeywordList *keywordList= extractor.getKeyword(nombre.c_str());
      EXTRACTOR_KeywordList *keywords= keywordList;
   
-     std::string nombre_dump = PATH_RES;
+     std::string nombre_dump = FileManager::obtenerPathBase();
      bool audio= false;
   
      if(keywords) {
@@ -81,7 +82,7 @@ bool ParserAudio::parsear(std::string nombre, uint32_t documento) {
 			 dump.close();
 			 archivos++;
 			 nombre_dump.clear();
-			 nombre_dump = PATH_RES;
+			 nombre_dump = FileManager::obtenerPathBase();
 			 nombre_dump+= AUDIO_DUMP_BASENAME;
 			 nombre_dump+= Util::intToString(archivos);
 			 dump.open(nombre_dump.c_str(), std::fstream::out);

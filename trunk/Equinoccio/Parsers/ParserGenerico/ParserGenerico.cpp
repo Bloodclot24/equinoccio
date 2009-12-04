@@ -1,12 +1,13 @@
 #include "ParserGenerico.h"
+#include "../../FileManager/FileManager.h"
 
 ParserGenerico::ParserGenerico(uint32_t cantMaxReg):Parser::Parser(cantMaxReg){
-	nombreBase+= PATH_RES;
+	nombreBase+=  FileManager::obtenerPathBase();
 }
 
 bool ParserGenerico::parsear(std::string nombre, uint32_t documento){
 
-	if(!verificarExtension(nombre,extensionesValidas))
+     if(!verificarExtension(nombre,extensionesValidas))
 	  return false;
 
      std::ifstream entrada(nombre.c_str());
@@ -42,7 +43,7 @@ void ParserGenerico::flush(){
 
 void ParserGenerico::guardarTermino(const std::string& termino, uint32_t documento){
      if(!salida.is_open()){
-	  std::string nombre(PATH_RES);
+	  std::string nombre( FileManager::obtenerPathBase());
 	  nombre += nombreDump;
 	  nombre += Util::intToString(archivos);
 	  salida.open(nombre.c_str(), std::ios::out);
@@ -56,7 +57,7 @@ void ParserGenerico::guardarTermino(const std::string& termino, uint32_t documen
 	       cantReg=0;
 	       salida.close();
 	       archivos++;
-	       std::string nombre(PATH_RES);
+	       std::string nombre( FileManager::obtenerPathBase());
 	       nombre += nombreDump;
 	       nombre += Util::intToString(archivos);
 	       salida.open(nombre.c_str(), std::ios::out);
