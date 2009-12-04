@@ -93,8 +93,9 @@ bool Busqueda::buscarEnIndice(std::string consulta, std::string catalogo) {
 
 bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 
-	std::string path = IDX_ARCH;
+	std::string path = PATH_RES;
 	path += catalogo;
+	path += ".idx";
 	std::ifstream indice(path.c_str(), std::ios::in | std::ios::binary);
 	path = PATH_RES;
 	path += catalogo;
@@ -102,7 +103,7 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 	std::ifstream pun_ng(path.c_str(),  std::ios::in | std::ios::binary);
 	path = PATH_RES;
 	path += catalogo;
-	path += EXT_NG_IDX;
+	path += ".lex";
 	std::ifstream lexico (path.c_str(), std::ios::in | std::ios::binary);
 	if (!indice.good() || !pun_ng.good() || !lexico.good()) {
 		std::cout << "error al abrir los archivos de ngramas"<<std::endl;
@@ -166,7 +167,7 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 	//Realizo el AND entre los punteros al indice obtenidos
 	std::list<uint32_t> offset_and;
 	Busqueda::andPunteros(offset_indice, offset_and);
-	std::cout<<"	__cant Punteros AND: "<<offset_and.size()<<"   Lu: siempre me da cero :("<<std::endl;
+	std::cout<<"	__cant Punteros AND: "<<offset_and.size()<<std::endl;
 
 	RegIndice *r;
 	uint32_t off = 0;
@@ -177,16 +178,19 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 		r = new RegIndice;
 		// entro al indice
 		//obtengo el termino, la frec, y el puntero a los docs y los agrego a la lista
-		indice.seekg(offset_and.front()*sizeof(RegistroIndice::size()));
+		indice.seekg(offset_and.front());
+		std::cout<<"Offset al indice: "<<offset_and.front()<<std::endl;
 		//leo el offset al lexico
 		indice.read((char*)&off, sizeof(uint32_t));
+		std::cout<<"Offset lexico: "<<off<<std::endl;
 		//leo frecuencia y puntero
 		indice.read((char*)&(r->frec), sizeof(uint32_t));
 		indice.read((char*)&(r->pun), sizeof(uint32_t));
 
 		//busco el termino en el archivo de lexico
 		lexico.seekg(off);
-		char c;
+		char c=0;
+		r->termino.clear();
 		while(lexico.good() && (c = lexico.get()) != 0){
 		  r->termino += c;
 		}
@@ -231,9 +235,9 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 		while (!reg_match.empty()) {
 			offset_and.clear();
 			Registro::obtenerPunterosEnLista(pun_docs,reg_match.front()->pun,reg_match.front()->frec,&offset_and);
-			std::cout<<"*********** "<<reg_match.front()->termino<<std::endl;
+			//std::cout<<"*********** "<<reg_match.front()->termino<<std::endl;
 			while (!offset_and.empty()){
-				std::cout<<"	doc: "<<buscarPath(offset_and.front(), catalogo);
+				//std::cout<<"	doc: "<<buscarPath(offset_and.front(), catalogo);
 				offset_and.pop_front();
 			}
 			reg_match.pop_front();
@@ -288,7 +292,6 @@ void Busqueda::andPunteros(std::vector< std::list<uint32_t>* > &punteros, std::l
 	  std::cout << "se saltea el AND\n";
 	  punteros_and = *punteros[0];
     }
-
 }
 
 void Busqueda::filtrarFalsosPositivos(std::list<std::string>& consulta, std::list<RegIndice*> &lista, std::list<RegIndice*> &filtrada) {
