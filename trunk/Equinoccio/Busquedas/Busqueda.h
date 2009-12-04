@@ -18,10 +18,6 @@ private:
 
 	std::list<uint32_t> punteros_match;	//punteros resultantes de la consulta
 	std::vector< std::list<uint32_t>* > punteros; //contiene las listas de punteros de todos los terminos buscados
-	unsigned int size; //cantidad de listas de punteros
-
-
-	void borrarListas();
 
 	/* Busca la palabra en el catalogo indicado
 	 * agrega la lista de punteros obtenidas en el vector de punteros
@@ -61,7 +57,7 @@ private:
 
 public:
 	Busqueda();
-	virtual ~Busqueda();
+	~Busqueda();
 
 
 	/* busca el string en el indice y devuelve una lista con los

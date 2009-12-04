@@ -5,12 +5,9 @@
 #include "../Parsers/Parser.h"
 #include "../FileManager/ConstPath.h"
 
-Busqueda::Busqueda() {
-	size = 0;
-}
+Busqueda::Busqueda() {}
 
 Busqueda::~Busqueda() {
-	borrarListas();
 }
 
 std::list<std::string> Busqueda::buscar(std::string& consulta, std::string catalogo) {
@@ -31,10 +28,12 @@ std::list<std::string> Busqueda::buscar(std::string& consulta, std::string catal
 		if (!encontrado) {
 			//una o mas palabras no matcheadas
 			std::cout<<" * NO MATCH * "<<std::endl;
+			for (unsigned int i=0; i<punteros.size();i++)
+				delete punteros[i];
 		}
 		else {
 			std::cout<<" * AND * "<<std::endl;
-			 Busqueda::andPunteros(punteros,punteros_match);
+			 Busqueda::andPunteros(this->punteros,this->punteros_match);
 		     std::cout << "tamanio de la lista final: " << punteros_match.size() << std::endl;
 		     std::list<uint32_t>::iterator it;
 		     std::list<uint32_t>::iterator end = punteros_match.end();
@@ -74,7 +73,6 @@ bool Busqueda::buscarEnIndice(std::string consulta, std::string catalogo) {
 					std::list<uint32_t>* puntDocs = new std::list<uint32_t>;
 					Registro::obtenerPunterosEnLista(arch_punteros, reg.pDocs , reg.frec, puntDocs);
 					punteros.push_back(puntDocs);
-					size++;
 					arch_punteros.close();
 					return true;
 				}
@@ -146,8 +144,10 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 					offset_indice.push_back(lista_offset);
 				}
 				else {
-					//liberar listas -> TODO
+					//liberar listas
 					std::cout<<"no existe el bigrama: "<<str.substr(car,2)<<std::endl;
+					for (unsigned int i=0; i<offset_indice.size();i++)
+						delete offset_indice[i];
 					return false;
 				}
 			}
@@ -181,10 +181,8 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 		// entro al indice
 		//obtengo el termino, la frec, y el puntero a los docs y los agrego a la lista
 		indice.seekg(offset_and.front(),std::ios_base::beg);
-		std::cout<<"Offset al indice: "<<offset_and.front()<<std::endl;
 		//leo el offset al lexico
 		indice.read((char*)&off, sizeof(uint32_t));
-		std::cout<<"Offset lexico: "<<off<<std::endl;
 		//leo frecuencia y puntero
 		indice.read((char*)&(r->frec), sizeof(uint32_t));
 		indice.read((char*)&(r->pun), sizeof(uint32_t));
@@ -217,21 +215,25 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 	path += ".pun";
 	std::ifstream pun_docs(path.c_str(), std::ios::in | std::ios::binary);
 	if (pun_docs.good()){
-		std::list<uint32_t> *punt = new std::list<uint32_t>;
+		if (reg_match.empty())
+			return false;
 		while (!reg_match.empty()) {
+			std::list<uint32_t> *punt = new std::list<uint32_t>;
 			punt->clear();
-			std::cout<<"Frecuencia del termino: "<<reg_match.front()->frec<<std::endl;
-
 			Registro::obtenerPunterosEnLista(pun_docs,reg_match.front()->pun,reg_match.front()->frec,punt);
-//			while (!punteros->empty()){
-//				std::cout<<"	doc: "<<buscarPath(punteros->front(), catalogo)<<std::endl;
-//				punteros->pop_front();
-//			}
 			delete reg_match.front();
 			reg_match.pop_front();
+			std::list<uint32_t>::iterator it = punt->begin();
+			while (it != punt->end()) {
+				std::cout<<"Doc: "<<buscarPath(*it,catalogo)<<std::endl;
+				it++;
+			}
+
+			//aca hay que hacer un merge y la lista mergeada pasarla a punt porque sino
 			punteros.push_back(punt);
 		}
 		pun_docs.close();
+
 		return true; //debe liberar
 	}
 
@@ -370,14 +372,4 @@ std::string Busqueda::buscarPath(uint32_t puntero,std::string catalogo ) {
 		std::cout<<"error al abrir el indice de documentos: "<<nombre<<std::endl;
 	}
 	return path;
-}
-
-void Busqueda::borrarListas() {
-//	while (!punteros.empty()) {
-//		punteros.back()->clear();
-//		delete punteros.back();
-//		punteros.pop_back();
-//	}
-	size = 0;
-	punteros_match.clear();
 }
