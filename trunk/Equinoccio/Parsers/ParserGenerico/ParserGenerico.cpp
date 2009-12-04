@@ -20,9 +20,7 @@ bool ParserGenerico::parsear(std::string nombre, uint32_t documento){
      std::string termino;
 
      for(;!entrada.eof() && entrada.good();entrada.get(c)){
-	  if(c=='#'){ //Comienzo de un comentario (lo salteo todo)
-	  }
-	  if(isalnum(c)){
+	  if(isalnum(c) || c>=128){
 	       termino += c;
 	       cr=false;
 	  }
@@ -49,6 +47,8 @@ void ParserGenerico::guardarTermino(const std::string& termino, uint32_t documen
 	  nombre += Util::intToString(archivos);
 	  salida.open(nombre.c_str(), std::ios::out);
      }
+
+ 	std::cout << "ANTES DE GUARDAR" << std::endl;
 
      if(!esStopWord(termino)){
 	  Registro r(termino, documento);
