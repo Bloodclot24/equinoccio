@@ -1,9 +1,9 @@
 * TODO Equinoccio
 
-  - [ ] General
+  - [-] General
     - [ ] Archivos de configuracion.
     - [ ] Bug con wildcards en nombres de directorios.
-    - [ ] Definir paths.
+    - [X] Definir paths.
   - [-] Armado del indice.
     - [X] Parseo
       - [X] Tener en cuenta los catalogos al parsear.

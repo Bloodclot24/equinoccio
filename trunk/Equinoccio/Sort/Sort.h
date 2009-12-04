@@ -16,7 +16,7 @@ class Sorter{
 private:
      Sorter(){};
 public:
-     static uint32_t Sort(const std::string &nombreArchivo,			\
+     static uint32_t Sort(const std::string &nombreArchivo,		\
 			  const std::string &nombreBaseSalida, uint32_t primero, \
 			  unsigned cantMax);
 };

@@ -24,7 +24,6 @@ TESTSOURCES=Arbol/arbol.cpp\
 	Parsers/ParserAudio/PruebaParserAudio.cpp\
 	Parsers/ParserC/Archivos_ejec.cpp\
 	Parsers/ParserImagen/testImgParser.cpp\
-	Parsers/ParserPhp/Archivos_ejec.cpp\
 	Parsers/ParserPDF/testPDF.cpp\
 	Parsers/ParserTXT/testTXTparser.cpp\
 	Registros/pruebaRegistro.cpp\

@@ -6,6 +6,7 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <libgen.h>
+#include <unistd.h>
 
 #include "Parsers.h"
 #include "Parsers/Parser.h"
@@ -69,6 +70,10 @@ private:
 
      std::string parsearDirectorio(const std::string nombre){
 	  //dirname+basename;
+	  //std::
+	  if(nombre[0] == '.'){
+	       
+	  }
 	  char *copia = new char[nombre.size()+1];
 	  strcpy(copia, nombre.c_str());
 	  std::string absoluto = dirname(copia);
@@ -122,6 +127,29 @@ private:
 	  idxDirectorios.write((char*)&p,sizeof(uint32_t));
 	  lexDirectorios.write(nombre.c_str(), nombre.size()+1);
 	  return 0;
+     }
+
+     bool existeDirectorio(const std::string& nombre){
+	  if(!idxDirectorios.is_open()){
+	       // Los abro sin truncar
+	       idxDirectorios.open(NOMBRE_IDX_DIRECTORIOS, std::fstream::in | std::fstream::out);
+	       lexDirectorios.open(NOMBRE_LEX_DIRECTORIOS, std::fstream::in | std::fstream::out);
+	  }
+	  
+	  lexDirectorios.seekg(0);
+	  idxDirectorios.seekg(0);
+
+	  std::string nombreLeido;
+
+	  bool encontrado = false;
+
+	  for(;!encontrado && !lexDirectorios.eof();std::getline(lexDirectorios, nombreLeido, '\0')){
+	       if(nombreLeido.compare(nombre)==0){
+		    encontrado = true;
+	       }
+	  }
+
+	  return encontrado;
      }
 
      void mostrar_uso(const char* nombre){
@@ -203,6 +231,7 @@ private:
 	  }
 	  if(arg_del_dir){
 	       std::cout << "Eliminar el directorio: " << arg_del_dir << std::endl;
+	       std::cout << "Existe directorio: " << existeDirectorio(arg_del_dir) << std::endl;
 	  }
 	  if(arg_search_string)
 	       std::cout << "Buscar la cadena: " << arg_search_string << std::endl;

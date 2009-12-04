@@ -99,7 +99,6 @@ int Merger<t>::Merge(const std::vector<std::string>& nombreParticiones, \
 		    registro[menor] = t::leer(*particiones[menor],0);
 	       }
 
-	       std::cout << "Escribo: " << temporal->obtenerTermino() << "\n";
 	       temporal->escribir(salida, 0);
 	       delete temporal;
 	       /*leo el siguiente*/
