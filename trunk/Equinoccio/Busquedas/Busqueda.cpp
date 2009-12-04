@@ -128,10 +128,9 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 			str +='$';
 		}
 		std::cout<<"substr: "<<str<<std::endl;
-		substr.push_back(str);
 		if (str.size() >= 2){
 			//armo bigramas y llamo a buscar para cada uno
-
+			substr.push_back(str);
 			for (size_t car=0; car<(str.size()-1) ;car++) {
 
 				std::cout<<"bigrama: \""<<str.substr(car,2)<<"\""<<std::endl;
@@ -141,7 +140,6 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 				if (regN.frec > 0) {
 					//busco la lista de offsets al indice asociado a ese biGrama
 					lista_offset = new std::list<uint32_t>;
-					lista_offset->clear();
 					RegistroNGramas::obtenerPunterosEnLista(pun_ng,regN.pDocs, regN.frec, lista_offset);
 					std::cout<<"	cant Punteros NG: "<<lista_offset->size()<<std::endl;
 					offset_indice.push_back(lista_offset);
@@ -221,7 +219,7 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 //		std::list<uint32_t>* puntDocs = new std::list<uint32_t>;
 //		while (!reg_match.empty()) {
 //			pun.clear();
-//			Registro::obtenerPunterosEnLista(pun_docs,reg_match.front()->pDoc,reg_match.front()->frecuencia,pun);
+//			Registro::obtenerPunterosEnLista(pun_docs,reg_match.front()->pDoc,reg_match.front()->frec,pun);
 //			reg_match.pop_front();
 //		}
 //		punteros.push_back(puntDocs);
@@ -235,12 +233,14 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 	path += ".pun";
 	std::ifstream pun_docs(path.c_str(), std::ios::in | std::ios::binary);
 	if (pun_docs.good()){
+		std::list<uint32_t> *punteros = new std::list<uint32_t>;
 		while (!reg_match.empty()) {
-			offset_and.clear();
-			Registro::obtenerPunterosEnLista(pun_docs,reg_match.front()->pun,reg_match.front()->frec,&offset_and);
-			while (!offset_and.empty()){
-				std::cout<<"	doc: "<<buscarPath(offset_and.front(), catalogo)<<std::endl;
-				offset_and.pop_front();
+			punteros->clear();
+			std::cout<<"Frecuencia del termino: "<<reg_match.front()->frec<<std::endl;
+			Registro::obtenerPunterosEnLista(pun_docs,reg_match.front()->pun,reg_match.front()->frec,punteros);
+			while (!punteros->empty()){
+				std::cout<<"	doc: "<<buscarPath(punteros->front(), catalogo)<<std::endl;
+				punteros->pop_front();
 			}
 			//delete reg_match.front();
 			reg_match.pop_front();
@@ -320,9 +320,10 @@ void Busqueda::filtrarFalsosPositivos(std::list<std::string>& consulta, std::lis
 			if (pos != std::string::npos) {
 				//salio porque encontro todos los subterminos, entonces agrego el registro a la lista
 				filtrada.push_back(reg);
-				std::cout<<"palabra match: "<<reg->termino<<std::endl;
+				std::cout<<"palabra match: "<<reg->termino<< " Frec: "<<reg->frec<<std::endl;
 			}
-			delete lista.front();
+			else
+				delete lista.front();
 			lista.pop_front();
 		}
 	}
