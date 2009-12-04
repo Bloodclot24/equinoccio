@@ -16,6 +16,7 @@ private:
 	sigc::connection id_activity;//id del refresh de la barra
 	Gtk::Button *button_buscar;
 	Gtk::Entry  *entry_consulta;
+	Gtk::Statusbar *status_bar;
 
 	bool activo;
 	bool error;
@@ -29,6 +30,7 @@ private:
 	void on_button_buscar_clicked();
 	bool mover();
 	void mostrarProgreso(Glib::ustring texto);
+	void detenerBarra();
 
 	//Catalogo
 	//Child widgets:
@@ -44,11 +46,26 @@ private:
 	};
 	ColumnaCatalogo columna_catalogo;
 
+
+	class ColumnaBusqueda: public Gtk::TreeModel::ColumnRecord {
+	public:
+		ColumnaBusqueda() {
+			add(m_col_path);
+			add(m_col_catalogo);
+		}
+
+	    Gtk::TreeModelColumn<Glib::ustring> m_col_path;
+	    Gtk::TreeModelColumn<Glib::ustring> m_col_catalogo;
+	};
+
+	Glib::RefPtr<Gtk::ListStore> liststore_busqueda;
+	ColumnaBusqueda columna_busqueda;
+	Gtk::TreeView *tree_view;
+
 public:
 	Interfaz();
 	~Interfaz();
 	void run();
-	void detenerBarra();
 	void agregarCatalogo(const std::string& catalogo);
 };
 

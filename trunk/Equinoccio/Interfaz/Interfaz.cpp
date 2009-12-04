@@ -24,6 +24,14 @@ Interfaz::Interfaz() {
 		liststore_catalogo= Gtk::ListStore::create(columna_catalogo);
 		combo_catalogo->set_model(liststore_catalogo);
 		builder->get_widget("entry", entry_consulta);
+		builder->get_widget("statusbar", status_bar);
+
+		builder->get_widget("treeview", tree_view);
+		liststore_busqueda= Gtk::ListStore::create(columna_busqueda);
+		tree_view->set_model(liststore_busqueda);
+		tree_view->append_column("Catalogo", columna_busqueda.m_col_catalogo);
+		tree_view->append_column("Archivo", columna_busqueda.m_col_path);
+
 		cargarMenu();
 
 	} catch (Glib::FileError& ex1) {
@@ -120,8 +128,14 @@ void Interfaz::on_menu_quit() {
 }
 
 void Interfaz::on_button_add_clicked() {
-	if (select_window->run() == Gtk::RESPONSE_OK);
-		std::cout<<select_window->get_filename()<<std::endl;
+	if (select_window->run() == Gtk::RESPONSE_OK) {
+		std::cout<<select_window->get_filename()<<std::endl;//if !activo?????????????????
+		mostrarProgreso("Indexando");
+		Glib::ustring text = "Agregando directorio: ";
+		text += select_window->get_filename();
+		activo = true;
+		status_bar->push(text);
+	}
 	select_window->hide();
 }
 
@@ -134,12 +148,19 @@ void Interfaz::on_button_buscar_clicked() {
 			std::cout<<"Consulta: "<<entry_consulta->get_text()<<" - Catalogo: "<<catalogo<<std::endl;
 			mostrarProgreso("Buscando..");
 			activo = true;
-		} else
+			Glib::ustring text = " ";
+			status_bar->push(text);
+		} else {
 			std::cout<<"Debe ingresar un catalogo"<<std::endl;
+			Glib::ustring text = "Debe ingresar un catalogo";
+			status_bar->push(text);
+		}
 	}
 	else {
 		detenerBarra(); //por ahora :P
 		activo = false;
+		Glib::ustring text = " ";
+		status_bar->push(text);
 	}
 }
 
