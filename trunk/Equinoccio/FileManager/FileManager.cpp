@@ -75,17 +75,17 @@ std::string FileManager::obtenerPathBase(){
 }
 
 std::string FileManager::obtenerPathIdxArch(){
-     return obtenerPathIdxArch()+IDX_ARCH2;
+     return obtenerPathBase()+IDX_ARCH2;
 }
 
 std::string FileManager::obtenerPathLexArch(){
-     return obtenerPathIdxArch()+LEX_ARCH2;
+     return obtenerPathBase()+LEX_ARCH2;
 }
 
 std::string FileManager::obtenerPathIdxDirs(){
-     return obtenerPathIdxArch()+IDX_DIRS2;
+     return obtenerPathBase()+IDX_DIRS2;
 }
 
 std::string FileManager::obtenerPathLexDirs(){
-     return obtenerPathIdxArch()+LEX_DIRS2;
+     return obtenerPathBase()+LEX_DIRS2;
 }

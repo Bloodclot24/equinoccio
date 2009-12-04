@@ -5,10 +5,10 @@
 #define PATH_TRES 	"Resources/"
 #define PATH_SEGDIF	"Resources/SegDiferenciales/"
 
-#define IDX_ARCH2 "Resources/IDX_ARCH.idx."
-#define LEX_ARCH2 "Resources/LEX_ARCH.lex."
-#define IDX_DIRS2 "Resources/IDX_DIRS.idx"
-#define LEX_DIRS2 "Resources/LEX_DIRS.lex"
+#define IDX_ARCH2 "IDX_ARCH.idx."
+#define LEX_ARCH2 "LEX_ARCH.lex."
+#define IDX_DIRS2 "IDX_DIRS.idx"
+#define LEX_DIRS2 "LEX_DIRS.lex"
 #define EXT_NG_PUN ".ng.pun"
 #define EXT_NG_IDX ".ng.idx"
 
