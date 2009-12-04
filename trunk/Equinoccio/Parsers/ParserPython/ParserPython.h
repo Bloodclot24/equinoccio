@@ -1,11 +1,15 @@
-#include "../Parser.h"
+#ifndef PARSERPYTHON_H_
+#define PARSERPYTHON_H_
 
-class ParserPython: public Parser{
-     std::ofstream salida;
-public:
-     ParserPython(uint32_t cantMaxReg);
-     virtual bool parsear(std::string nombre, uint32_t documento);
-     virtual void flush();
+#include "../ParserGenerico/ParserGenerico.h"
+
+class ParserPython: public ParserGenerico {
+
 private:
-     void guardarTermino(const std::string& termino, uint32_t documento);
+	static const char* validas[];
+
+public:
+	ParserPython(uint32_t cantMaxReg);
 };
+
+#endif /* PARSERPYTHON_H_ */

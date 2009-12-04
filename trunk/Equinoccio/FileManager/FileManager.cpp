@@ -10,7 +10,6 @@ FileManager::~FileManager() {}
 
 int FileManager::crearJerarquias() {
 
-	mkdir(PATH_TEMP, PERMISO);
     mkdir(PATH_RES, PERMISO);
 	mkdir(PATH_SEGDIF, PERMISO);
 	mkdir(PATH_CONFIG, PERMISO);

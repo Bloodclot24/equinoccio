@@ -11,9 +11,11 @@
 #include "Parsers/Parser.h"
 #include "Parsers/ParserImagen/ParserImagen.h"
 #include "Parsers/ParserAudio/ParserAudio.h"
-#include "Parsers/ParserCPHP/ParserCPHP.h"
+#include "Parsers/ParserC/ParserC.h"
 #include "Parsers/ParserPython/ParserPython.h"
 #include "Parsers/ParserTXT/ParserTxt.h"
+#include "Parsers/ParserPDF/ParserPdf.h"
+#include "Parsers/ParserPhp/ParserPHP.h"
 #include "FileManager/FileManager.h"
 
 
@@ -185,12 +187,12 @@ private:
 	  }
 
 	  parsers.agregarParser(new ParserPython(1000000));
-	  // parsers.agregarParser(new ParserC(1000));
-	  // parsers.agregarParser(new ParserPHP(1000));
-	  //parsers.agregarParser(new ParserImagen(100000));
-	  parsers.agregarParser(new ParserAudio(100000));
-//	  parsers.agregarParser(new ParserTxt(100000));
-
+	  parsers.agregarParser(new ParserC(1000000));
+	  parsers.agregarParser(new ParserPhp(1000000));
+	  parsers.agregarParser(new ParserImagen(1000000));
+	  parsers.agregarParser(new ParserAudio(1000000));
+	  parsers.agregarParser(new ParserTxt(1000000));
+	  parsers.agregarParser(new ParserPdf(1000000));
 
 	  if(arg_list)
 	       std::cout << "Listado de directorios.\n";

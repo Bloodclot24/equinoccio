@@ -1,21 +1,15 @@
 #ifndef PARSERTXT_H_
 #define PARSERTXT_H_
 
-#include "../Parser.h"
+#include "../ParserGenerico/ParserGenerico.h"
 
-#define PATH_DUMP_TXT "dump_txt_"
+class ParserTxt: public ParserGenerico {
 
-class ParserTxt: public Parser {
+private:
+	static const char* validas[];
 
-	private:
-		void guardarEnDump(std::ofstream& dump, std::string palabra, uint32_t documento);
-		void Leer(const char *);
-		void separarLinea(const std::string&,short*);
-		static std::string limpiarTabs(const std::string&);
-
-	public:
-		ParserTxt(uint32_t cantMaxReg);
-		virtual bool parsear(std::string nombre, uint32_t documento);
-	};
+public:
+	ParserTxt(uint32_t cantMaxReg);
+};
 
 #endif /*PARSERTXT_H_*/

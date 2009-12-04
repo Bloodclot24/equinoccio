@@ -7,7 +7,6 @@
 
 #define MIME_TYPE_JPEG "image/jpeg"
 #define MIME_TYPE_PNG "image/png"
-#define IMAGEN_DUMP_NAME "dump_img_"
 
 enum IMG_KeywordType {
 	IMG_FILENAME = 1,
@@ -18,7 +17,6 @@ enum IMG_KeywordType {
 	IMG_CAMERA_MAKE = 72,
 	IMG_CAMERA_MODEL = 73
 };
-
 
 class ParserImagen: public Parser {
 

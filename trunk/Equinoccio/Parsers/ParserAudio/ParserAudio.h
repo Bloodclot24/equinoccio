@@ -22,7 +22,6 @@ enum AUDIO_KeywordType {
      AUDIO_TRACK_NUMBER = 132,
 };
 
-#define PATH_DUMP_AUDIO "dump_audio_"
 #define MIME_TYPE_MP3 "audio/mpeg"
 #define MIME_TYPE_OGG "application/ogg"
 

@@ -1,9 +1,0 @@
-void swapvec(int pos1, int pos2, int mat[MAXRANGES][2]) {
-
-	int aux1 = mat[pos1][0], aux2 = mat[pos1][1];
-
-	mat[pos1][0] = mat[pos2][0];
-	mat[pos1][1] = mat[pos2][1];
-	mat[pos2][0] = aux1;
-	mat[pos2][1] = aux2;
-}

@@ -44,9 +44,6 @@ bool Parser::esStopWord(const std::string& palabra) {
 /*--------------------------------------------------------------------------*/
 std::string Parser::aMinuscSinInvalidos(const std::string& informacion) {
 	
-//	//TODO: /*PRUEBA*/
-//	std::cout << "Palabra Cruda: " << informacion << std::endl;
-	
 	std::string invalidos("!#$%&'()*+,-.0123456789:;<=>?@[]^_`{|}~/\\\"\n");
 	std::string palabraFiltrada;
 	for(size_t c=0; c<informacion.size(); c++) {
@@ -59,9 +56,6 @@ std::string Parser::aMinuscSinInvalidos(const std::string& informacion) {
 			palabraFiltrada+= " "; 
 	}
 
-//	//TODO: /*PRUEBA*/
-//	std::cout << "Palabra Filtrada: " << palabraFiltrada << std::endl;
-	
 	return palabraFiltrada;
 }
 
@@ -98,7 +92,7 @@ uint32_t Parser::getCantReg() {
 
 bool Parser::verificarExtension(const std::string& nombre, const char **validas){
      size_t t =nombre.find_last_of('.');
-     
+
      if(t >= std::string::npos)
 	  return false;
 
@@ -108,7 +102,8 @@ bool Parser::verificarExtension(const std::string& nombre, const char **validas)
      bool encontrado=false;
 
      for(int i=0;(validas[i]!=NULL) &&!encontrado;i++){
-	  if(extMinus.compare(validas[i])==0)
+
+    	 if(extMinus.compare(validas[i])==0)
 	       encontrado=true;
      }
 

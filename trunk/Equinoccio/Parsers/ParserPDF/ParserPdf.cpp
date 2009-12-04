@@ -5,10 +5,9 @@
 ParserPdf::ParserPdf(uint32_t cantMaxReg):Parser(cantMaxReg) {
      nombreCatalogo = "PDF";
      nombreBase = PATH_RES;
-     nombreBase+=PDF_DUMP_NAME;
-     cargarStopWord(PDF_PATH_STOPWORDS);
+     nombreBase+= PDF_DUMP_BASENAME;
+     cargarStopWord(PDF_STOP_WORD_FILE);
 }
-
 
 ParserPdf::~ParserPdf() {}
 
@@ -36,16 +35,10 @@ bool ParserPdf::parsear(std::string nombre, uint32_t documento) {
 					|| keyType == PDF_PUBLISHER || keyType == PDF_SUBJECT || keyType == PDF_KEYS
 					|| keyType == PDF_CREATOR || keyType == PDF_PRODUCER) {
 
-				std::cout<<"KEY: "<<keyword<<std::endl;
 				guardarPalabras( aMinuscSinInvalidos(keyword) );
-
-			}
-			else {
-				std::cout<<"___other: "<<keyword<<std::endl;
 			}
 
 			if (keyType == PDF_MIMETYPE) {
-				std::cout<<"mime: "<<keyword<<std::endl;
 				if (keyword != MIME_TYPE_PDF)
 					is_ok = false;
 				else {
@@ -63,11 +56,9 @@ bool ParserPdf::parsear(std::string nombre, uint32_t documento) {
 			keywords= extractor.getNext(keywords);
 		}while(keywords != NULL);
 
-		std::cout<<"endKeys"<<std::endl<<std::endl;
-
 		if (is_ok) {
 			std::string dump_name = PATH_RES;
-			dump_name += PDF_DUMP_NAME;
+			dump_name += PDF_DUMP_BASENAME;
 			dump_name += Util::intToString(archivos);
 
 			std::ofstream dump;
@@ -78,7 +69,6 @@ bool ParserPdf::parsear(std::string nombre, uint32_t documento) {
 			for (it = lista.begin(); it != lista.end(); it++) {
 
 				if (cantReg != cantMaxReg) {
-					std::cout << "Palabra A Guardar: " << *it << std::endl;
 					guardarEnDump(dump, *it, documento);
 					cantReg++;
 				}
@@ -87,11 +77,9 @@ bool ParserPdf::parsear(std::string nombre, uint32_t documento) {
 					archivos++;
 					dump.close();
 					dump_name = PATH_RES;
-					dump_name += PDF_DUMP_NAME;
+					dump_name += PDF_DUMP_BASENAME;
 					dump_name += Util::intToString(archivos);
 					dump.open(dump_name.c_str(), std::ofstream::out);
-
-					std::cout << "Palabra A Guardar: " << *it << std::endl;
 					guardarEnDump(dump, *it, documento);
 				}
 			}
@@ -110,6 +98,4 @@ void ParserPdf::guardarEnDump(std::ofstream& dump, std::string& palabra, uint32_
 		Registro reg(palabra, documento);
 		reg.escribir(dump, 0);
 	}
-	else
-		std::cout<<"Stopword: "<<palabra<<std::endl;
 }

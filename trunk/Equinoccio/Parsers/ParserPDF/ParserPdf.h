@@ -5,8 +5,6 @@
 #include <iostream>
 
 #define MIME_TYPE_PDF "application/pdf"
-#define PDF_DUMP_NAME "dump_pdf_"
-
 
 enum PDF_KeywordType {
 	PDF_FILENAME = 1,
