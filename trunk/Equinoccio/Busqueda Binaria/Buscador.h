@@ -14,10 +14,13 @@ typedef struct{
 	
 }RegistroIndice;
 
-typedef struct{
+typedef struct RegistroNGrama{
 	char ngrama[2];
 	uint32_t frec;
 	uint32_t pDocs;
+	static uint32_t sizeofNG(){
+		return sizeof(char)*2 + sizeof(uint32_t) + sizeof(uint32_t);
+	}
 }RegistroNGrama;
 
 /* El Buscador es el encargado de realizar una busqueda binaria.

@@ -226,7 +226,7 @@ void RegistroNGramas::obtenerPunterosEnLista(std::ifstream& archivo, uint32_t of
 		bit=1<<7;
 	   }
 
-	   for(;bit!=0 && bits > 0 && indice < 2; bit >>= 1, bits--){
+	   for(;bit!=0 && bits > 0 && indice < 1; bit >>= 1, bits--){
 		aux += ((byte)&(bit))>0?'1':'0';
 		
 		if((valores[indice] = TDA_Codigos::getNGamma(aux)) != (uint32_t)-1){

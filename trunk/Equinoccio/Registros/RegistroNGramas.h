@@ -137,7 +137,7 @@ public:
 
      static int generarEscribir(std::ofstream &archivo, int compresion, Registro& r, uint32_t offset);
 
-     void obtenerPunterosEnLista(std::ifstream& archivo, uint32_t offset, uint32_t frec, std::list<uint32_t>* lista_punteros);
+    static void obtenerPunterosEnLista(std::ifstream& archivo, uint32_t offset, uint32_t frec, std::list<uint32_t>* lista_punteros);
 
 };
 

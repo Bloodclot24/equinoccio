@@ -66,7 +66,7 @@ RegistroNGrama Buscador::buscarNgrama(const std::string& ngrama,const std::strin
 	bool encontrado = false;
 	bool error = false;
 	std::string archNgrama = PATH_RES;
-	archNgrama += catalogo + ".ng";
+	archNgrama += catalogo + EXT_NG_IDX;
 	std::fstream archivo;
 	RegistroNGrama regNgrama;
 	//char bigrama[2];
@@ -74,17 +74,19 @@ RegistroNGrama Buscador::buscarNgrama(const std::string& ngrama,const std::strin
 	if(!archivo.is_open()) error = true;
 	
 	archivo.seekg(0,std::fstream::end);
-	derecha = archivo.tellg()/sizeof(RegistroIndice);
+	derecha = archivo.tellg()/regNgrama.sizeofNG();
 	
+	std::cout << "Sizeof regNgrama: " << regNgrama.sizeofNG() << std::endl;
 	
-	while (!encontrado && izquierda < derecha && !error){
+	while (!encontrado && izquierda <= derecha && !error){
 		medio = (izquierda + derecha) / 2;
-		archivo.seekg(medio*sizeof(RegistroNGrama));
+		archivo.seekg(medio*regNgrama.sizeofNG());
 		archivo.read((char*)&(regNgrama.ngrama),sizeof(char)*2);
 		
-		if(ngrama.compare(regNgrama.ngrama) == 0){
+		if(ngrama.compare(0,2,regNgrama.ngrama,2) == 0){
 			encontrado = true;
 			archivo.read((char*)&(regNgrama.frec),sizeof(uint32_t));
+			std::cout<<"Frec en busqueda: "<<regNgrama.frec<<std::endl;
 			archivo.read((char*)&(regNgrama.pDocs),sizeof(uint32_t));
 		
 		}else{

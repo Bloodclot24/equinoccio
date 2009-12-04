@@ -1,6 +1,7 @@
 #include "Busqueda.h"
 #include "../Busqueda Binaria/Buscador.h"
 #include "../Registros/Registro.h"
+#include "../Registros/RegistroNGramas.h"
 #include "../Parsers/Parser.h"
 #include "../FileManager/ConstPath.h"
 
@@ -49,7 +50,6 @@ std::list<std::string> Busqueda::buscar(std::string& consulta, std::string catal
 				    if(min > punteros[i]->front()){
 					 vec_min.clear();
 					 min = punteros[i]->front();
-					 std::cout << "minimo: " << min << " posicion " << i<<std::endl;
 					 pos_min=i;
 					 vec_min.push_back(i);
 				    }else if (min==punteros[i]->front()){
@@ -69,7 +69,7 @@ std::list<std::string> Busqueda::buscar(std::string& consulta, std::string catal
 					 punteros.pop_back();
 				    }
 			       }
-			       std::cout << "MATCH: (min) " << min << std::endl;
+
 			  }
 		     }
 		     else{
@@ -138,18 +138,17 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 	str = '$';
 	size_t pos = 0;
 	size_t where = 0;
-	RegistroNGrama regN;
 	RegistroIndice reg;
 	std::string path = IDX_ARCH;
 	path += catalogo;
 	std::ifstream indice(path.c_str(), std::ios::in | std::ios::binary);
 	path = PATH_RES;
 	path += catalogo;
-	path += EXT_PUN_NG;
+	path += EXT_NG_PUN;
 	std::ifstream pun_ng(path.c_str(),  std::ios::in | std::ios::binary);
 	path = PATH_RES;
 	path += catalogo;
-	path += ".lex";
+	path += EXT_NG_IDX;
 	std::ifstream lexico (path.c_str(), std::ios::in | std::ios::binary);
 	std::vector<std::list<RegIndice*>* > reg_bigrama;
 	std::list<uint32_t> pun;	//punteros a los archivos
@@ -162,8 +161,8 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 	do {
 		//separo por asteriscos
 		where = consulta.find('*', pos);
-		str += Parser::aMinuscSinInvalidos(consulta.substr(pos, where - pos));
-
+		str += consulta.substr(pos, where - pos);
+		Util::aMinusculas(str);
 		if (where == std::string::npos) {
 			str +='$';
 		}
@@ -174,15 +173,17 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 
 			for (size_t car=0; car<(str.size()-1) ;car++) {
 
-				std::cout<<"bigrama: "<<str.substr(car,2)<<std::endl;
-				regN = Buscador::buscarNgrama(str.substr(car,2),catalogo);
+				std::cout<<"bigrama: \""<<str.substr(car,2)<<"\""<<std::endl;
+				RegistroNGrama regN = Buscador::buscarNgrama(str.substr(car,2),catalogo);
 				//en pDocs esta el offset al archivo con los offsets al indice general
 
 				if (regN.frec > 0) {
+					std::cout<<"Frec: "<<regN.frec<<std::endl;
 					std::list<RegIndice*>* lista = new std::list<RegIndice*>;
 					//obtener punteros al indice desde archivo
 					pun.clear();
-					Registro::obtenerPunterosEnLista(pun_ng,regN.pDocs, regN.frec, &pun);
+					std::cout<<"Pun NG: "<<pun_ng.is_open()<<std::endl;
+					RegistroNGramas::obtenerPunterosEnLista(pun_ng,regN.pDocs, regN.frec, &pun);
 					while (!pun.empty()) {
 						// entro al indice
 						//obtengo el termino, la frec, y el puntero a los docs y los agrego a la lista
@@ -293,7 +294,6 @@ void Busqueda::andTerminos(std::vector<std::list<RegIndice*>*> &reg_bigrama, std
 		    if(min->termino > reg_bigrama[i]->front()->termino){
 			 vec_min.clear();
 			 min = reg_bigrama[i]->front();
-			 std::cout << "minimo: " << min << " posicion " << i<<std::endl;
 			 pos_min=i;
 			 vec_min.push_back(i);
 		    }else if (min->termino==reg_bigrama[i]->front()->termino){
@@ -313,7 +313,7 @@ void Busqueda::andTerminos(std::vector<std::list<RegIndice*>*> &reg_bigrama, std
 			 reg_bigrama.pop_back();
 		    }
 	       }
-	       std::cout << "MATCH: (min) " << min << std::endl;
+
 	  }
     }
     else{
