@@ -2,8 +2,8 @@ SOURCES=CodigoGamma/TDA_Codigos.cpp \
 	Parsers/Parser.cpp \
 	Parsers/ParserAudio/ParserAudio.cpp \
 	Parsers/ParserC/ParserC.cpp \
-	Parsers/ParserCPHP/ParserCPHP.cpp \
 	Parsers/ParserImagen/ParserImagen.cpp \
+	Parsers/ParserGenerico/ParserGenerico.cpp \
 	Parsers/ParserPython/ParserPython.cpp \
 	Parsers/ParserTXT/ParserTxt.cpp \
 	Parsers/libExtractor/libExtractor.cpp \
@@ -23,7 +23,6 @@ TESTSOURCES=Arbol/arbol.cpp\
 	CodigoGamma/TDA_Codigos_ejec.cpp\
 	Parsers/ParserAudio/PruebaParserAudio.cpp\
 	Parsers/ParserC/Archivos_ejec.cpp\
-	Parsers/ParserCPHP/Archivos_ejec.cpp\
 	Parsers/ParserImagen/testImgParser.cpp\
 	Parsers/ParserPhp/Archivos_ejec.cpp\
 	Parsers/ParserPDF/testPDF.cpp\
