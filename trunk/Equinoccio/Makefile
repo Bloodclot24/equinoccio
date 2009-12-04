@@ -36,7 +36,7 @@ TESTSOURCES=Arbol/arbol.cpp\
 
 MAIN=Equinoccio.cpp
 
-CFLAGS+=-g -Wall `pkg-config --cflags --libs gtkmm-2.4`
+CFLAGS+=-g3 -ggdb -Wall `pkg-config --cflags --libs gtkmm-2.4`
 LDFLAGS=-lextractor `pkg-config --cflags --libs gtkmm-2.4`
 CC=g++
 EXECUTABLE=Equinoccio

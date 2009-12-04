@@ -325,7 +325,6 @@ public:
 	       idxPunteros += spunteros.size();
 
 	       // Genero los N-gramas y llevo la cuenta de cuantos van
-	       std::cout << "OFFSET INDICE: " << offsetIndice << std::endl;
 	       contador+=RegistroNGramas::generarEscribir(ngramas,0,*r,offsetIndice);
 	       offsetIndice += sizeof(idxLexico) + sizeof(freq) + sizeof(idxPunteros);
 	       // si supero el limite, creo otra particion de N-gramas

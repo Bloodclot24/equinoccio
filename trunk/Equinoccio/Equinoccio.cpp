@@ -68,45 +68,58 @@ private:
 	  return false;
      }
 
-     std::string parsearDirectorio(const std::string nombre){
+     std::string parsearDirectorio(const std::string& nombre){
 	  //dirname+basename;
-	  std::string baseRaiz;
-
 	  char *cwd = new char[PATH_MAX];
 	  getcwd(cwd, PATH_MAX);
-	  baseRaiz = cwd;
-	  delete cwd;
+	  std::string baseRaiz(cwd);
+	  delete[] cwd;
 
-	  if(nombre[0] == '/' )
-	       return nombre;
-	       
 
-	  char *copia = strdup(nombre.c_str());
-	  std::string absoluto = dirname(copia);
-	  if(absoluto.substr(0,1).compare(".")==0){
-	       absoluto = absoluto.substr(1,std::string::npos);
+	  if(nombre[0] != '/' ){
+
+	       char *copia = strdup(nombre.c_str());	  
+	       std::string absoluto = dirname(copia);
+
+	       if(absoluto.compare(".")==0){
+		    absoluto = absoluto.substr(1,std::string::npos);
+	       }
+	       else if(absoluto.substr(0,2).compare("./")==0){
+		    absoluto = absoluto.substr(2,std::string::npos);
+	       }
+	       if(baseRaiz[baseRaiz.size()-1] != '/')
+		    baseRaiz = baseRaiz+'/';
+	       if(absoluto[0] == '/')
+		    absoluto.erase(absoluto.begin());
+	       if(absoluto.size() > 0){
+		    baseRaiz += absoluto;
+		    if(baseRaiz[baseRaiz.size()-1] != '/')
+			 baseRaiz = baseRaiz+'/';
+	       }
+	       strcpy(copia, nombre.c_str());
+	       if(basename(copia)[0] != '/')
+		    baseRaiz += basename(copia);
+	       else
+		    baseRaiz += basename(copia)+1;
+	       free(copia);
 	  }
-	  if(baseRaiz[baseRaiz.size()] != '/')
-	       baseRaiz = baseRaiz+'/';
-	  if(absoluto[0] == '/')
-	       absoluto.erase(absoluto.begin());
-	  baseRaiz += absoluto;
-	  strcpy(copia, nombre.c_str());
-	  baseRaiz += "/";
-	  baseRaiz += basename(copia);
-	  free(copia);
+	  else baseRaiz = nombre;
 
-	  std::cout << "Parcial: " << baseRaiz << std::endl;
 
 	  unsigned posicionBarra=0, posicionLectura=0;
 
-	  ;
 	  while((posicionLectura = baseRaiz.find("/..")) && posicionLectura != std::string::npos){
 	       
 	       posicionBarra = baseRaiz.rfind("/",posicionLectura-1);
-	       std::cout << "posicionLectura: " << posicionLectura << " Posicionbarra: " << posicionBarra << std::endl;
 	       baseRaiz.erase(posicionBarra, posicionLectura-posicionBarra+3);
 	  }
+
+	  while((posicionLectura = baseRaiz.find("/./")) && posicionLectura != std::string::npos){
+	       baseRaiz.erase(posicionLectura, 2);
+	  }
+
+	  if(baseRaiz[baseRaiz.size()-1] == '/' )
+	       baseRaiz.erase(baseRaiz.end()-1);
 	  
 	  return baseRaiz;
      }
@@ -115,7 +128,7 @@ private:
 	  DIR* directory;
 	  struct dirent* entry;
 
-	  std::string directorio = nombre; //parsearDirectorio(nombre);
+	  std::string directorio = nombre;
 
 	  std::cout << "Directorio absouto: " << directorio << "\n";
 
@@ -253,7 +266,8 @@ private:
 	       std::cout << "Listado de directorios.\n";
 	  if(arg_add_dir){
 	       std::cout << "Agregar el directorio: " << arg_add_dir << std::endl;
-	       agregarDirectorio(parsearDirectorio(arg_add_dir));
+	       std::string pesado(arg_add_dir);
+	       agregarDirectorio(parsearDirectorio(pesado));
 	       parsers.armarIndices();
 	  }
 	  if(arg_del_dir){

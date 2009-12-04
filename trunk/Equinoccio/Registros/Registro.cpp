@@ -310,4 +310,3 @@ void Registro::obtenerPunterosEnLista(std::ifstream& archivo, uint32_t offset, u
 	}
 }
 
-
