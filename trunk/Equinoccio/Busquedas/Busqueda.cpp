@@ -33,6 +33,7 @@ std::list<std::string> Busqueda::buscar(std::string& consulta, std::string catal
 			std::cout<<" * NO MATCH * "<<std::endl;
 		}
 		else {
+			std::cout<<" * AND * "<<std::endl;
 			 Busqueda::andPunteros(punteros,punteros_match);
 		     std::cout << "tamanio de la lista final: " << punteros_match.size() << std::endl;
 		     std::list<uint32_t>::iterator it;
@@ -211,43 +212,27 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 	//agregar los docs al vector punteros
 	//liberar todas las listas auxiliares
 
-//	path = PATH_RES;
-//	path += catalogo;
-//	path += ".pun";
-//	std::ifstream pun_docs(path.c_str(), std::ios::in | std::ios::binary);
-//	if (pun_docs.good()){
-//		std::list<uint32_t>* puntDocs = new std::list<uint32_t>;
-//		while (!reg_match.empty()) {
-//			pun.clear();
-//			Registro::obtenerPunterosEnLista(pun_docs,reg_match.front()->pDoc,reg_match.front()->frec,pun);
-//			reg_match.pop_front();
-//		}
-//		punteros.push_back(puntDocs);
-//		size++;
-//		pun_docs.close();
-//		return true;
-//	}
-	//por ahora asi para testear-->
 	path = PATH_RES;
 	path += catalogo;
 	path += ".pun";
 	std::ifstream pun_docs(path.c_str(), std::ios::in | std::ios::binary);
 	if (pun_docs.good()){
-		std::list<uint32_t> *punteros = new std::list<uint32_t>;
+		std::list<uint32_t> *punt = new std::list<uint32_t>;
 		while (!reg_match.empty()) {
-			punteros->clear();
+			punt->clear();
 			std::cout<<"Frecuencia del termino: "<<reg_match.front()->frec<<std::endl;
-			Registro::obtenerPunterosEnLista(pun_docs,reg_match.front()->pun,reg_match.front()->frec,punteros);
-			while (!punteros->empty()){
-				std::cout<<"	doc: "<<buscarPath(punteros->front(), catalogo)<<std::endl;
-				punteros->pop_front();
-			}
-			//delete reg_match.front();
+
+			Registro::obtenerPunterosEnLista(pun_docs,reg_match.front()->pun,reg_match.front()->frec,punt);
+//			while (!punteros->empty()){
+//				std::cout<<"	doc: "<<buscarPath(punteros->front(), catalogo)<<std::endl;
+//				punteros->pop_front();
+//			}
+			delete reg_match.front();
 			reg_match.pop_front();
+			punteros.push_back(punt);
 		}
 		pun_docs.close();
-		std::cout<<"Nadaremos! hasta aqui llegue XD "<<std::endl;
-		return false; //debe guardar bien las cosas, liberar y devolver true.. esto es porque no esta terminado :)
+		return true; //debe liberar
 	}
 
 	std::cout<<"error al abrir el arch de punteros: "<<path<<std::endl;
