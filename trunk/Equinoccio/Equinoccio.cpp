@@ -70,25 +70,52 @@ private:
 
      std::string parsearDirectorio(const std::string nombre){
 	  //dirname+basename;
-	  //std::
-	  if(nombre[0] == '.'){
+	  std::string baseRaiz;
+
+	  char *cwd = new char[PATH_MAX];
+	  getcwd(cwd, PATH_MAX);
+	  baseRaiz = cwd;
+	  delete cwd;
+
+	  if(nombre[0] == '/' )
+	       return nombre;
 	       
-	  }
-	  char *copia = new char[nombre.size()+1];
-	  strcpy(copia, nombre.c_str());
+
+	  char *copia = strdup(nombre.c_str());
 	  std::string absoluto = dirname(copia);
-	  absoluto+='/';
+	  if(absoluto.substr(0,1).compare(".")==0){
+	       absoluto = absoluto.substr(1,std::string::npos);
+	  }
+	  if(baseRaiz[baseRaiz.size()] != '/')
+	       baseRaiz = baseRaiz+'/';
+	  if(absoluto[0] == '/')
+	       absoluto.erase(absoluto.begin());
+	  baseRaiz += absoluto;
 	  strcpy(copia, nombre.c_str());
-	  absoluto+= basename(copia);
-	  delete[] copia;
-	  return absoluto;
+	  baseRaiz += "/";
+	  baseRaiz += basename(copia);
+	  free(copia);
+
+	  std::cout << "Parcial: " << baseRaiz << std::endl;
+
+	  unsigned posicionBarra=0, posicionLectura=0;
+
+	  ;
+	  while((posicionLectura = baseRaiz.find("/..")) && posicionLectura != std::string::npos){
+	       
+	       posicionBarra = baseRaiz.rfind("/",posicionLectura-1);
+	       std::cout << "posicionLectura: " << posicionLectura << " Posicionbarra: " << posicionBarra << std::endl;
+	       baseRaiz.erase(posicionBarra, posicionLectura-posicionBarra+3);
+	  }
+	  
+	  return baseRaiz;
      }
 
      void agregarDirectorio(const std::string& nombre){
 	  DIR* directory;
 	  struct dirent* entry;
 
-	  std::string directorio = parsearDirectorio(nombre);
+	  std::string directorio = nombre; //parsearDirectorio(nombre);
 
 	  std::cout << "Directorio absouto: " << directorio << "\n";
 
@@ -162,8 +189,8 @@ private:
 
      int magic(int argc, char** argv){
 
-	  char buffer[256];
-	  if(getcwd(buffer, 255)==NULL)
+	  char buffer[PATH_MAX];
+	  if(getcwd(buffer, PATH_MAX)==NULL)
 	       return -1;
 	  baseDir = buffer;
 	  baseDir +='/';
@@ -225,8 +252,8 @@ private:
 	  if(arg_list)
 	       std::cout << "Listado de directorios.\n";
 	  if(arg_add_dir){
-	       std::cout << "Agregar el directorio: " << baseDir+arg_add_dir << std::endl;
-	       agregarDirectorio(arg_add_dir);
+	       std::cout << "Agregar el directorio: " << arg_add_dir << std::endl;
+	       agregarDirectorio(parsearDirectorio(arg_add_dir));
 	       parsers.armarIndices();
 	  }
 	  if(arg_del_dir){

@@ -116,7 +116,7 @@ std::string RegistroNGramas::obtenerPunterosComprimidos(){
      std::string str;
      char byte=0;
      unsigned bit=1<<7;
-     uint32_t docAnterior = 0;
+     uint32_t docAnterior = (uint32_t)-1;
      unsigned bits=0;
      std::string resultado;
      std::list<uint32_t>::iterator it;     
@@ -124,7 +124,7 @@ std::string RegistroNGramas::obtenerPunterosComprimidos(){
 	  uint32_t p;
 	  p = *it;
 	  
-	  str = TDA_Codigos::getCGamma(p-docAnterior+1);
+	  str = TDA_Codigos::getCGamma(p-docAnterior);
 	  docAnterior=p;
 	  
 	  ptr  = str.c_str();
