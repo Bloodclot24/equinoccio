@@ -141,6 +141,7 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 				if (regN.frec > 0) {
 					//busco la lista de offsets al indice asociado a ese biGrama
 					lista_offset = new std::list<uint32_t>;
+					lista_offset->clear();
 					RegistroNGramas::obtenerPunterosEnLista(pun_ng,regN.pDocs, regN.frec, lista_offset);
 					std::cout<<"	cant Punteros NG: "<<lista_offset->size()<<std::endl;
 					offset_indice.push_back(lista_offset);
@@ -176,9 +177,11 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 
 	while (!offset_and.empty()) {
 		r = new RegIndice;
+		r->frec = 0;
+		r->pun = 0;
 		// entro al indice
 		//obtengo el termino, la frec, y el puntero a los docs y los agrego a la lista
-		indice.seekg(offset_and.front());
+		indice.seekg(offset_and.front(),std::ios_base::beg);
 		std::cout<<"Offset al indice: "<<offset_and.front()<<std::endl;
 		//leo el offset al lexico
 		indice.read((char*)&off, sizeof(uint32_t));
@@ -188,7 +191,7 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 		indice.read((char*)&(r->pun), sizeof(uint32_t));
 
 		//busco el termino en el archivo de lexico
-		lexico.seekg(off);
+		lexico.seekg(off,std::ios_base::beg);
 		char c=0;
 		r->termino.clear();
 		while(lexico.good() && (c = lexico.get()) != 0){
@@ -235,11 +238,11 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 		while (!reg_match.empty()) {
 			offset_and.clear();
 			Registro::obtenerPunterosEnLista(pun_docs,reg_match.front()->pun,reg_match.front()->frec,&offset_and);
-			//std::cout<<"*********** "<<reg_match.front()->termino<<std::endl;
 			while (!offset_and.empty()){
-				//std::cout<<"	doc: "<<buscarPath(offset_and.front(), catalogo);
+				std::cout<<"	doc: "<<buscarPath(offset_and.front(), catalogo)<<std::endl;
 				offset_and.pop_front();
 			}
+			//delete reg_match.front();
 			reg_match.pop_front();
 		}
 		pun_docs.close();
@@ -317,6 +320,7 @@ void Busqueda::filtrarFalsosPositivos(std::list<std::string>& consulta, std::lis
 			if (pos != std::string::npos) {
 				//salio porque encontro todos los subterminos, entonces agrego el registro a la lista
 				filtrada.push_back(reg);
+				std::cout<<"palabra match: "<<reg->termino<<std::endl;
 			}
 			delete lista.front();
 			lista.pop_front();

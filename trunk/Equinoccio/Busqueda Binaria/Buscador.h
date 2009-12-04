@@ -39,7 +39,7 @@ class Buscador
 		 **/
 		static RegistroIndice buscar(const std::string& termino, const std::string& catalogo);
 		
-		static RegistroNGrama buscarNgrama(const std::string& ngrama,const std::string& catalogo);	
+		static RegistroNGrama buscarNgrama(const std::string ngrama,const std::string& catalogo);
 };
 
 #endif /*BUSCADOR_H_*/

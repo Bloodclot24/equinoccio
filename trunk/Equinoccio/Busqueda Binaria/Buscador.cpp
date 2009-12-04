@@ -58,7 +58,7 @@ RegistroIndice Buscador::buscar(const std::string& termino,const std::string& ca
 	return regInd;
 }
 
-RegistroNGrama Buscador::buscarNgrama(const std::string& ngrama,const std::string& catalogo)
+RegistroNGrama Buscador::buscarNgrama(const std::string ngrama,const std::string& catalogo)
 {
 	uint32_t medio = 0;
 	uint32_t izquierda = 0;
@@ -78,7 +78,7 @@ RegistroNGrama Buscador::buscarNgrama(const std::string& ngrama,const std::strin
 
 	while (!encontrado && izquierda <= derecha && !error){
 		medio = (izquierda + derecha) / 2;
-		archivo.seekg(medio*regNgrama.sizeofNG());
+		archivo.seekg(medio*RegistroNGrama::sizeofNG());
 		archivo.read((char*)&(regNgrama.ngrama),sizeof(char)*2);
 		
 		if(ngrama.compare(0,2,regNgrama.ngrama,2) == 0){
