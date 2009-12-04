@@ -75,9 +75,7 @@ RegistroNGrama Buscador::buscarNgrama(const std::string& ngrama,const std::strin
 	
 	archivo.seekg(0,std::fstream::end);
 	derecha = archivo.tellg()/regNgrama.sizeofNG();
-	
-	std::cout << "Sizeof regNgrama: " << regNgrama.sizeofNG() << std::endl;
-	
+
 	while (!encontrado && izquierda <= derecha && !error){
 		medio = (izquierda + derecha) / 2;
 		archivo.seekg(medio*regNgrama.sizeofNG());
@@ -86,7 +84,6 @@ RegistroNGrama Buscador::buscarNgrama(const std::string& ngrama,const std::strin
 		if(ngrama.compare(0,2,regNgrama.ngrama,2) == 0){
 			encontrado = true;
 			archivo.read((char*)&(regNgrama.frec),sizeof(uint32_t));
-			std::cout<<"Frec en busqueda: "<<regNgrama.frec<<std::endl;
 			archivo.read((char*)&(regNgrama.pDocs),sizeof(uint32_t));
 		
 		}else{

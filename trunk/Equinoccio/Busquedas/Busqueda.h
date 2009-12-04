@@ -45,15 +45,13 @@ private:
 	 *  */
 	bool consultaNgramas(std::string& consulta, std::string catalogo);
 
-
 	/*
-	 * realiza un and de las listas de registros de los bigramas
-	 * comparando los terminos.
+	 * realiza un and de los punteros en las listas
 	 *
-	 * @param reg_bigrama 	contiene las listas de registros con los terminos para el and
-	 * @param reg_and 		lista resultante con el AND de los registros
+	 * @param punteros	 	contiene las listas de punteros a intersectar
+	 * @param punteros_and	lista resultante con el AND de los punteros
 	 * */
-	void andTerminos(std::vector<std::list<RegIndice*>*> &reg_bigrama, std::list<RegIndice*>& reg_and);
+	static void andPunteros(std::vector< std::list<uint32_t>* > &punteros, std::list<uint32_t> &punteros_and);
 
 	/*
 	 * Guarda en la lista filtrada los elementos de la lista original que contengan a los terminos

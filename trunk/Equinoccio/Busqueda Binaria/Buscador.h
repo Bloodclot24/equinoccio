@@ -7,10 +7,13 @@
 
 /* El tipo de archivo que devuelve como resultado de la busqueda.
  **/
-typedef struct{
+typedef struct RegistroIndice{
 	uint32_t pLexico;
 	uint32_t frec;
 	uint32_t pDocs;
+	static uint32_t size(){
+		return (sizeof(uint32_t)*3);
+	}
 	
 }RegistroIndice;
 
