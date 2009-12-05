@@ -119,6 +119,7 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 	str = '$';
 	size_t pos = 0;
 	size_t where = 0;
+	bool hay_bigrama = false;
 	std::list<std::string> substr; 	//lista con los substrings a matchear por los terminos
 	std::vector<std::list<uint32_t>* > offset_indice;	//offsets de los terminos de bigramas en el indice general
 	std::list<uint32_t> *lista_offset;
@@ -133,6 +134,7 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 		}
 		std::cout<<"substr: "<<str<<std::endl;
 		if (str.size() >= 2){
+			hay_bigrama = true;
 			//armo bigramas y llamo a buscar para cada uno
 			substr.push_back(str);
 			for (size_t car=0; car<(str.size()-1) ;car++) {
@@ -172,6 +174,13 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 	}while(where != std::string::npos);
 
 	pun_ng.close();
+	if (!hay_bigrama) {
+		lexico.close();
+		indice.close();
+		pun_docs.close();
+		std::cout<<"no hay bigrama"<<std::endl;
+		return false;
+	}
 
 	//Realizo el AND entre los punteros al indice obtenidos
 	std::list<uint32_t> offset_and;

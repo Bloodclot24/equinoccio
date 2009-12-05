@@ -20,6 +20,7 @@ Interfaz::Interfaz() {
 					&Interfaz::on_button_buscar_clicked));
 		builder->get_widget("progressbar", progress_bar);
 		progress_bar->hide();
+
 		builder->get_widget("combobox", combo_catalogo);
 		liststore_catalogo= Gtk::ListStore::create(columna_catalogo);
 		combo_catalogo->set_model(liststore_catalogo);
@@ -31,6 +32,10 @@ Interfaz::Interfaz() {
 		tree_view->set_model(liststore_busqueda);
 		tree_view->append_column("Catalogo", columna_busqueda.m_col_catalogo);
 		tree_view->append_column("Archivo", columna_busqueda.m_col_path);
+		selection = tree_view->get_selection();
+		tree_view->add_events(Gdk::BUTTON_PRESS_MASK);
+		tree_view->signal_button_press_event().connect(sigc::mem_fun(*this,
+					&Interfaz::on_double_click));
 
 		cargarMenu();
 
@@ -144,9 +149,11 @@ void Interfaz::on_button_buscar_clicked() {
 		Gtk::TreeModel::iterator iter_active= combo_catalogo->get_active();
 		if(iter_active) {
 			Gtk::TreeModel::Row row= *iter_active;
-			Glib::ustring catalogo= row[columna_catalogo.m_col_catalogo];
-			std::cout<<"Consulta: "<<entry_consulta->get_text()<<" - Catalogo: "<<catalogo<<std::endl;
+			catalogo= row[columna_catalogo.m_col_catalogo];
+			Glib::ustring cod_cat = row[columna_catalogo.m_col_codigo];
+			std::cout<<"Consulta: "<<entry_consulta->get_text()<<" - Catalogo: "<<catalogo<<" - Codigo: "<<cod_cat<<std::endl;
 			mostrarProgreso("Buscando..");
+			agregarFila(entry_consulta->get_text());//test
 			activo = true;
 			Glib::ustring text = " ";
 			status_bar->push(text);
@@ -162,6 +169,17 @@ void Interfaz::on_button_buscar_clicked() {
 		Glib::ustring text = " ";
 		status_bar->push(text);
 	}
+}
+
+bool Interfaz::on_double_click(GdkEventButton *ev) {
+	std::cout<<"Evento "<<std::endl;
+	 if (ev->type == GDK_2BUTTON_PRESS) {
+		 //si fue un doble click tomo la fila seleccionada
+		 Gtk::TreeModel::iterator iter = selection->get_selected();
+		 Gtk::TreeModel::Row row = *iter;
+		 std::cout<<"Doble click. Path: "<< row.get_value(columna_busqueda.m_col_path)<<std::endl;
+	 }
+	return false;
 }
 
 void Interfaz::mostrarProgreso(Glib::ustring texto){
@@ -188,12 +206,20 @@ void Interfaz::run() {
 	if (!error) {
 		Gtk::Main* kit = Gtk::Main::instance();
 		kit->run(*main_window);
+		//liberar
 	}
 }
 
-void Interfaz::agregarCatalogo(const std::string& catalogo) {
+void Interfaz::agregarCatalogo(const std::string& catalogo,const std::string codigo) {
 
 	Gtk::TreeModel::Row row = *(liststore_catalogo->append());
 	row[columna_catalogo.m_col_catalogo] = catalogo;
+	row[columna_catalogo.m_col_codigo] = codigo;
+}
+
+void Interfaz::agregarFila(const std::string path) {
+	Gtk::TreeModel::Row row = *(liststore_busqueda->append());
+	row[columna_busqueda.m_col_path] = path;
+	row[columna_busqueda.m_col_catalogo] = catalogo;
 }
 

@@ -5,24 +5,29 @@
 #include <glib.h>
 #include <iostream>
 
+#define ABRIR "xdg-open "
+
 class Interfaz {
 private:
-	Gtk::Window *main_window; //ventana principal de la aplicacion
-	Gtk::AboutDialog *about_window; //ventana "acerca de"
-	Glib::RefPtr<Gtk::Builder> builder;//obtiene datos del archivo de la vista
-	Gtk::FileChooserDialog *select_window; //ventana de seleccion de directorio
+	Gtk::Window *main_window;	//ventana principal de la aplicacion
+	Gtk::AboutDialog *about_window;	//ventana "acerca de"
+	Glib::RefPtr<Gtk::Builder> builder;	//obtiene datos del archivo de la vista
+	Gtk::FileChooserDialog *select_window; 	//ventana de seleccion de directorio
+	Glib::RefPtr<Gtk::TreeSelection> selection;	//fila seleccionada
 
-	Gtk::ProgressBar *progress_bar;//barra que muestra actividad
-	sigc::connection id_activity;//id del refresh de la barra
+	Gtk::ProgressBar *progress_bar;	//barra que muestra actividad
+	sigc::connection id_activity;	//id del refresh de la barra
 	Gtk::Button *button_buscar;
 	Gtk::Entry  *entry_consulta;
 	Gtk::Statusbar *status_bar;
 
 	bool activo;
 	bool error;
+	Glib::ustring catalogo; //catalogo en el que se esta buscando
 
 	void cargarMenu();
 
+	bool on_double_click(GdkEventButton*);
 	void on_menu_about();
 	void on_menu_help();
 	void on_menu_quit();
@@ -31,6 +36,7 @@ private:
 	bool mover();
 	void mostrarProgreso(Glib::ustring texto);
 	void detenerBarra();
+	void agregarFila(const std::string path);
 
 	//Catalogo
 	//Child widgets:
@@ -40,9 +46,11 @@ private:
 	public:
 		ColumnaCatalogo() {
 			add(m_col_catalogo);
+			add(m_col_codigo);
 		}
 
 	    Gtk::TreeModelColumn<Glib::ustring> m_col_catalogo;
+	    Gtk::TreeModelColumn<Glib::ustring> m_col_codigo;
 	};
 	ColumnaCatalogo columna_catalogo;
 
@@ -66,7 +74,7 @@ public:
 	Interfaz();
 	~Interfaz();
 	void run();
-	void agregarCatalogo(const std::string& catalogo);
+	void agregarCatalogo(const std::string& catalogo,const std::string codigo);
 };
 
 #endif /* INTERFAZ_H_ */

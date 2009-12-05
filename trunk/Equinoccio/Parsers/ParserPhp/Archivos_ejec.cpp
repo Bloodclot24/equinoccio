@@ -1,7 +1,7 @@
 #include "ParserPHP.h"
 int main(int argc, char** argv){/*Main de Prueba*/
 	std::string aux ="";
-	ParserPHP	 parser(500);
+	ParserPhp	 parser(500);
 	//parser.parsear("test",0);//Ok
 	//parser.parsear("test2",1);//OK
 	//parser.parsear("test3",0);//OK

@@ -12,8 +12,10 @@ int main(int argc, char** argv) {
 	Interfaz vista;
 
 	//agregar catalogos
-	vista.agregarCatalogo("Musica");
-	vista.agregarCatalogo("Audio");
+	vista.agregarCatalogo("Imagen", "IMG");
+	vista.agregarCatalogo("Audio", "SND");
+	vista.agregarCatalogo("Texto", "TXT");
+	vista.agregarCatalogo("Codigo Fuente", "SRC");
 
 	vista.run();
 
