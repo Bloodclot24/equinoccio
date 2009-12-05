@@ -33,10 +33,11 @@ Interfaz::Interfaz() {
 		tree_view->append_column("Catalogo", columna_busqueda.m_col_catalogo);
 		tree_view->append_column("Archivo", columna_busqueda.m_col_path);
 		selection = tree_view->get_selection();
-		tree_view->add_events(Gdk::BUTTON_PRESS_MASK);
-		tree_view->signal_button_press_event().connect(sigc::mem_fun(*this,
-					&Interfaz::on_double_click));
-
+//		tree_view->add_events(Gdk::BUTTON_PRESS_MASK);
+//		tree_view->signal_button_press_event().connect(sigc::mem_fun(*this,
+//					&Interfaz::on_double_click));
+		tree_view->signal_row_activated().connect(sigc::mem_fun(*this,
+									&Interfaz::on_double_click));
 		cargarMenu();
 
 	} catch (Glib::FileError& ex1) {
@@ -148,15 +149,17 @@ void Interfaz::on_button_buscar_clicked() {
 	if(!activo){
 		Gtk::TreeModel::iterator iter_active= combo_catalogo->get_active();
 		if(iter_active) {
+			liststore_busqueda->clear();
 			Gtk::TreeModel::Row row= *iter_active;
 			catalogo= row[columna_catalogo.m_col_catalogo];
 			Glib::ustring cod_cat = row[columna_catalogo.m_col_codigo];
 			std::cout<<"Consulta: "<<entry_consulta->get_text()<<" - Catalogo: "<<catalogo<<" - Codigo: "<<cod_cat<<std::endl;
 			mostrarProgreso("Buscando..");
-			agregarFila(entry_consulta->get_text());//test
 			activo = true;
 			Glib::ustring text = " ";
 			status_bar->push(text);
+
+			agregarFila(entry_consulta->get_text());//test
 		} else {
 			std::cout<<"Debe ingresar un catalogo"<<std::endl;
 			Glib::ustring text = "Debe ingresar un catalogo";
@@ -171,15 +174,11 @@ void Interfaz::on_button_buscar_clicked() {
 	}
 }
 
-bool Interfaz::on_double_click(GdkEventButton *ev) {
+void Interfaz::on_double_click(const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* column) {
 	std::cout<<"Evento "<<std::endl;
-	 if (ev->type == GDK_2BUTTON_PRESS) {
-		 //si fue un doble click tomo la fila seleccionada
-		 Gtk::TreeModel::iterator iter = selection->get_selected();
+	Gtk::TreeModel::iterator iter = selection->get_selected();
 		 Gtk::TreeModel::Row row = *iter;
 		 std::cout<<"Doble click. Path: "<< row.get_value(columna_busqueda.m_col_path)<<std::endl;
-	 }
-	return false;
 }
 
 void Interfaz::mostrarProgreso(Glib::ustring texto){

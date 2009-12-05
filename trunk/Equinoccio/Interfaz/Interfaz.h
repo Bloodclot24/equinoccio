@@ -27,7 +27,7 @@ private:
 
 	void cargarMenu();
 
-	bool on_double_click(GdkEventButton*);
+	void on_double_click(const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* column);
 	void on_menu_about();
 	void on_menu_help();
 	void on_menu_quit();

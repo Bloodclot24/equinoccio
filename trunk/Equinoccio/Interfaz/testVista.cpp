@@ -15,7 +15,7 @@ int main(int argc, char** argv) {
 	vista.agregarCatalogo("Imagen", "IMG");
 	vista.agregarCatalogo("Audio", "SND");
 	vista.agregarCatalogo("Texto", "TXT");
-	vista.agregarCatalogo("Codigo Fuente", "SRC");
+	vista.agregarCatalogo("Fuentes", "SRC");
 
 	vista.run();
 
