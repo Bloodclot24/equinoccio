@@ -34,7 +34,7 @@ std::list<std::string> Busqueda::buscar(std::string& consulta, std::string catal
 		}
 		else {
 			std::cout<<" * AND * "<<std::endl;
-			 Busqueda::andPunteros(this->punteros,this->punteros_match);
+			 Busqueda::andPunteros2(this->punteros,this->punteros_match);
 		     std::cout << "tamanio de la lista final: " << punteros_match.size() << std::endl;
 		     std::list<uint32_t>::iterator it;
 		     std::list<uint32_t>::iterator end = punteros_match.end();
@@ -175,7 +175,7 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 
 	//Realizo el AND entre los punteros al indice obtenidos
 	std::list<uint32_t> offset_and;
-	Busqueda::andPunteros(offset_indice, offset_and);
+	Busqueda::andPunteros2(offset_indice, offset_and);
 	std::cout<<"	__cant Punteros AND: "<<offset_and.size()<<std::endl;	//VER!!!! ngrama repetidos
 
 	RegIndice *r;
@@ -279,6 +279,47 @@ void Busqueda::andPunteros(std::vector< std::list<uint32_t>* > &punteros, std::l
 	  punteros_and = *punteros[0];
     }
 }
+
+void Busqueda::andPunteros2(std::vector< std::list<uint32_t>* > &punteros, std::list<uint32_t> &punteros_and) {
+
+    if (punteros.size() > 1){
+	  uint32_t pos_min=0;
+	  uint32_t min=(uint32_t)-1;
+	  std::vector<std::list<uint32_t>::iterator> vec_it;
+	  uint32_t palabrasBuscadas = punteros.size();
+
+	  bool salir=false;
+
+	  // cargo un vector con iteradores al principio de cada lista
+	  for(int i=0;i<punteros.size();i++)
+	       vec_it.push_back(punteros[i]->begin());
+
+	  min=*vec_it[0];
+	  for(int i=0;i<punteros.size() && !salir;i++){
+	       while(*vec_it[i] < min && vec_it[i]!=punteros[i]->end())
+		    vec_it[i]++;
+	       if(vec_it[i] == punteros[i]->end())
+		    salir=true;
+	       else if(min < *vec_it[i]){
+		    min = *vec_it[i];
+		    i=-1;
+	       }
+	       else if(i == punteros.size()-1){
+		    punteros_and.push_back(min);
+		    vec_it[0]++;
+		    if(vec_it[0] !=punteros[0]->end())
+			 min = *vec_it[0];
+		    else salir = true;
+		    i=-1;
+	       }
+	  }
+    }
+    else{
+	  std::cout << "se saltea el AND\n";
+	  punteros_and = *punteros[0];
+    }
+}
+
 
 void Busqueda::filtrarFalsosPositivos(std::list<std::string>& consulta, std::list<RegIndice*> &lista, std::list<RegIndice*> &filtrada) {
 

@@ -49,6 +49,8 @@ private:
 	 * */
 	static void andPunteros(std::vector< std::list<uint32_t>* > &punteros, std::list<uint32_t> &punteros_and);
 
+	static void andPunteros2(std::vector< std::list<uint32_t>* > &punteros, std::list<uint32_t> &punteros_and);
+
 	/*
 	 * Guarda en la lista filtrada los elementos de la lista original que contengan a los terminos. Para ngramas.
 	 *
