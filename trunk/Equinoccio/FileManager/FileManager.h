@@ -12,6 +12,9 @@
 
 class FileManager {
 
+private:
+     static uint32_t segmento;
+
 public:
 		/**
 		 * Crea un FileManager.
@@ -54,6 +57,7 @@ public:
 
      static std::string obtenerPathLexDirs();
 
+     static void setSegmento(uint32_t numero);
 };
 #endif /*FILEMANAGER_H_*/
 

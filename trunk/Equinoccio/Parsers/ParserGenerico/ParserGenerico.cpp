@@ -2,7 +2,6 @@
 #include "../../FileManager/FileManager.h"
 
 ParserGenerico::ParserGenerico(uint32_t cantMaxReg):Parser::Parser(cantMaxReg){
-	nombreBase+=  FileManager::obtenerPathBase();
 }
 
 bool ParserGenerico::parsear(std::string nombre, uint32_t documento){

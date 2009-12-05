@@ -4,7 +4,6 @@
 /****************************************************************************/
 ParserAudio::ParserAudio(uint32_t cantMaxReg): Parser::Parser(cantMaxReg) { 
      nombreCatalogo = "SND";
-     nombreBase = FileManager::obtenerPathBase();
      nombreBase += AUDIO_DUMP_BASENAME;
      cargarStopWord(AUDIO_STOP_WORD_FILE);
 }; 

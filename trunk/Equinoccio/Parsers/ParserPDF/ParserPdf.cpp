@@ -5,7 +5,6 @@
 
 ParserPdf::ParserPdf(uint32_t cantMaxReg):Parser(cantMaxReg) {
      nombreCatalogo = "PDF";
-     nombreBase = FileManager::obtenerPathBase();
      nombreBase+= PDF_DUMP_BASENAME;
      cargarStopWord(PDF_STOP_WORD_FILE);
 }

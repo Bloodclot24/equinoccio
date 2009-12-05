@@ -19,7 +19,7 @@
 #include "Parsers/ParserPhp/ParserPHP.h"
 #include "FileManager/FileManager.h"
 
-
+#include "Busquedas/Busqueda.h"
 
 #define ARG_LIST   "-pl"
 #define ARG_ADD    "-pa"
@@ -27,8 +27,8 @@
 #define ARG_SEARCH "-s"
 #define ARG_CAT    "-c"
 
-#define NOMBRE_IDX_DIRECTORIOS "Resources/IDX_DIRS.idx"
-#define NOMBRE_LEX_DIRECTORIOS "Resources/LEX_DIRS.lex"
+//#define NOMBRE_IDX_DIRECTORIOS "Resources/IDX_DIRS.idx"
+//#define NOMBRE_LEX_DIRECTORIOS "Resources/LEX_DIRS.lex"
 
 #define ERROR_NO_ERROR              0
 #define ERROR_ARG_DESCONOCIDO      -1
@@ -160,8 +160,9 @@ private:
 
      uint32_t guardarDirectorio(const std::string& nombre){
 	  if(!idxDirectorios.is_open()){
-	       idxDirectorios.open(NOMBRE_IDX_DIRECTORIOS, std::fstream::in | std::fstream::out | std::fstream::trunc);
-	       lexDirectorios.open(NOMBRE_LEX_DIRECTORIOS, std::fstream::in | std::fstream::out | std::fstream::trunc);
+	       
+	       idxDirectorios.open(FileManager::obtenerPathIdxDirs().c_str(), std::fstream::in | std::fstream::out | std::fstream::trunc);
+	       lexDirectorios.open(FileManager::obtenerPathLexDirs().c_str(), std::fstream::in | std::fstream::out | std::fstream::trunc);
 	  }
 	  uint32_t p = lexDirectorios.tellp();
 	  idxDirectorios.write((char*)&p,sizeof(uint32_t));
@@ -172,8 +173,8 @@ private:
      bool existeDirectorio(const std::string& nombre){
 	  if(!idxDirectorios.is_open()){
 	       // Los abro sin truncar
-	       idxDirectorios.open(NOMBRE_IDX_DIRECTORIOS, std::fstream::in | std::fstream::out);
-	       lexDirectorios.open(NOMBRE_LEX_DIRECTORIOS, std::fstream::in | std::fstream::out);
+	       idxDirectorios.open(FileManager::obtenerPathIdxDirs().c_str(), std::fstream::in | std::fstream::out);
+	       lexDirectorios.open(FileManager::obtenerPathLexDirs().c_str(), std::fstream::in | std::fstream::out);
 	  }
 	  
 	  lexDirectorios.seekg(0);
@@ -262,6 +263,8 @@ private:
 	  parsers.agregarParser(new ParserTxt(1000000));
 	  parsers.agregarParser(new ParserPdf(1000000));
 
+	  FileManager::setSegmento(999);
+
 	  if(arg_list)
 	       std::cout << "Listado de directorios.\n";
 	  if(arg_add_dir){
@@ -274,10 +277,20 @@ private:
 	       std::cout << "Eliminar el directorio: " << arg_del_dir << std::endl;
 	       std::cout << "Existe directorio: " << existeDirectorio(arg_del_dir) << std::endl;
 	  }
-	  if(arg_search_string)
+	  if(arg_search_string){
 	       std::cout << "Buscar la cadena: " << arg_search_string << std::endl;
-	  if(arg_cat_string)
-	       std::cout << "Buscar en el catalogo: " << arg_cat_string << std::endl;
+
+	       std::string catalogo="SRC";
+	       if(arg_cat_string){
+		    std::cout << "Buscar en el catalogo: " << arg_cat_string << std::endl;
+		    catalogo = arg_cat_string;
+	       }
+
+
+	       Busqueda buscador;
+	       std::string busqueda=arg_search_string;
+	       buscador.buscar(busqueda, catalogo);
+	  }
 
 	  return ERROR_NO_ERROR;
      }

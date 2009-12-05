@@ -4,7 +4,6 @@
 
 ParserImagen::ParserImagen(uint32_t cantMaxReg):Parser(cantMaxReg) {
      nombreCatalogo = "IMG";
-     nombreBase = FileManager::obtenerPathBase();
      nombreBase+= IMAGEN_DUMP_BASENAME;
      cargarStopWord(IMAGEN_STOP_WORD_FILE);
 }

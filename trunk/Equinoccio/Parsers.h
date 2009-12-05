@@ -20,8 +20,8 @@
 #include "FileManager/ConstPath.h"
 #include "FileManager/FileManager.h"
 
-#define NOMBRE_IDX_ARCHIVOS "Resources/IDX_ARCH.idx"
-#define NOMBRE_LEX_ARCHIVOS "Resources/LEX_ARCH.lex"
+//#define NOMBRE_IDX_ARCHIVOS "Resources/IDX_ARCH.idx"
+//#define NOMBRE_LEX_ARCHIVOS "Resources/LEX_ARCH.lex"
 
 #define NUMERO_PARTICIONES  20
 #define NUMERO_REGISTROS_SORT  1000
@@ -132,8 +132,7 @@ public:
 	       // formo el nombre del archivo utilizando el nombre
 	       // base de los indices de archivo y concatenandole '.'
 	       // y el nombre del catalogo
-	       std::string nombre = NOMBRE_IDX_ARCHIVOS;
-	       nombre+= '.';
+	       std::string nombre = FileManager::obtenerPathIdxArch(); //NOMBRE_IDX_ARCHIVOS;
 	       nombre+=catalogo;
 	       // abro el archivo
 	       idxArchivos.open(nombre.c_str(), std::fstream::in | std::fstream::out | std::fstream::trunc);
@@ -141,8 +140,7 @@ public:
 	       // formo el nombre del archivo utilizando el nombre
 	       // base del lexico de archivos y concatenandole '.' y el nombre del
 	       // catalogo
-	       nombre=NOMBRE_LEX_ARCHIVOS;
-	       nombre+= '.';
+	       nombre=FileManager::obtenerPathLexArch(); //NOMBRE_LEX_ARCHIVOS;
 	       nombre+=catalogo;
 	       // abro el archivo
 	       lexArchivos.open(nombre.c_str(), std::fstream::in | std::fstream::out | std::fstream::trunc);
@@ -238,7 +236,7 @@ public:
 		    ultimo = p->getCantArchivosParseados();
 
 		    /* y que nombre base tiene cada uno */
-		    std::string nombreBase = p->getNombreBase();
+		    std::string nombreBase = FileManager::obtenerPathBase() + p->getNombreBase();
 
 		    std::cerr << "Primero,Ultimo: " << primero << " " << ultimo << std::endl;
 		    // hasta parsear el ultimo...
