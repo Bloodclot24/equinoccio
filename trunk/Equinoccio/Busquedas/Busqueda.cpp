@@ -224,6 +224,8 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 	std::list<RegIndice*> reg_match;
 	filtrarFalsosPositivos(substr,registros, reg_match);
 
+	std::cout << "Cantidad de terminos despues de filtrar: " << reg_match.size();
+
 	std::vector< std::list<uint32_t>* > punteros_docs;
 	//obtengo la lista de punteros de cada termino
 	//agregar los docs al vector punteros
@@ -292,19 +294,17 @@ void Busqueda::andPunteros(std::vector< std::list<uint32_t>* > &punteros, std::l
 void Busqueda::andPunteros2(std::vector< std::list<uint32_t>* > &punteros, std::list<uint32_t> &punteros_and) {
 
     if (punteros.size() > 1){
-	  uint32_t pos_min=0;
 	  uint32_t min=(uint32_t)-1;
 	  std::vector<std::list<uint32_t>::iterator> vec_it;
-	  uint32_t palabrasBuscadas = punteros.size();
 
 	  bool salir=false;
 
 	  // cargo un vector con iteradores al principio de cada lista
-	  for(int i=0;i<punteros.size();i++)
+	  for(int i=0;i<(int)punteros.size();i++)
 	       vec_it.push_back(punteros[i]->begin());
 
 	  min=*vec_it[0];
-	  for(int i=0;i<punteros.size() && !salir;i++){
+	  for(int i=0;i<(int)punteros.size() && !salir;i++){
 	       while(*vec_it[i] < min && vec_it[i]!=punteros[i]->end())
 		    vec_it[i]++;
 	       if(vec_it[i] == punteros[i]->end())
@@ -313,7 +313,7 @@ void Busqueda::andPunteros2(std::vector< std::list<uint32_t>* > &punteros, std::
 		    min = *vec_it[i];
 		    i=-1;
 	       }
-	       else if(i == punteros.size()-1){
+	       else if(i == (int)(punteros.size()-1)){
 		    punteros_and.push_back(min);
 		    vec_it[0]++;
 		    if(vec_it[0] !=punteros[0]->end())

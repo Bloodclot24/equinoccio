@@ -176,6 +176,8 @@ public:
       */
      uint32_t obtenerFrecuencia();
 
+     void obtenerPunterosEnLista(std::ifstream& archivo, uint32_t offset, uint32_t frec, std::list<Registro::Punteros>* lista_punteros);
+
 };
 
 #endif //REGISTRO_H_INCLUDED

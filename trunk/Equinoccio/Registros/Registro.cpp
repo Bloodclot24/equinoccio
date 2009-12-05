@@ -223,7 +223,6 @@ int Registro::unir(const Registro& registro){
      // inicializo la frecuencia a cero
      frecuencia=0;
 
-
      // recorro las 2 listas de punteros
      while(it1!= punteros.end() && it2 != registro.punteros.end()){
 	  // si la primera es menor que la segunda
@@ -253,7 +252,7 @@ int Registro::unir(const Registro& registro){
 	  }
 
 	  // en cualquiera de los casos, aumento la frecuencia
-	  frecuencia++;
+	  	  frecuencia++;
      }
      
      // termino de procesar los elementos que puedan quedar en la
@@ -304,6 +303,45 @@ void Registro::obtenerPunterosEnLista(std::ifstream& archivo, uint32_t offset, u
 	   if(indice==2){
 		docAnterior = valores[0]+docAnterior;
 		lista_punteros->push_back(docAnterior);
+		indice=0;
+		frec--;
+	   }
+	}
+}
+
+void Registro::obtenerPunterosEnLista(std::ifstream& archivo, uint32_t offset, uint32_t frec, std::list<Registro::Punteros>* lista_punteros) {
+
+	char byte=0;
+	unsigned bit=1<<7;
+	uint32_t docAnterior = (uint32_t)-1;
+	unsigned bits=0;
+	unsigned indice=0;
+	uint32_t valores[2];
+	std::string aux;
+
+	archivo.seekg(offset);
+
+	while(archivo.good() && frec > 0){
+	   if(bits==0){
+		archivo.read(&byte, 1);
+		bits=8;
+		bit=1<<7;
+	   }
+
+	   for(;bit!=0 && bits > 0 && indice < 2; bit >>= 1, bits--){
+		aux += ((byte)&(bit))>0?'1':'0';
+		
+		if((valores[indice] = TDA_Codigos::getNGamma(aux)) != (uint32_t)-1){
+		     indice++;
+		     aux.clear();
+		}
+	   }
+	   if(indice==2){
+		Punteros p;
+		docAnterior = valores[0]+docAnterior;
+		p.documento = docAnterior;
+		p.frecuencia = valores[1];
+		lista_punteros->push_back(p);
 		indice=0;
 		frec--;
 	   }
