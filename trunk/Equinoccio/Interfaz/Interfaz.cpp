@@ -33,9 +33,6 @@ Interfaz::Interfaz() {
 		tree_view->append_column("Catalogo", columna_busqueda.m_col_catalogo);
 		tree_view->append_column("Archivo", columna_busqueda.m_col_path);
 		selection = tree_view->get_selection();
-//		tree_view->add_events(Gdk::BUTTON_PRESS_MASK);
-//		tree_view->signal_button_press_event().connect(sigc::mem_fun(*this,
-//					&Interfaz::on_double_click));
 		tree_view->signal_row_activated().connect(sigc::mem_fun(*this,
 									&Interfaz::on_double_click));
 		cargarMenu();
@@ -160,8 +157,8 @@ void Interfaz::on_button_buscar_clicked() {
 			status_bar->push(text);
 
 			agregarFila(entry_consulta->get_text());//test
+
 		} else {
-			std::cout<<"Debe ingresar un catalogo"<<std::endl;
 			Glib::ustring text = "Debe ingresar un catalogo";
 			status_bar->push(text);
 		}
@@ -175,10 +172,12 @@ void Interfaz::on_button_buscar_clicked() {
 }
 
 void Interfaz::on_double_click(const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* column) {
-	std::cout<<"Evento "<<std::endl;
 	Gtk::TreeModel::iterator iter = selection->get_selected();
-		 Gtk::TreeModel::Row row = *iter;
-		 std::cout<<"Doble click. Path: "<< row.get_value(columna_busqueda.m_col_path)<<std::endl;
+	Gtk::TreeModel::Row row = *iter;
+	std::cout<<"Doble click. Path: "<< row.get_value(columna_busqueda.m_col_path)<<std::endl;
+	std::string comando = ABRIR;
+	comando += row.get_value(columna_busqueda.m_col_path);
+	system(comando.c_str()); //TODO hay que escapear los caracteres!
 }
 
 void Interfaz::mostrarProgreso(Glib::ustring texto){

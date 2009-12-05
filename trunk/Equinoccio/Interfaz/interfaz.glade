@@ -9,9 +9,10 @@
     </columns>
   </object>
   <object class="GtkWindow" id="window">
-    <property name="width_request">400</property>
-    <property name="height_request">300</property>
+    <property name="width_request">600</property>
+    <property name="height_request">400</property>
     <property name="title" translatable="yes">.: Equinoccio :.</property>
+    <property name="window_position">center-always</property>
     <child>
       <object class="GtkVBox" id="box">
         <property name="visible">True</property>
@@ -251,15 +252,20 @@
     </child>
   </object>
   <object class="GtkAboutDialog" id="about">
+    <property name="width_request">400</property>
+    <property name="height_request">300</property>
     <property name="border_width">5</property>
     <property name="resizable">False</property>
+    <property name="window_position">center-always</property>
     <property name="destroy_with_parent">True</property>
     <property name="type_hint">normal</property>
     <property name="skip_taskbar_hint">True</property>
     <property name="program_name">Equinoccio</property>
+    <property name="version">0.1</property>
     <property name="copyright" translatable="yes">75.42 - Organizacion de Datos
 Facultad de Ingenieria. UBA
 2&#xB0; Cuatrimestre 2009</property>
+    <property name="comments" translatable="yes">Grupo 3</property>
     <property name="authors">Guido Ygounet
 Nicolas Fernandez
 Lucas Pandolfo
@@ -297,6 +303,7 @@ Veronica Bukaczewski</property>
     <property name="border_width">5</property>
     <property name="title" translatable="yes">Seleccion de Directorio a Agregar</property>
     <property name="modal">True</property>
+    <property name="window_position">center-always</property>
     <property name="type_hint">normal</property>
     <property name="skip_taskbar_hint">True</property>
     <property name="has_separator">False</property>
