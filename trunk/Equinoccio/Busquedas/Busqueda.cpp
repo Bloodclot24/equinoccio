@@ -105,8 +105,13 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 	path += catalogo;
 	path += ".lex";
 	std::ifstream lexico (path.c_str(), std::ios::in | std::ios::binary);
-	if (!indice.good() || !pun_ng.good() || !lexico.good()) {
+	path = FileManager::obtenerPathBase();
+	path += catalogo;
+	path += ".pun";
+	std::ifstream pun_docs(path.c_str(), std::ios::in | std::ios::binary);
+	if (!indice.good() || !pun_ng.good() || !lexico.good() || !pun_docs.good()) {
 		std::cout << "error al abrir los archivos de ngramas"<<std::endl;
+		indice.close(); pun_ng.close();  lexico.close();  pun_docs.close();
 		return false;
 	}
 
@@ -115,7 +120,6 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 	size_t pos = 0;
 	size_t where = 0;
 	std::list<std::string> substr; 	//lista con los substrings a matchear por los terminos
-
 	std::vector<std::list<uint32_t>* > offset_indice;	//offsets de los terminos de bigramas en el indice general
 	std::list<uint32_t> *lista_offset;
 
@@ -149,6 +153,10 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 					std::cout<<"no existe el bigrama: "<<str.substr(car,2)<<std::endl;
 					for (unsigned int i=0; i<offset_indice.size();i++)
 						delete offset_indice[i];
+					indice.close();
+					lexico.close();
+					pun_ng.close();
+					pun_docs.close();
 					return false;
 				}
 			}
@@ -168,7 +176,7 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 	//Realizo el AND entre los punteros al indice obtenidos
 	std::list<uint32_t> offset_and;
 	Busqueda::andPunteros(offset_indice, offset_and);
-	std::cout<<"	__cant Punteros AND: "<<offset_and.size()<<std::endl;
+	std::cout<<"	__cant Punteros AND: "<<offset_and.size()<<std::endl;	//VER!!!! ngrama repetidos
 
 	RegIndice *r;
 	uint32_t off = 0;
@@ -203,43 +211,30 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 	lexico.close(); //checkear error de lectura
 	indice.close();
 
-	//chequear falsos positivos
+	//eliminar falsos positivos
 	std::list<RegIndice*> reg_match;
 	filtrarFalsosPositivos(substr,registros, reg_match);
 
+	std::vector< std::list<uint32_t>* > punteros_docs;
 	//obtengo la lista de punteros de cada termino
 	//agregar los docs al vector punteros
 	//liberar todas las listas auxiliares
-
-	path = FileManager::obtenerPathBase();
-	path += catalogo;
-	path += ".pun";
-	std::ifstream pun_docs(path.c_str(), std::ios::in | std::ios::binary);
-	if (pun_docs.good()){
-		if (reg_match.empty())
-			return false;
-		while (!reg_match.empty()) {
-			std::list<uint32_t> *punt = new std::list<uint32_t>;
-			punt->clear();
-			Registro::obtenerPunterosEnLista(pun_docs,reg_match.front()->pun,reg_match.front()->frec,punt);
-			delete reg_match.front();
-			reg_match.pop_front();
-			std::list<uint32_t>::iterator it = punt->begin();
-			while (it != punt->end()) {
-				std::cout<<"Doc: "<<buscarPath(*it,catalogo)<<std::endl;
-				it++;
-			}
-
-			//aca hay que hacer un merge y la lista mergeada pasarla a punt porque sino
-			punteros.push_back(punt);
-		}
-		pun_docs.close();
-
-		return true; //debe liberar
+	std::list<uint32_t> *punt = NULL;
+	while (!reg_match.empty()) {
+		punt = new std::list<uint32_t>;
+		punt->clear();
+		Registro::obtenerPunterosEnLista(pun_docs,reg_match.front()->pun,reg_match.front()->frec,punt);
+		delete reg_match.front();
+		reg_match.pop_front();
+		punteros_docs.push_back(punt);
 	}
-
-	std::cout<<"error al abrir el arch de punteros: "<<path<<std::endl;
-	return false;
+	pun_docs.close();
+	//union para evitar docs repetidos
+	if ((punt = unionPunteros(punteros_docs)) != NULL) {
+		punteros.push_back(punt);
+		return true;
+	}
+	return false;	//falta verificar que se libere todo
 }
 
 void Busqueda::andPunteros(std::vector< std::list<uint32_t>* > &punteros, std::list<uint32_t> &punteros_and) {
@@ -317,6 +312,47 @@ void Busqueda::filtrarFalsosPositivos(std::list<std::string>& consulta, std::lis
 	}
 }
 
+std::list<uint32_t>* Busqueda::unionPunteros(std::vector< std::list<uint32_t>* > &punteros) {
+
+	std::list<uint32_t>* pun_union = NULL;
+	if (punteros.size() > 1) {
+		pun_union = new std::list<uint32_t>;
+		uint32_t anterior = -1; //ver inicial
+		do {
+			//busco el minimo
+			uint32_t min = 0; 	//lista del minimo puntero
+			for (uint32_t i=1; i < punteros.size();i++){
+				if (punteros[i]->front() <= punteros[min]->front()) {
+					min = i;
+				}
+			}
+			if (punteros[min]->front() != anterior) {
+				anterior = punteros[min]->front();
+				pun_union->push_back(anterior);
+			}
+			punteros[min]->pop_front();
+			//si la lista del minimo esta vacia la borro
+			if (punteros[min]->empty()) {
+				delete punteros[min];
+				punteros[min] = punteros[punteros.size()-1];
+				punteros.pop_back();
+			}
+		}while(!punteros.empty());
+
+		if (pun_union->empty()) {
+			delete pun_union;
+			pun_union = NULL;
+		}
+	}
+	else {
+		std::cout<<"size de union menor o igual a 1"<<std::endl;
+		if (punteros.size() == 1)
+			pun_union = punteros[0]; //tiene un solo elemento
+	}
+	return pun_union;
+}
+
+
 std::string Busqueda::buscarPath(uint32_t puntero,std::string catalogo ) {
 
 	std::string path;
@@ -374,3 +410,4 @@ std::string Busqueda::buscarPath(uint32_t puntero,std::string catalogo ) {
 	}
 	return path;
 }
+

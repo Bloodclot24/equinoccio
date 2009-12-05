@@ -43,7 +43,7 @@
     - [X] Busqueda simple.
     - [X] Busqueda compuesta.
     - [ ] Busqueda rankeada.
-    - [ ] Comodines.
+    - [X] Comodines.
     - [ ] Busqueda en todos los segmentos.
   - [ ] Interfaz.
   - [ ] Instalacion.

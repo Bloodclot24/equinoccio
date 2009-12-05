@@ -50,10 +50,21 @@ private:
 	static void andPunteros(std::vector< std::list<uint32_t>* > &punteros, std::list<uint32_t> &punteros_and);
 
 	/*
-	 * Guarda en la lista filtrada los elementos de la lista original que contengan a los terminos
+	 * Guarda en la lista filtrada los elementos de la lista original que contengan a los terminos. Para ngramas.
+	 *
+	 * @param consulta 	palabra a matchear
+	 * @param lista		lista de registros
+	 * @param filtrada	lista de registros que contienen en su termino a la palabra a matchear
 	 * */
 	void filtrarFalsosPositivos(std::list<std::string>& consulta, std::list<RegIndice*>& lista, std::list<RegIndice*>& filtrada);
 
+	/*
+	 * junta todos los punteros de las palabras matcheadas por ngramas, eliminando repeticiones.
+	 * se asume que las listas de punteros tienen elementos
+	 * @return 	puntero a una lista con los resultados. NULL en caso de error o de resultado vacio
+	 * */
+
+	std::list<uint32_t>* unionPunteros(std::vector< std::list<uint32_t>* > &punteros);
 
 public:
 	Busqueda();
