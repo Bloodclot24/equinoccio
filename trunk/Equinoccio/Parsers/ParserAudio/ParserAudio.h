@@ -30,7 +30,6 @@ class ParserAudio: public Parser {
 	
 	private:
 		void guardarEnDump(std::ofstream& dump, std::string& palabra, uint32_t documento);
-		std::string obtenerExtension(const std::string& extension);
 	
 	public: 
 		ParserAudio(uint32_t cantMaxReg);

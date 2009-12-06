@@ -10,8 +10,8 @@ ParserAudio::ParserAudio(uint32_t cantMaxReg): Parser::Parser(cantMaxReg) {
 		
 /*--------------------------------------------------------------------------*/
 bool ParserAudio::parsear(std::string nombre, uint32_t documento) {
-	
-     const char* validas[]={".mp3",".ogg",0};
+
+	 const char* validas[]={".mp3",".ogg",0};
      if(!verificarExtension(nombre,validas))
 	  return false;
   
@@ -57,8 +57,13 @@ bool ParserAudio::parsear(std::string nombre, uint32_t documento) {
 			    (keyword.compare(MIME_TYPE_OGG) != 0))
 			      audio= false;
 			 else {
-			      std::string extension= obtenerExtension(keyword); 
-			      guardarEnDump(dump, extension, documento);
+			      unsigned int indexExt= nombre.find_last_of('.');
+			      std::string ext;
+			      if(indexExt != std::string::npos) {
+			    	  ext= nombre.substr(indexExt + 1);
+			    	  Util::aMinusculas(ext);
+			    	  guardarEnDump(dump, ext, documento);
+			      }
 			 }	
 
 		    } else
@@ -106,16 +111,6 @@ void ParserAudio::guardarEnDump(std::ofstream& dump,
 	  Registro reg(palabra, documento);
 	  reg.escribir(dump, 0);
      }
-}
-
-/*--------------------------------------------------------------------------*/
-std::string ParserAudio::obtenerExtension(const std::string& extension) {
-
-     std::string strAparsear(extension); 
-     size_t found= strAparsear.find("/", 0);
-     std::string palabraExtension(strAparsear, found+1);
-
-     return palabraExtension;	
 }
 
 /****************************************************************************/
