@@ -1,10 +1,13 @@
 #include "Interfaz.h"
+#include "../Util/Util.h"
 
 #define WINDOW_FILE "Interfaz/interfaz.glade"
 
 Interfaz::Interfaz() {
 	error=false;
 	activo=false;
+	paths_resultado = NULL;
+	fin = false;
 	try {
 		builder = Gtk::Builder::create_from_file(WINDOW_FILE);
 		main_window = 0;
@@ -70,6 +73,9 @@ void Interfaz::cargarMenu() {
 	menu_archivo->add(Gtk::Action::create("FileAdd", Gtk::Stock::OPEN,
 			"_Agregar Directorio", "Indexa el nuevo directorio"),
 			sigc::mem_fun(*this, &Interfaz::on_button_add_clicked));
+//	menu_archivo->add(Gtk::Action::create("FileAdd", Gtk::Stock::OPEN,
+//			"_Eliminar Directorio", "Saca al directorio de la busqueda"),
+//			sigc::mem_fun(*this, &Interfaz::on_button_add_clicked));
 	menu_ayuda->add(Gtk::Action::create("HelpMenu", "Ayuda"));
 	menu_ayuda->add(Gtk::Action::create("HelpAbout", Gtk::Stock::ABOUT,"A_cerca De", "Acerca de Equinoccio"),
 			sigc::mem_fun(*this, &Interfaz::on_menu_about));
@@ -131,15 +137,16 @@ void Interfaz::on_menu_quit() {
 }
 
 void Interfaz::on_button_add_clicked() {
-	if (select_window->run() == Gtk::RESPONSE_OK) {
-		std::cout<<select_window->get_filename()<<std::endl;//if !activo?????????????????
-		mostrarProgreso("Indexando");
-		Glib::ustring text = "Agregando directorio: ";
-		text += select_window->get_filename();
-		activo = true;
-		status_bar->push(text);
+	if (!activo) {
+		if (select_window->run() == Gtk::RESPONSE_OK) {
+			std::cout<<select_window->get_filename()<<std::endl;
+			mostrarProgreso("Indexando");
+			Glib::ustring text = "Agregando directorio: ";
+			text += select_window->get_filename();
+			status_bar->push(text);
+		}
+		select_window->hide();
 	}
-	select_window->hide();
 }
 
 void Interfaz::on_button_buscar_clicked() {
@@ -148,26 +155,27 @@ void Interfaz::on_button_buscar_clicked() {
 		if(iter_active) {
 			liststore_busqueda->clear();
 			Gtk::TreeModel::Row row= *iter_active;
-			catalogo= row[columna_catalogo.m_col_catalogo];
+			catalogo= row[columna_catalogo.m_col_codigo];
+			consulta = entry_consulta->get_text();
 			Glib::ustring cod_cat = row[columna_catalogo.m_col_codigo];
-			std::cout<<"Consulta: "<<entry_consulta->get_text()<<" - Catalogo: "<<catalogo<<" - Codigo: "<<cod_cat<<std::endl;
+			std::cout<<"Consulta: "<<consulta<<" - Catalogo: "<<row[columna_catalogo.m_col_catalogo]<<" - Codigo: "<<cod_cat<<std::endl;
 			mostrarProgreso("Buscando..");
 			activo = true;
-			Glib::ustring text = " ";
-			status_bar->push(text);
+			status_bar->push(" ");
+			button_buscar->set_sensitive(false); //activar al sacaar todos los test
+			paths_resultado = NULL;
+			id_esperando = Glib::signal_timeout().connect(sigc::mem_fun(*this,
+				        &Interfaz::esperarResultado), 200 );
 
-			agregarFila(entry_consulta->get_text());//test
+			//agregarFila(entry_consulta->get_text());//test
+			this->execute();
 
 		} else {
-			Glib::ustring text = "Debe ingresar un catalogo";
-			status_bar->push(text);
+			status_bar->push("Debe ingresar un catalogo");
 		}
 	}
 	else {
-		detenerBarra(); //por ahora :P
-		activo = false;
-		Glib::ustring text = " ";
-		status_bar->push(text);
+		status_bar->push(" ");
 	}
 }
 
@@ -176,8 +184,10 @@ void Interfaz::on_double_click(const Gtk::TreeModel::Path& path, Gtk::TreeViewCo
 	Gtk::TreeModel::Row row = *iter;
 	std::cout<<"Doble click. Path: "<< row.get_value(columna_busqueda.m_col_path)<<std::endl;
 	std::string comando = ABRIR;
+	comando += '"';
 	comando += row.get_value(columna_busqueda.m_col_path);
-	system(comando.c_str()); //TODO hay que escapear los caracteres!
+	comando += '"';
+	system(comando.c_str());
 }
 
 void Interfaz::mostrarProgreso(Glib::ustring texto){
@@ -195,12 +205,13 @@ bool Interfaz::mover() {
 
 void Interfaz::detenerBarra() {
 	id_activity.disconnect();
+	activo = false;
 	progress_bar->set_text(" ");
 	progress_bar->set_fraction(0);
 	progress_bar->hide();
 }
 
-void Interfaz::run() {
+void Interfaz::iniciar() {
 	if (!error) {
 		Gtk::Main* kit = Gtk::Main::instance();
 		kit->run(*main_window);
@@ -221,3 +232,30 @@ void Interfaz::agregarFila(const std::string path) {
 	row[columna_busqueda.m_col_catalogo] = catalogo;
 }
 
+bool Interfaz::esperarResultado() {
+	mx_fin.lock();
+	if (fin) {
+		finEspera();
+	}
+	mx_fin.unlock();
+	return true;
+}
+
+void Interfaz::finEspera() {
+	id_esperando.disconnect();
+	detenerBarra();
+	fin = false;
+	if (paths_resultado != NULL) {
+		Glib::ustring res= "Se encontraron ";
+		res += Util::intToString(paths_resultado->size());
+		res += " resultados.";
+		status_bar->push(res);
+		std::list<std::string>::iterator it;
+		for(it=paths_resultado->begin(); it!=paths_resultado->end(); it++) {
+			agregarFila(*it);
+		}
+	}
+	else
+		status_bar->push("No se encontraron resultados.");
+	button_buscar->set_sensitive(true);
+}

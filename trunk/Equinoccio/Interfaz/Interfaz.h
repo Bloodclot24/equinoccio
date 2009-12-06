@@ -4,10 +4,12 @@
 #include <gtkmm.h>
 #include <glib.h>
 #include <iostream>
-
+#include "../Busquedas/Busqueda.h"
+#include "../Thread/Thread.h"
+#include "../Thread/Mutex.h"
 #define ABRIR "xdg-open "
 
-class Interfaz {
+class Interfaz: public Thread {
 private:
 	Gtk::Window *main_window;	//ventana principal de la aplicacion
 	Gtk::AboutDialog *about_window;	//ventana "acerca de"
@@ -24,9 +26,10 @@ private:
 	bool activo;
 	bool error;
 	Glib::ustring catalogo; //catalogo en el que se esta buscando
+	Glib::ustring consulta;
+	sigc::connection id_esperando;
 
 	void cargarMenu();
-
 	void on_double_click(const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* column);
 	void on_menu_about();
 	void on_menu_help();
@@ -70,11 +73,32 @@ private:
 	ColumnaBusqueda columna_busqueda;
 	Gtk::TreeView *tree_view;
 
+	std::list<std::string> *paths_resultado;//mutex???
+	bool esperarResultado();
+	void finEspera();
+
+//test
+	Busqueda buscador;
+	bool fin;
+	Mutex mx_fin;
+
+	void* run() {
+		std::string cat = catalogo;
+		std::string cons = consulta;
+		paths_resultado = buscador.buscar(cons,cat);
+		mx_fin.lock();
+		fin = true;
+		mx_fin.unlock();
+		return NULL;
+	}
 public:
 	Interfaz();
 	~Interfaz();
-	void run();
+	void iniciar();
 	void agregarCatalogo(const std::string& catalogo,const std::string codigo);
+	void setResultado(std::list<std::string> *paths) {
+		paths_resultado = paths;
+	}
 };
 
 #endif /* INTERFAZ_H_ */

@@ -75,9 +75,9 @@ public:
 
 	/* busca el string en el indice y devuelve una lista con los
 	 * path de los documentos matcheados
-	 * devuelve lista vacia en caso de que no haya match
+	 * devuelve NULL en caso de que no haya match
 	 * */
-	std::list<std::string> buscar(std::string& consulta, std::string catalogo);
+	std::list<std::string>* buscar(std::string& consulta, std::string catalogo);
 
 
 };

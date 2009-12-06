@@ -19,7 +19,9 @@ SOURCES=CodigoGamma/TDA_Codigos.cpp \
 	Bitmap/Bitmap.cpp \
 	Registros/RegistroMatriz.cpp \
 	Busqueda\ Rankeada/BusquedaRankeada.cpp \
-	Notificador/Notificador.cpp		
+	Notificador/Notificador.cpp	\
+	Thread/Thread.cpp \
+	Thread/Mutex.cpp	
 
 TESTSOURCES=Arbol/arbol.cpp\
 	Arbol/arbolRegistros.cpp\

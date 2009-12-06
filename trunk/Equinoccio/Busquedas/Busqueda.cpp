@@ -11,14 +11,15 @@ Busqueda::Busqueda() {}
 Busqueda::~Busqueda() {
 }
 
-std::list<std::string> Busqueda::buscar(std::string& consulta, std::string catalogo) {
-
-	std::list<std::string> paths;
+std::list<std::string>* Busqueda::buscar(std::string& consulta, std::string catalogo) {
+	 FileManager::setSegmento(999);
+	std::list<std::string> *paths = NULL;
 	if (consulta.size() != 0) {
-
 		size_t pos = 0;
 		size_t where = 0;
 		bool encontrado;
+		punteros.clear();
+		punteros_match.clear();
 		do {
 			//tomo la palabra y la busco en el indice
 			where = consulta.find(' ', pos);
@@ -36,27 +37,25 @@ std::list<std::string> Busqueda::buscar(std::string& consulta, std::string catal
 			std::cout<<" * AND * "<<std::endl;
 			 Busqueda::andPunteros2(this->punteros,this->punteros_match);
 		     std::cout << "tamanio de la lista final: " << punteros_match.size() << std::endl;
-		     std::list<uint32_t>::iterator it;
-		     std::list<uint32_t>::iterator end = punteros_match.end();
-		     
+
 		     //agregar los paths a la lista
-		     for (it = punteros_match.begin(); it != end; it++)
-			  paths.push_back(buscarPath(*it, catalogo));
-		     
-		     while(punteros_match.size()>0){
-			  std::cout<<"MATCH: "<<buscarPath(punteros_match.front(), catalogo)<<std::endl;
-			  punteros_match.pop_front();
+		     if (punteros_match.size() != 0) {
+		    	 paths = new std::list<std::string>;
+		    	 do{
+		    		 std::string path_documento = buscarPath(punteros_match.front(), catalogo);
+					 std::cout<<"MATCH: "<<path_documento<<std::endl;
+					 paths->push_back(path_documento);
+					 punteros_match.pop_front();
+				 }while(punteros_match.size()>0);
 		     }
 		}
 	}
-		
-	//borrarListas();
 	std::cout<<"Fin buscar"<<std::endl;
 	return paths;
 }
 	
 bool Busqueda::buscarEnIndice(std::string consulta, std::string catalogo) {
-	     
+
 	if ( consulta.find('*') == std::string::npos) {
 		//busqueda simple
 		consulta = (consulta);
@@ -69,6 +68,7 @@ bool Busqueda::buscarEnIndice(std::string consulta, std::string catalogo) {
 				std::string nombre_pun =  FileManager::obtenerPathBase();
 				nombre_pun += catalogo;
 				nombre_pun += ".pun";
+				std::cout<<nombre_pun<<std::endl;
 				std::ifstream arch_punteros(nombre_pun.c_str(), std::ios::in | std::ios::binary);
 				if (arch_punteros.good()){
 					std::list<uint32_t>* puntDocs = new std::list<uint32_t>;
@@ -96,18 +96,22 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 	std::string path = FileManager::obtenerPathBase();
 	path += catalogo;
 	path += ".idx";
+	std::cout<<path<<std::endl;
 	std::ifstream indice(path.c_str(), std::ios::in | std::ios::binary);
 	path = FileManager::obtenerPathBase();
 	path += catalogo;
 	path += EXT_NG_PUN;
+	std::cout<<path<<std::endl;
 	std::ifstream pun_ng(path.c_str(),  std::ios::in | std::ios::binary);
 	path = FileManager::obtenerPathBase();
 	path += catalogo;
 	path += ".lex";
+	std::cout<<path<<std::endl;
 	std::ifstream lexico (path.c_str(), std::ios::in | std::ios::binary);
 	path = FileManager::obtenerPathBase();
 	path += catalogo;
 	path += ".pun";
+	std::cout<<path<<std::endl;
 	std::ifstream pun_docs(path.c_str(), std::ios::in | std::ios::binary);
 	if (!indice.good() || !pun_ng.good() || !lexico.good() || !pun_docs.good()) {
 		std::cout << "error al abrir los archivos de ngramas"<<std::endl;
@@ -224,7 +228,7 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 	std::list<RegIndice*> reg_match;
 	filtrarFalsosPositivos(substr,registros, reg_match);
 
-	std::cout << "Cantidad de terminos despues de filtrar: " << reg_match.size();
+	std::cout << "Cantidad de terminos despues de filtrar: " << reg_match.size()<<std::endl;
 
 	std::vector< std::list<uint32_t>* > punteros_docs;
 	//obtengo la lista de punteros de cada termino
