@@ -3,113 +3,138 @@
 void Notificador::buscarModificaciones() {
 
 	//Nombre directorio
-	std::string directorio= FileManager::obtenerPathBase();
-	directorio+= "IDX_DIRS.idx";
+	std::string directorio= FileManager::obtenerPathIdxDirs();
 	//Abro directorio para busqueda
 	std::fstream archDirectorio;
 	archDirectorio.open(directorio.c_str(), std::fstream::in);
 
 	//Nombre lexico directorio
-	std::string lexico_dir= FileManager::obtenerPathBase();
-	lexico_dir+= "LEX_DIRS.lex";
+	std::string lexico_dir= FileManager::obtenerPathLexDirs();
 	//Abro lexico de directorio para busqueda
 	std::fstream archLexicoDir;
 	archLexicoDir.open(lexico_dir.c_str(), std::fstream::in);
-
-	//Nombre archivo
-	std::string archivo= FileManager::obtenerPathBase();
-	archivo+= "IDX_ARCH.idx.IMG"; // prueba
-	//Creo file para archivos
-	std::fstream archArchivo;
-	archArchivo.open(archivo.c_str(), std::fstream::in); //provisorio deberia ser para cada catalogo
-	//Creo registro de archivo
-	RegistroArchivo regArchivo;
-
-	//Nombre lexico archivo
-	std::string arch_lexico= FileManager::obtenerPathBase();
-	arch_lexico+= "LEX_ARCH.lex.IMG"; // prueba
-	//Creo file para archivos
-	std::fstream archLexico;
-	archLexico.open(arch_lexico.c_str(), std::fstream::in); //provisorio deberia ser para cada catalogo
 
 	//Auxiliares
 	std::map<ino_t,RegistroDisco> registrosDisco;
 	std::list<std::string> directoriosNuevos;
 	uint32_t dir= 0, dir_ultimo= 0;
 	std::string nombre_arch;
+	std::string catalogo;
 
-	if(archArchivo.good()) {
-		//Leo el fin del IDX_ARCH_IDX catalogo
-		archArchivo.seekg(0, std::fstream::end);
-		uint32_t eofArchivo= archArchivo.tellg();
-		archArchivo.seekg(0, std::fstream::beg);
+	//Cargar lista de catalogos
+	catalogos.push_back("image");
+	catalogos.push_back("text");
+	catalogos.push_back("source");
+	catalogos.push_back("sound");
 
-		//Leo el primer registro de datos de un archivo para obtener el primer numero de directorio
-		archArchivo.read((char*)&regArchivo.pLexico, sizeof(regArchivo.pLexico));
-		archArchivo.read((char*)&regArchivo.nro_dir, sizeof(regArchivo.nro_dir));
-		dir_ultimo= regArchivo.nro_dir;
-		archArchivo.read((char*)&regArchivo.inode, sizeof(regArchivo.inode));
-		archArchivo.read((char*)&regArchivo.time_stamp, sizeof(regArchivo.time_stamp));
-		//Vuelvo a la primera posicion
-		archArchivo.seekg(0, std::fstream::beg);
+	//Nombre archivo
+	std::string archivo;
+	//Creo file para archivos
+	std::fstream archArchivo;
+	//Creo registro de archivo
+	RegistroArchivo regArchivo;
 
-		//Mientras no llegue al fin del archivo
-		while(archArchivo.tellg() != eofArchivo) {
+	//Nombre lexico archivo
+	std::string arch_lexico;
+	//Creo file para archivos
+	std::fstream archLexico;
 
-			dir= dir_ultimo;
-			registrosDisco.clear();
-			cargarRegistrosDelDirectorio(dir, archDirectorio, archLexicoDir, registrosDisco, directoriosNuevos);
+	while(!catalogos.empty()) {
 
-			do {
-				avanzarArchivo(archArchivo, archLexico, regArchivo, nombre_arch);
-				dir_ultimo= regArchivo.nro_dir;
+		catalogo= catalogos.front();
+		catalogos.pop_front();
+		archivo= FileManager::obtenerPathIdxArchCatalogo(catalogo);
+		archArchivo.open(archivo.c_str(), std::fstream::in);
+		arch_lexico= FileManager::obtenerPathLexArchCatalogo(catalogo);
+		archLexico.open(arch_lexico.c_str(), std::fstream::in);
 
-				if(dir_ultimo == dir) {
-					//Busco si el inode esta en disco
-					int cant= registrosDisco.count(regArchivo.inode);
+		std::cout << "archivo: " << archivo << std::endl;
+		std::cout << "arch_lexico: " << arch_lexico << std::endl;
+		std::cout << "************* CATALOGO: " << catalogo << " *************" << std::endl;
 
-					std::cout << "Busco: "<< regArchivo.inode << std::endl;
-					std::cout << "cant: "<< registrosDisco.count(regArchivo.inode) << std::endl;
+		if(archArchivo.good()) {
+			//Leo el fin del IDX_ARCH_IDX catalogo
+			archArchivo.seekg(0, std::fstream::end);
+			uint32_t eofArchivo= archArchivo.tellg();
+			archArchivo.seekg(0, std::fstream::beg);
 
+			//Leo el primer registro de datos de un archivo para obtener el primer numero de directorio
+			archArchivo.read((char*)&regArchivo.pLexico, sizeof(regArchivo.pLexico));
+			archArchivo.read((char*)&regArchivo.nro_dir, sizeof(regArchivo.nro_dir));
+			dir_ultimo= regArchivo.nro_dir;
+			archArchivo.read((char*)&regArchivo.inode, sizeof(regArchivo.inode));
+			archArchivo.read((char*)&regArchivo.time_stamp, sizeof(regArchivo.time_stamp));
+			//Vuelvo a la primera posicion
+			archArchivo.seekg(0, std::fstream::beg);
 
-					//Si existe verificar modificaciones
-					if(cant != 0) {
-						//TODO: Verificar modificaciones
-						std::cout << "Hay que verificar modificaciones: " << registrosDisco[regArchivo.inode].nombre << std::endl;
-						registrosDisco.erase(regArchivo.inode);
-					} else {
-						std::cout << "Se borro el archivo" << regArchivo.inode << std::endl;
-						//TODO: Hay que borrar el archivo
+			//Mientras no llegue al fin del archivo
+			while(archArchivo.tellg() != eofArchivo) {
+
+				dir= dir_ultimo;
+				registrosDisco.clear();
+				cargarRegistrosDelDirectorio(dir, archDirectorio, archLexicoDir, registrosDisco, directoriosNuevos);
+
+				do {
+					avanzarArchivo(archArchivo, archLexico, regArchivo, nombre_arch);
+					dir_ultimo= regArchivo.nro_dir;
+
+					if(dir_ultimo == dir) {
+						//Busco si el inode esta en disco
+						int cant= registrosDisco.count(regArchivo.inode);
+
+						//Si existe verificar modificaciones
+						if(cant != 0) {
+							//TODO: Verificar modificaciones
+							std::cout << "Hay que verificar modificaciones: " << registrosDisco[regArchivo.inode].nombre << std::endl;
+							registrosDisco.erase(regArchivo.inode);
+						} else {
+							std::cout << "Se borro el archivo" << regArchivo.inode << std::endl;
+							//TODO: Hay que borrar el archivo
+						}
 					}
+
+				} while(dir == dir_ultimo && archArchivo.tellg() != eofArchivo);
+
+				//Si no es el fin del archivo, vuelvo un registro atras
+				if(archArchivo.tellg() != eofArchivo) {
+					uint32_t posActual= archArchivo.tellg();
+					archArchivo.seekg(posActual-RegistroArchivo::size(), std::fstream::beg);
 				}
 
-			} while(dir == dir_ultimo && archArchivo.tellg() != eofArchivo);
+				//Si quedaron registros debo agregarlos
+				if(!registrosDisco.empty()) {
+					//TODO: Agrego archivos nuevos
+					//PRUEBA
+					std::cout << "------- Hay archivos nuevos -------" << std::endl;
+					std::map<ino_t,RegistroDisco>::iterator it;
+					for(it= registrosDisco.begin(); it != registrosDisco.end(); it++) {
+						std::cout << it->first << std::endl;
+					}
+					std::cout << "-----------------------------------" << std::endl;
+					//
+				}
 
-			//Si no es el fin del archivo, vuelvo un registro atras
-			if(archArchivo.tellg() != eofArchivo) {
-				uint32_t posActual= archArchivo.tellg();
-				archArchivo.seekg(posActual-RegistroArchivo::size(), std::fstream::beg);
+				std::cout << "/*===================================================*/" << std::endl;
 			}
+		} //fin if arcArchivo.good()
 
-			//Si quedaron registros debo agregarlos
-			if(!registrosDisco.empty()) {
-				//TODO: Agrego archivos nuevos
-				std::cout << "--- Hay archivos nuevos ---" << std::endl;
+		//TODO: Agarra la lista de directoriosNuevos parsearlos y agregarlos
+		if(!directoriosNuevos.empty()) {
+			//PRUEBA
+			std::list<std::string>::iterator it;
+			std::cout << "+++++ Hay directorios nuevos +++++" << std::endl;
+			for(it= directoriosNuevos.begin(); it != directoriosNuevos.end(); it++) {
+				std::cout << *it << std::endl;
 			}
-
-			std::cout << "/*=================================*/" << std::endl;
+			std::cout << "++++++++++++++++++++++++++++++++++" << std::endl;
+			//
 		}
-	} //fin if arcArchivo.good()
 
-	//TODO: Agarra la lista de directoriosNuevos parsearlos y agregarlos
-	if(!directoriosNuevos.empty()) {
-		std::cout << "+++++ Hay directorios nuevos +++++" << std::endl;
-	}
-
-	//Cierro el catalogo
-	archArchivo.close();
-	//Cierro el lexico del catalogo
-	archLexico.close();
+		//Cierro el catalogo
+		archArchivo.close();
+		//Cierro el lexico del catalogo
+		archLexico.close();
+	} //while catalogos
 
 	//Cierro directorio
 	archDirectorio.close();
@@ -133,8 +158,8 @@ void Notificador::cargarRegistrosDelDirectorio(uint32_t nro_dir, std::fstream &a
 	while((c= archLexicoDir.get()) != 0)
 		directorio+= c;
 
-	std::cout << "Directorio" << directorio << std::endl;
-	std::cout << "pLexico: " << regDirectorio.pLexico << std::endl;
+	std::cout << "///////////// Directorio /////////////" << directorio << std::endl;
+//	std::cout << "pLexico: " << regDirectorio.pLexico << std::endl;
 
 	//Elimino de la lista de directorios nuevo
 	directoriosNuevos.remove(directorio);
@@ -149,7 +174,6 @@ void Notificador::cargarRegistrosDelDirectorio(uint32_t nro_dir, std::fstream &a
 			while((entry=readdir(directory))!=NULL){
 				std::string nombreCompleto(directorio+'/'+entry->d_name);
 				if(esArchivo(nombreCompleto)){
-					std::cout << "Agregar el archivo: " << nombreCompleto << "\n";
 					regDisco.nombre= nombreCompleto;
 					  if(lstat(nombreCompleto.c_str(), &sb) != -1) {
 						  regDisco.time= sb.st_mtime;
@@ -181,9 +205,9 @@ void Notificador::avanzarArchivo(std::fstream &archArchivo, std::fstream &archLe
 	while((c= archLexico.get()) != 0)
 		nombre_arch+= c;
 
-	std::cout << "----------Archivo: " << nombre_arch << std::endl;
-	std::cout << "pLexico: " << regArchivo.pLexico << std::endl;
-	std::cout << "nro_dir: " << regArchivo.nro_dir << std::endl;
-	std::cout << "inode: " << regArchivo.inode << std::endl;
-	std::cout << "time_stamp: " << regArchivo.time_stamp << std::endl;
+//	std::cout << "----------Archivo: " << nombre_arch << std::endl;
+//	std::cout << "pLexico: " << regArchivo.pLexico << std::endl;
+//	std::cout << "nro_dir: " << regArchivo.nro_dir << std::endl;
+//	std::cout << "inode: " << regArchivo.inode << std::endl;
+//	std::cout << "time_stamp: " << regArchivo.time_stamp << std::endl;
 }

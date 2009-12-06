@@ -12,6 +12,11 @@
 #define EXT_NG_PUN ".ng.pun"
 #define EXT_NG_IDX ".ng.idx"
 
+#define EXT_IMG "IMG"
+#define EXT_TXT "TXT"
+#define EXT_SRC "SRC"
+#define EXT_SND "SND"
+
 #define AUDIO_STOP_WORD_FILE "StopWords/stop_words_audio"
 #define AUDIO_DUMP_BASENAME "dump_audio_"
 #define PYTHON_STOP_WORD_FILE "StopWords/stop_words_python"

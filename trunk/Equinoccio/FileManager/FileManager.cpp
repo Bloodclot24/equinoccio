@@ -98,6 +98,31 @@ std::string FileManager::obtenerPathLexDirs(){
      return obtenerPathBase()+LEX_DIRS2;
 }
 
+std::string FileManager::obtenerExtCatalogo(const std::string& catalogo) {
+
+	std::string ext;
+	if(catalogo.compare("image") == 0)
+		ext= EXT_IMG;
+	if(catalogo.compare("text") == 0)
+		ext= EXT_TXT;
+	if(catalogo.compare("source") == 0)
+		ext= EXT_SRC;
+	if(catalogo.compare("sound") == 0)
+		ext= EXT_SND;
+
+	return ext;
+}
+
+std::string FileManager::obtenerPathIdxArchCatalogo(const std::string &catalogo) {
+
+    return obtenerPathBase()+IDX_ARCH2+obtenerExtCatalogo(catalogo);
+}
+
+std::string FileManager::obtenerPathLexArchCatalogo(const std::string &catalogo) {
+
+    return obtenerPathBase()+LEX_ARCH2+obtenerExtCatalogo(catalogo);
+}
+
 void FileManager::setSegmento(uint32_t numero){
      segmento=numero;
 }

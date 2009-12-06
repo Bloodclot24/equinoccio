@@ -13,6 +13,8 @@
 
 class Notificador {
 
+std::list<std::string> catalogos;
+
 typedef struct RegistroDirectorio {
 	uint32_t pLexico;
 	static uint32_t size() {

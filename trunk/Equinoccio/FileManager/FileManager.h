@@ -57,6 +57,12 @@ public:
 
      static std::string obtenerPathLexDirs();
 
+     static std::string obtenerExtCatalogo(const std::string& catalogo);
+
+     static std::string obtenerPathIdxArchCatalogo(const std::string &catalogo);
+
+     static std::string obtenerPathLexArchCatalogo(const std::string &catalogo);
+
      static void setSegmento(uint32_t numero);
 };
 #endif /*FILEMANAGER_H_*/
