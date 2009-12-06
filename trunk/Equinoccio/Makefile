@@ -15,7 +15,8 @@ SOURCES=CodigoGamma/TDA_Codigos.cpp \
 	Busqueda\ Binaria/Buscador.cpp \
 	Busquedas/Busqueda.cpp \
 	FileManager/FileManager.cpp \
-	Interfaz/Interfaz.cpp
+	Interfaz/Interfaz.cpp \
+	Bitmap/Bitmap.cpp
 
 
 TESTSOURCES=Arbol/arbol.cpp\
@@ -32,7 +33,8 @@ TESTSOURCES=Arbol/arbol.cpp\
 	Merge/testMerge.cpp \
 	Busqueda\ Binaria/testBusquedaBinaria.cpp \
 	Busquedas/testBusqueda.cpp \
-	Interfaz/testVista.cpp
+	Interfaz/testVista.cpp \
+	Bitmap/testBitmap.cpp
 
 MAIN=Equinoccio.cpp
 
