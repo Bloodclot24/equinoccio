@@ -16,7 +16,11 @@ class RegistroMatriz {
 		RegistroMatriz(){ };
 	public:
 		RegistroMatriz(uint32_t x, uint32_t y, double peso);
-		RegistroMatriz(const std::string& termino, uint32_t documento){ };
+		RegistroMatriz(const std::string& termino, uint32_t documento){
+		    registro.x = 0;
+		    registro.y = 0;
+                    registro.peso = 0;
+		};
 		static RegistroMatriz* leer(std::ifstream &archivo, int compresion);
 		int escribir(std::ofstream &archivo, int compresion);
 		int unir(const RegistroMatriz& registro){ return 0;};

@@ -40,7 +40,8 @@ TESTSOURCES=Arbol/arbol.cpp\
 	Busquedas/testBusqueda.cpp \
 	Interfaz/testVista.cpp \
 	Bitmap/testBitmap.cpp \
-	Notificador/testNotificador.cpp	
+	Notificador/testNotificador.cpp	\
+	Busqueda\ Rankeada/testArmadoMartizCoseno.cpp
 
 MAIN=Equinoccio.cpp
 
