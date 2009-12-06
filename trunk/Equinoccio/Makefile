@@ -18,8 +18,8 @@ SOURCES=CodigoGamma/TDA_Codigos.cpp \
 	Interfaz/Interfaz.cpp \
 	Bitmap/Bitmap.cpp \
 	Registros/RegistroMatriz.cpp \
-	Busqueda\ Rankeada/BusquedaRankeada.cpp
-
+	Busqueda\ Rankeada/BusquedaRankeada.cpp \
+	Notificador/Notificador.cpp		
 
 TESTSOURCES=Arbol/arbol.cpp\
 	Arbol/arbolRegistros.cpp\
@@ -36,7 +36,8 @@ TESTSOURCES=Arbol/arbol.cpp\
 	Busqueda\ Binaria/testBusquedaBinaria.cpp \
 	Busquedas/testBusqueda.cpp \
 	Interfaz/testVista.cpp \
-	Bitmap/testBitmap.cpp
+	Bitmap/testBitmap.cpp \
+	Notificador/testNotificador.cpp	
 
 MAIN=Equinoccio.cpp
 

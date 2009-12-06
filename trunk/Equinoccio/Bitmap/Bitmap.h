@@ -3,6 +3,7 @@
 
 #include <string>
 #include <fstream>
+#include <stdint.h>
 
 class Bitmap{
 private:
