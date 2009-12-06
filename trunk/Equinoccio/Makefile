@@ -21,7 +21,8 @@ SOURCES=CodigoGamma/TDA_Codigos.cpp \
 	Busqueda\ Rankeada/BusquedaRankeada.cpp \
 	Notificador/Notificador.cpp	\
 	Thread/Thread.cpp \
-	Thread/Mutex.cpp	
+	Thread/Mutex.cpp \
+	Equinoccio.cpp
 
 TESTSOURCES=Arbol/arbol.cpp\
 	Arbol/arbolRegistros.cpp\

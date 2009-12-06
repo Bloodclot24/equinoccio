@@ -7,6 +7,7 @@
 #include "../Busquedas/Busqueda.h"
 #include "../Thread/Thread.h"
 #include "../Thread/Mutex.h"
+#include "../Equinoccio.h"
 #define ABRIR "xdg-open "
 
 class Interfaz: public Thread {
@@ -27,6 +28,7 @@ private:
 	bool error;
 	Glib::ustring catalogo; //catalogo en el que se esta buscando
 	Glib::ustring consulta;
+	Glib::ustring directorio;
 	sigc::connection id_esperando;
 
 	void cargarMenu();
@@ -73,24 +75,35 @@ private:
 	ColumnaBusqueda columna_busqueda;
 	Gtk::TreeView *tree_view;
 
-	std::list<std::string> *paths_resultado;//mutex???
+	std::list<std::string> *paths_resultado;
 	bool esperarResultado();
 	void finEspera();
 
-//test
-	Busqueda buscador;
 	bool fin;
 	Mutex mx_fin;
+	bool add_dir;
 
 	void* run() {
-		std::string cat = catalogo;
-		std::string cons = consulta;
-		paths_resultado = buscador.buscar(cons,cat);
+		if (add_dir) {
+			//agrego directorio
+			std::string dir = directorio;
+			const char* com_c[] = {"./Equinoccio", "-pa", dir.c_str()};
+			Equinoccio::main(3,com_c);
+		}
+		else {
+			//busqueda
+			std::string cat = catalogo;
+			std::string cons = consulta;
+			const char* com_c[] = {"./Equinoccio", "-c", cat.c_str(), "-s", cons.c_str()};
+			Equinoccio::main(5, com_c);
+			paths_resultado = Equinoccio::getPaths();
+		}
 		mx_fin.lock();
 		fin = true;
 		mx_fin.unlock();
 		return NULL;
 	}
+
 public:
 	Interfaz();
 	~Interfaz();

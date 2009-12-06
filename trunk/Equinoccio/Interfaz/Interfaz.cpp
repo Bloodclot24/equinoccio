@@ -8,6 +8,9 @@ Interfaz::Interfaz() {
 	activo=false;
 	paths_resultado = NULL;
 	fin = false;
+	add_dir = false;
+	consulta = "";
+	directorio = "";
 	try {
 		builder = Gtk::Builder::create_from_file(WINDOW_FILE);
 		main_window = 0;
@@ -139,13 +142,18 @@ void Interfaz::on_menu_quit() {
 }
 
 void Interfaz::on_button_add_clicked() {
-	if (!activo) {
+	if (!activo && !add_dir) {
 		if (select_window->run() == Gtk::RESPONSE_OK) {
-			std::cout<<select_window->get_filename()<<std::endl;
+			directorio = select_window->get_filename();
 			mostrarProgreso("Indexando");
 			Glib::ustring text = "Agregando directorio: ";
-			text += select_window->get_filename();
+			text += directorio;
 			status_bar->push(text);
+			add_dir = true;
+			activo = true;
+			id_esperando = Glib::signal_timeout().connect(sigc::mem_fun(*this,
+									&Interfaz::esperarResultado), 200 );
+			this->execute();
 		}
 		select_window->hide();
 	}
@@ -169,8 +177,6 @@ void Interfaz::on_button_buscar_clicked() {
 				paths_resultado = NULL;
 				id_esperando = Glib::signal_timeout().connect(sigc::mem_fun(*this,
 							&Interfaz::esperarResultado), 200 );
-
-				//agregarFila(entry_consulta->get_text());//test
 				this->execute();
 			}
 			else {
@@ -180,9 +186,6 @@ void Interfaz::on_button_buscar_clicked() {
 		} else {
 			status_bar->push("Debe ingresar un catalogo");
 		}
-	}
-	else {
-		status_bar->push(" ");
 	}
 }
 
@@ -252,17 +255,26 @@ void Interfaz::finEspera() {
 	id_esperando.disconnect();
 	detenerBarra();
 	fin = false;
-	if (paths_resultado != NULL) {
-		Glib::ustring res= "Se encontraron ";
-		res += Util::intToString(paths_resultado->size());
-		res += " resultados.";
-		status_bar->push(res);
-		std::list<std::string>::iterator it;
-		for(it=paths_resultado->begin(); it!=paths_resultado->end(); it++) {
-			agregarFila(*it);
+	if(add_dir) {
+		add_dir = false;
+		Glib::ustring text = "Directorio ";
+		text += directorio;
+		text += " indexado";
+		directorio = "";
+		status_bar->push(text);
+	}else {
+		if (paths_resultado != NULL) {
+			Glib::ustring res= "Se encontraron ";
+			res += Util::intToString(paths_resultado->size());
+			res += " resultados.";
+			status_bar->push(res);
+			std::list<std::string>::iterator it;
+			for(it=paths_resultado->begin(); it!=paths_resultado->end(); it++) {
+				agregarFila(*it);
+			}
 		}
+		else
+			status_bar->push("No se encontraron resultados.");
+		button_buscar->set_sensitive(true);
 	}
-	else
-		status_bar->push("No se encontraron resultados.");
-	button_buscar->set_sensitive(true);
 }
