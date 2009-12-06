@@ -16,7 +16,9 @@ SOURCES=CodigoGamma/TDA_Codigos.cpp \
 	Busquedas/Busqueda.cpp \
 	FileManager/FileManager.cpp \
 	Interfaz/Interfaz.cpp \
-	Bitmap/Bitmap.cpp
+	Bitmap/Bitmap.cpp \
+	Registros/RegistroMatriz.cpp \
+	Busqueda\ Rankeada/BusquedaRankeada.cpp
 
 
 TESTSOURCES=Arbol/arbol.cpp\

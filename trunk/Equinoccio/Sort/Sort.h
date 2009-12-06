@@ -21,7 +21,8 @@ public:
 			  unsigned cantMax);
 };
 
-
+//NombreArchivo, nombre del archivo a ordenar, NombreSalida: nombre base del archivo de salida, primero es el primer
+//numero de la salida, cantMax, es la cant maxima de reg en el arbol.
 template <class t>
 uint32_t Sorter<t>::Sort(const std::string &nombreArchivo,		\
 			 const std::string &nombreBaseSalida,		\
