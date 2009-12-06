@@ -20,16 +20,9 @@
 #include "FileManager/ConstPath.h"
 #include "FileManager/FileManager.h"
 
-//#define NOMBRE_IDX_ARCHIVOS "Resources/IDX_ARCH.idx"
-//#define NOMBRE_LEX_ARCHIVOS "Resources/LEX_ARCH.lex"
-
 #define NUMERO_PARTICIONES  20
 #define NUMERO_REGISTROS_SORT  1000
-#define NUMERO_NGRAMAS 5000 
-
-// #define NUMERO_PARTICIONES  2
-// #define NUMERO_REGISTROS_SORT  4
-// #define NUMERO_NGRAMAS 5000 
+#define NUMERO_NGRAMAS 5000
 
 
 /** 

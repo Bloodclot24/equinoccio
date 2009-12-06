@@ -157,8 +157,8 @@ const std::string& RegistroNGramas::obtenerTermino(){
 }
 
 int RegistroNGramas::unir(const RegistroNGramas& registro){
-     std::list<uint32_t> final;
-     std::list<uint32_t>::const_iterator it1, it2;
+     std::list<uint32_t>::iterator it1;
+     std::list<uint32_t>::const_iterator it2;
 
      if(termino != registro.termino)
 	  return 0;
@@ -172,37 +172,40 @@ int RegistroNGramas::unir(const RegistroNGramas& registro){
      it1 = punteros.begin();
      it2 = registro.punteros.begin();
 
-     frecuencia=0;
 
+     // recorro las 2 listas de punteros
      while(it1!= punteros.end() && it2 != registro.punteros.end()){
+	  // si la primera es menor que la segunda
 	  if((*it1) < (*it2)){
-	       final.push_back(*it1);
+	       // escribo la primera y avanzo
 	       it1++;
 	  }
+	  // si la segunda es menor que la primera
 	  else if((*it1) > (*it2)){
-	       final.push_back(*it2);
+	       // escribo la segunda y avanzo
+	       punteros.insert(it1, *it2);
 	       it2++;
+	       // aumento la frecuencia
+	       frecuencia++;
+
 	  }
 	  else{
-	       final.push_back(*it1);
+	       // si son iguales, sumo las frecuencias y avanzo en las
+	       // dos listas
 	       it1++;
 	       it2++;
 	  }
-	  frecuencia++;
+
      }
      
-     while(it1!= punteros.end()){
-	  final.push_back(*it1);
-	  it1++;
-	  frecuencia++;
-     }
+     // termino de procesar los elementos que puedan quedar en la
+     // lista
      while(it2!= registro.punteros.end()){
-	  final.push_back(*it2);
+	  punteros.insert(it1,*it2);
 	  it2++;
 	  frecuencia++;
      }
 
-     punteros = final;
      
      return 1;
 }

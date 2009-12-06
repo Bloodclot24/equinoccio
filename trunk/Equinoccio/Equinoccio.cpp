@@ -27,9 +27,6 @@
 #define ARG_SEARCH "-s"
 #define ARG_CAT    "-c"
 
-//#define NOMBRE_IDX_DIRECTORIOS "Resources/IDX_DIRS.idx"
-//#define NOMBRE_LEX_DIRECTORIOS "Resources/LEX_DIRS.lex"
-
 #define ERROR_NO_ERROR              0
 #define ERROR_ARG_DESCONOCIDO      -1
 #define ERROR_ARG_FALTANTE         -1
@@ -263,7 +260,7 @@ private:
 	  parsers.agregarParser(new ParserTxt(1000000));
 	  parsers.agregarParser(new ParserPdf(1000000));
 
-	  FileManager::setSegmento(999);
+//	  FileManager::setSegmento(999);
 
 	  if(arg_list)
 	       std::cout << "Listado de directorios.\n";

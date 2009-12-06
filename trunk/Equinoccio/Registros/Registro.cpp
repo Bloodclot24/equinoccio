@@ -206,7 +206,8 @@ const std::string& Registro::obtenerTermino(){
 
 int Registro::unir(const Registro& registro){
      std::list<Registro::Punteros> final;
-     std::list<Registro::Punteros>::const_iterator it1, it2;
+     std::list<Registro::Punteros>::iterator it1;
+     std::list<Registro::Punteros>::const_iterator it2;
 
      // if(termino != registro.termino)
      // 	  return 0;
@@ -221,55 +222,42 @@ int Registro::unir(const Registro& registro){
      it2 = registro.punteros.begin();
 
      // inicializo la frecuencia a cero
-     frecuencia=0;
+//     frecuencia=0;
 
      // recorro las 2 listas de punteros
      while(it1!= punteros.end() && it2 != registro.punteros.end()){
 	  // si la primera es menor que la segunda
 	  if((*it1).documento < (*it2).documento){
 	       // escribo la primera y avanzo
-	       final.push_back(*it1);
 	       it1++;
 	  }
 	  // si la segunda es menor que la primera
 	  else if((*it1).documento > (*it2).documento){
-
 	       // escribo la segunda y avanzo
-	       final.push_back(*it2);
+	       punteros.insert(it1, *it2);
 	       it2++;
+	       // aumento la frecuencia
+	       frecuencia++;
+
 	  }
 	  else{
-
 	       // si son iguales, sumo las frecuencias y avanzo en las
 	       // dos listas
-	       Registro::Punteros p;
-	       p.documento = (*it1).documento;
-	       p.frecuencia = (*it1).frecuencia + (*it2).frecuencia ;
-
-	       final.push_back(p);
+	       (*it1).frecuencia += (*it2).frecuencia ;
 	       it1++;
 	       it2++;
 	  }
 
-	  // en cualquiera de los casos, aumento la frecuencia
-	  	  frecuencia++;
      }
      
      // termino de procesar los elementos que puedan quedar en la
      // lista
-     while(it1!= punteros.end()){
-	  final.push_back(*it1);
-	  it1++;
-	  frecuencia++;
-     }
      while(it2!= registro.punteros.end()){
-	  final.push_back(*it2);
+	  punteros.insert(it1,*it2);
 	  it2++;
 	  frecuencia++;
      }
 
-     punteros = final;
-     
      return 1;
 }
 
