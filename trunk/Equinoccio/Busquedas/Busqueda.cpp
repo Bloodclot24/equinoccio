@@ -287,7 +287,7 @@ void Busqueda::andPunteros(std::vector< std::list<uint32_t>* > &punteros, std::l
     }
     else{
 	  std::cout << "se saltea el AND\n";
-	  punteros_and.assign(punteros[0]->begin(),punteros[0]->end());
+	  punteros_and = *punteros[0];
     }
 }
 
