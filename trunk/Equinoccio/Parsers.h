@@ -47,6 +47,12 @@ class Parsers{
 						       * que llevamos
 						       * parseados por
 						       * catalogo */
+
+     std::map<std::string, uint32_t> terminosCatalogo; /**< Cantidad
+							* de terminos
+							* por
+							* catalogo */
+
      std::map<std::string, std::fstream*> lexico; /**< Archivo de
 						   * lexico de
 						   * archivos segun
@@ -74,6 +80,7 @@ public:
 	  if(documentos.count(p->getNombreCatalogo()) == 0){
 	       /* si es un catalogo nuevo, lo registro*/
 	       documentos[p->getNombreCatalogo()] = 0;
+	       terminosCatalogo[p->getNombreCatalogo()] =0;
 	       std::fstream* f = new std::fstream();
 	       /* registro el archivo de lexico */
 	       lexico[p->getNombreCatalogo()] = f;
@@ -263,7 +270,9 @@ public:
 	       std::string nombreCat = FileManager::obtenerPathBase();
 	       nombreCat += p->getNombreCatalogo();
 	       // y lo armo (separo el auxiliar)
-	       separarAuxiliar(nombreIndice,nombreCat);
+	       uint32_t cantidadTerminos=0;
+	       cantidadTerminos = separarAuxiliar(nombreIndice,nombreCat);
+	       terminosCatalogo[p->getNombreCatalogo()] += cantidadTerminos;
 	  }
 
 	  return 0;
@@ -304,8 +313,11 @@ public:
       * 
       * @param nombre El nombre del archivo auxiliar.
       * @param nombreBase El nombre base para los archivos generados.
+      *
+      * @return Cantidad de terminos en el indice
       */
-     void separarAuxiliar(const std::string& nombre, const std::string& nombreBase){
+     uint32_t separarAuxiliar(const std::string& nombre, const std::string& nombreBase){
+	  uint32_t terminos=0;
 	  std::cout << "Separando " << nombre << std::endl;
 	  // creo el archivo destino
 	  std::ifstream archivo(nombre.c_str());
@@ -329,6 +341,8 @@ public:
 	  for(r=Registro::leer(archivo, 0);r!=NULL;r=Registro::leer(archivo, 0)){
 	       // extraigo el termino
 	       std::string termino = r->obtenerTermino();
+	       // lo cuento
+	       terminos++;
 	       // extraigo la frecuencia
 	       uint32_t freq=r->obtenerFrecuencia();
 	       // extraigo los punteros ya comprimidos
@@ -383,6 +397,8 @@ public:
 	       // separo los N-gramas en 2
 	       separarNgramas(nombreNgramas ,nombreNgramas);
 	  }
+
+	  return terminos;
      }
 
      void separarNgramas(const std::string& nombre, const std::string& nombreBase){
@@ -416,7 +432,23 @@ public:
 	  }
 
 	  remove(nombre.c_str());
+     }
 
+     uint32_t obtenerCantidadDocumentos(std::string catalogo){
+	  return documentos[catalogo];
+     }
+
+     uint32_t obtenerCantidadDocumentos(){
+	  uint32_t acumulado=0;
+	  std::map<std::string, unsigned long>::iterator it;
+	  for(it=documentos.begin(); it!=documentos.end(); it++)
+	       acumulado += it->second;
+	  
+	  return acumulado;
+     }
+
+     uint32_t obtenerCantidadTerminos(std::string catalogo){
+	  return terminosCatalogo[catalogo];
      }
 
      /** 
