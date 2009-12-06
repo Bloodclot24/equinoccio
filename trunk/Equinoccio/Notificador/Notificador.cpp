@@ -2,6 +2,8 @@
 
 void Notificador::buscarModificaciones() {
 
+	FileManager::setSegmento(999);
+
 	//Nombre directorio
 	std::string directorio= FileManager::obtenerPathIdxDirs();
 	//Abro directorio para busqueda
@@ -13,6 +15,9 @@ void Notificador::buscarModificaciones() {
 	//Abro lexico de directorio para busqueda
 	std::fstream archLexicoDir;
 	archLexicoDir.open(lexico_dir.c_str(), std::fstream::in);
+
+	std::cout << "Directorio: " << directorio << std::endl;
+	std::cout << "Lexico_dir: " << lexico_dir << std::endl;
 
 	//Auxiliares
 	std::map<ino_t,RegistroDisco> registrosDisco;
