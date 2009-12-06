@@ -28,6 +28,8 @@ Interfaz::Interfaz() {
 		liststore_catalogo= Gtk::ListStore::create(columna_catalogo);
 		combo_catalogo->set_model(liststore_catalogo);
 		builder->get_widget("entry", entry_consulta);
+		entry_consulta->signal_activate().connect(sigc::mem_fun(*this,
+					&Interfaz::on_button_buscar_clicked));
 		builder->get_widget("statusbar", status_bar);
 
 		builder->get_widget("treeview", tree_view);
@@ -153,22 +155,27 @@ void Interfaz::on_button_buscar_clicked() {
 	if(!activo){
 		Gtk::TreeModel::iterator iter_active= combo_catalogo->get_active();
 		if(iter_active) {
-			liststore_busqueda->clear();
-			Gtk::TreeModel::Row row= *iter_active;
-			catalogo= row[columna_catalogo.m_col_codigo];
 			consulta = entry_consulta->get_text();
-			Glib::ustring cod_cat = row[columna_catalogo.m_col_codigo];
-			std::cout<<"Consulta: "<<consulta<<" - Catalogo: "<<row[columna_catalogo.m_col_catalogo]<<" - Codigo: "<<cod_cat<<std::endl;
-			mostrarProgreso("Buscando..");
-			activo = true;
-			status_bar->push(" ");
-			button_buscar->set_sensitive(false); //activar al sacaar todos los test
-			paths_resultado = NULL;
-			id_esperando = Glib::signal_timeout().connect(sigc::mem_fun(*this,
-				        &Interfaz::esperarResultado), 200 );
+			if (consulta != "") {
+				liststore_busqueda->clear();
+				Gtk::TreeModel::Row row= *iter_active;
+				catalogo= row[columna_catalogo.m_col_codigo];
+				Glib::ustring cod_cat = row[columna_catalogo.m_col_codigo];
+				std::cout<<"Consulta: "<<consulta<<" - Catalogo: "<<row[columna_catalogo.m_col_catalogo]<<" - Codigo: "<<cod_cat<<std::endl;
+				mostrarProgreso("Buscando..");
+				activo = true;
+				status_bar->push(" ");
+				button_buscar->set_sensitive(false); //activar al sacaar todos los test
+				paths_resultado = NULL;
+				id_esperando = Glib::signal_timeout().connect(sigc::mem_fun(*this,
+							&Interfaz::esperarResultado), 200 );
 
-			//agregarFila(entry_consulta->get_text());//test
-			this->execute();
+				//agregarFila(entry_consulta->get_text());//test
+				this->execute();
+			}
+			else {
+				status_bar->push("Debe ingresar consulta");
+			}
 
 		} else {
 			status_bar->push("Debe ingresar un catalogo");
