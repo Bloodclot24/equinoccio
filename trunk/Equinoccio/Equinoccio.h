@@ -158,7 +158,6 @@ private:
 	       closedir(directory);
 	  }
 	  while(subdir.size()>0){
-	       agregarDirectorio(subdir.front());
 	       subdir.pop_front();
 	  }
      }
@@ -219,10 +218,12 @@ private:
     	 FileManager::crearConfiguracion();
      };
      static std::list<std::string> *path_result;
+     static std::list<std::string> *dir_indexados;
+
 public:
      static std::list<std::string>* getPaths();
+     static std::list<std::string>* getDirIndexados();
      static int main(int argc, const char** argv);
-
 };
 
 

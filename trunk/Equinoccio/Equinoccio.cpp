@@ -1,6 +1,8 @@
 #include "Equinoccio.h"
 
 std::list<std::string>* Equinoccio::path_result = NULL;
+std::list<std::string>* Equinoccio::dir_indexados = new std::list<std::string>;
+bool huboCambios= false;
 
 int Equinoccio::magic(int argc, const char** argv){
 
@@ -73,6 +75,7 @@ int Equinoccio::magic(int argc, const char** argv){
 	   std::string pesado(arg_add_dir);
 	   agregarDirectorio(parsearDirectorio(pesado));
 	   parsers.armarIndices();
+	   huboCambios= true;
 	}
 	if(arg_del_dir){
 	   std::cout << "Eliminar el directorio: " << arg_del_dir << std::endl;
@@ -98,6 +101,61 @@ int Equinoccio::magic(int argc, const char** argv){
 
 std::list<std::string>* Equinoccio::getPaths() {
 	return path_result;
+}
+
+std::list<std::string>* Equinoccio::getDirIndexados() {
+
+	if(dir_indexados->empty() || huboCambios) {
+		//TODO: CUIDADO!
+		FileManager::setSegmento(999);
+
+		//Nombre directorio
+		std::string directorio= FileManager::obtenerPathIdxDirs();
+		//Abro directorio para busqueda
+		std::fstream archDirectorio;
+		archDirectorio.open(directorio.c_str(), std::fstream::in);
+
+		//Nombre lexico directorio
+		std::string lexico_dir= FileManager::obtenerPathLexDirs();
+		//Abro lexico de directorio para busqueda
+		std::fstream archLexicoDir;
+		archLexicoDir.open(lexico_dir.c_str(), std::fstream::in);
+
+		archDirectorio.seekg(0, std::fstream::end);
+		uint32_t eofArchivo= archDirectorio.tellg();
+		archDirectorio.seekg(0, std::fstream::beg);
+
+		uint32_t nro_dir= 0;
+		uint32_t regDirectorio;
+
+		//Mientras no llegue al fin del archivo
+		while(archDirectorio.tellg() != eofArchivo) {
+
+			//Posiciono en el directorio segun numero de directorio leido
+			archDirectorio.seekg(nro_dir*sizeof(regDirectorio),std::ios_base::beg);
+			//Leo el puntero al lexico del directorio
+			archDirectorio.read((char*)&regDirectorio, sizeof(regDirectorio));
+
+			//Posiciono en el lexico directorio segun el puntero leido y leo el nombre del directorio
+			archLexicoDir.seekg(regDirectorio,std::fstream::beg);
+			char c=0;
+			std::string directorio;
+			while((c= archLexicoDir.get()) != 0)
+				directorio+= c;
+
+			dir_indexados->push_back(directorio);
+			nro_dir++;
+		}
+
+		//Cierro directorio
+		archDirectorio.close();
+		//Cierro el lexico del directorio
+		archLexicoDir.close();
+
+		huboCambios= false;
+	}
+
+	return dir_indexados;
 }
 
 int Equinoccio::main(int argc, const char** argv){
