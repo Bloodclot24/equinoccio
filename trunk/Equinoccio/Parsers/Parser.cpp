@@ -9,8 +9,11 @@ Parser::Parser(uint32_t cantMaxReg) {
 
 /*--------------------------------------------------------------------------*/
 Parser::~Parser() {
-	
-	arbol.LiberarTodo(true);
+     StopWord vacio("");
+     StopWord *aux;
+     for(aux=arbol.RemoverMayorIgual(vacio);aux!=NULL;aux=arbol.RemoverMayorIgual(vacio)){
+	  delete aux;
+     }
 }
 
 /*--------------------------------------------------------------------------*/
@@ -24,6 +27,7 @@ void Parser::cargarStopWord(const std::string& nombreStopWord) {
 		
 	char buffer[512];
 
+	arbol.LiberarTodo(true);
 	if(archivo.is_open()) {
 		while(archivo.tellg() != length) {
 			archivo.getline(buffer, 512);
@@ -37,7 +41,6 @@ void Parser::cargarStopWord(const std::string& nombreStopWord) {
 
 /*--------------------------------------------------------------------------*/
 bool Parser::esStopWord(const std::string& palabra) {
-	
 	return(arbol.Search(StopWord(palabra)));
 }
 

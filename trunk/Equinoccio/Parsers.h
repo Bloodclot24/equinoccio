@@ -22,7 +22,7 @@
 
 #define NUMERO_PARTICIONES  20
 #define NUMERO_REGISTROS_SORT  1000
-#define NUMERO_NGRAMAS 5000
+#define NUMERO_NGRAMAS 10000 
 
 
 /** 
@@ -422,6 +422,7 @@ public:
 	       // escribo los punteros
 	       punteros.write(punterosComprimidos.c_str(), punterosComprimidos.size());
 	       idxPunteros += punterosComprimidos.size();
+	       delete rn;
 	  }
 
 	  remove(nombre.c_str());

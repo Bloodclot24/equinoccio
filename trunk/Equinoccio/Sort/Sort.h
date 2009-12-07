@@ -71,6 +71,7 @@ uint32_t Sorter<t>::Sort(const std::string &nombreArchivo,		\
 			if(r2 != NULL){
 			     while(r!= NULL && !(*r > *r2) && !(*r < *r2)){ //si son iguales
 				  r2->unir(*r);
+				  delete r;
 				  r=t::leer(archivo,0);
 			     }
 			     /* lo guardo */

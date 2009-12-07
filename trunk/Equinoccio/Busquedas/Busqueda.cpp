@@ -12,7 +12,7 @@ Busqueda::~Busqueda() {
 }
 
 std::list<std::string>* Busqueda::buscar(std::string& consulta, std::string catalogo) {
-	 FileManager::setSegmento(999);
+     FileManager::setSegmento(999);
 	std::list<std::string> *paths = NULL;
 	if (consulta.size() != 0) {
 		size_t pos = 0;
@@ -243,9 +243,10 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 		reg_match.pop_front();
 		punteros_docs.push_back(punt);
 	}
+	std::cout << "Listo, uniendo...."<< std::endl;
 	pun_docs.close();
 	//union para evitar docs repetidos
-	if ((punt = unionPunteros(punteros_docs)) != NULL) {
+	if ((punt = unionPunteros2(punteros_docs)) != NULL) {
 		punteros.push_back(punt);
 		return true;
 	}
@@ -369,6 +370,7 @@ void Busqueda::filtrarFalsosPositivos(std::list<std::string>& consulta, std::lis
 std::list<uint32_t>* Busqueda::unionPunteros(std::vector< std::list<uint32_t>* > &punteros) {
 
 	std::list<uint32_t>* pun_union = NULL;
+
 	if (punteros.size() > 1) {
 		pun_union = new std::list<uint32_t>;
 		uint32_t anterior = -1; //ver inicial
@@ -406,6 +408,47 @@ std::list<uint32_t>* Busqueda::unionPunteros(std::vector< std::list<uint32_t>* >
 	return pun_union;
 }
 
+
+std::list<uint32_t>* Busqueda::unionPunteros2(std::vector< std::list<uint32_t>* > &punteros) {
+
+     std::list<uint32_t>* pun_union = NULL;
+
+     if (punteros.size() > 1) {
+	  std::vector<std::list<uint32_t>::iterator> iteradores;
+
+	  uint32_t min=(uint32_t)-1;
+	  uint32_t proximo=(uint32_t)-1;
+
+	  for(int i=0;i<punteros.size();i++){
+	       iteradores.push_back(punteros[i]->begin());
+	       if(*iteradores[i] < min)
+		    min = *iteradores[i];
+	  }
+
+	  pun_union = new std::list<uint32_t>;
+
+	  while(iteradores.size()>0){
+	       for(int i=0;i<iteradores.size(); i++){
+		    while(*iteradores[i]<=min && iteradores[i]!= punteros[i]->end())
+			 iteradores[i]++;
+
+		    if(iteradores[i] == punteros[i]->end()){
+			 punteros.erase(punteros.begin()+i);
+			 iteradores.erase(iteradores.begin()+i);
+			 i--;
+		    }
+		    else if(*iteradores[i] < proximo)
+			 proximo = *iteradores[i];
+	       }
+	       
+	       pun_union->push_back(min);
+	       min=proximo;
+	       proximo=(uint32_t)-1;
+	  }
+     }
+	
+     return pun_union;
+}
 
 std::string Busqueda::buscarPath(uint32_t puntero,std::string catalogo ) {
 

@@ -67,6 +67,7 @@ private:
 	 * */
 
 	std::list<uint32_t>* unionPunteros(std::vector< std::list<uint32_t>* > &punteros);
+	std::list<uint32_t>* unionPunteros2(std::vector< std::list<uint32_t>* > &punteros);
 
 public:
 	Busqueda();

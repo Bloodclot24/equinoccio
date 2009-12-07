@@ -105,6 +105,6 @@ int Equinoccio::main(int argc, const char** argv){
     return E.magic(argc, argv);
 }
 
-//int main(int argc, char** argv){
+//int main(int argc, const char** argv){
 //     return Equinoccio::main(argc, argv);
 //}
