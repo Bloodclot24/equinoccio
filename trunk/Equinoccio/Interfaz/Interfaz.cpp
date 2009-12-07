@@ -359,10 +359,14 @@ void Interfaz::finEspera() {
 		}
 		else
 			status_bar->push("No hay directorios indexados.");
+	}else{
+	if (estado==E_RALL){
+		status_bar->push("Indice eliminado.");
+		liststore_dirs->clear();
 	}
+
 //rellenar
-	}
-	}
+	}}}
 	detenerBarra();
 	fin = false;
 }

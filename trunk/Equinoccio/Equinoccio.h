@@ -31,7 +31,7 @@
 #define ARG_DEL    "-pd"
 #define ARG_SEARCH "-s"
 #define ARG_CAT    "-c"
-
+//todo!!!! AGREGAR UN BORRAR TODO EL INDICE
 //#define NOMBRE_IDX_DIRECTORIOS "Resources/IDX_DIRS.idx"
 //#define NOMBRE_LEX_DIRECTORIOS "Resources/LEX_DIRS.lex"
 

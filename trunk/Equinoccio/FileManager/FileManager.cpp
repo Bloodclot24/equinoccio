@@ -134,6 +134,8 @@ uint32_t FileManager::getCantidadSegmentos(){
 uint32_t FileManager::segmentos = 0;
 
 void FileManager::borrarIndice() {
-	//remove(PATH_TRES); TODO
+	// TODO BEWARE!!!!! BE CAREFUL!!
+	rmdir(PATH_TRES);
+	mkdir(PATH_TRES, PERMISO);
 }
 

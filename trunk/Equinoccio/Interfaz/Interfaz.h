@@ -123,10 +123,14 @@ private:
 			const char* com_c[] = {"./Equinoccio", ARG_LIST};
 			Equinoccio::main(2,com_c);
 			lista_dirs = Equinoccio::getDirIndexados();
+		}else{
+		if (estado ==  E_RALL) {
+			FileManager::borrarIndice();
 		}
+
 //TODO.. agregar los casos que faltan :)
-		}
-		}
+
+		}}}
 		mx_fin.lock();
 		fin = true;
 		mx_fin.unlock();

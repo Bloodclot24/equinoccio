@@ -193,7 +193,7 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 	//Realizo el AND entre los punteros al indice obtenidos
 	std::list<uint32_t> offset_and;
 	Busqueda::andPunteros2(offset_indice, offset_and);
-	std::cout<<"	__cant Punteros AND: "<<offset_and.size()<<std::endl;	//VER!!!! ngrama repetidos
+	std::cout<<"cant Punteros AND: "<<offset_and.size()<<std::endl;	//VER!!!! ngrama repetidos
 
 	RegIndice *r;
 	uint32_t off = 0;
@@ -232,8 +232,6 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 	std::list<RegIndice*> reg_match;
 	filtrarFalsosPositivos(substr,registros, reg_match);
 
-	std::cout << "Cantidad de terminos despues de filtrar: " << reg_match.size()<<std::endl;
-
 	std::vector< std::list<uint32_t>* > punteros_docs;
 	//obtengo la lista de punteros de cada termino
 	//agregar los docs al vector punteros
@@ -247,7 +245,6 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 		reg_match.pop_front();
 		punteros_docs.push_back(punt);
 	}
-	std::cout << "Listo, uniendo...."<< std::endl;
 	pun_docs.close();
 	//union para evitar docs repetidos
 	if ((punt = unionPunteros2(punteros_docs)) != NULL) {
@@ -454,6 +451,11 @@ std::list<uint32_t>* Busqueda::unionPunteros2(std::vector< std::list<uint32_t>* 
 	       min=proximo;
 	       proximo=(uint32_t)-1;
 	  }
+     }else{
+    	 if (punteros.size()==1){
+			 std::cout<<"saltea union"<<std::endl;
+			 pun_union = punteros[0];
+    	 }
      }
 	
      return pun_union;

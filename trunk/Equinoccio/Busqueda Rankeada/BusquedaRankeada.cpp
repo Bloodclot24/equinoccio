@@ -119,7 +119,7 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
 	double valor = 0.0;
 	uint32_t index = 0;
 	path.clear();
-	path = FileManager::obtenerPathBase();
+	path = FileManager::obtenerPathBase(0);
 	path += catalogo;
 	path += ".mc";
 	std::string path1 = path + "1";
