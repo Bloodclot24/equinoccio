@@ -43,8 +43,8 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
 	//TODO voy a tener la cantidad de terminos y de documentos en el indice.
 	//Usar los metodos, obtenerCantidadTerminos y obtenerCantidadDocumentos
 	//de Parsers.h
-	uint32_t cantTerminos = 106815;
-	uint32_t cantidadDocumentos = 6272;
+	uint32_t cantTerminos = 11;
+	uint32_t cantidadDocumentos = 2;
 	//****************************************************************
 
 	uint32_t pTermino = 0;
@@ -80,10 +80,14 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
 			j++;
 		}
 		std::cout << "Bucle Afuera:P \n " ;
+		delete punt;
 	}
 
 
-        matriz.close();
+    matriz.close();
+    indice.close();
+    punteros.close();
+
 	std::cout << "VA A ENTRARRRRRR AL SORRTTTTTTTTTTTTTTTTT PARAAAAAAAAAAAAAALOOOOOOOOOOOOOOOOOOO!!!!!!!! \n";
 	uint32_t cantParticiones = 0;
 	//Transpongo la matriz.
@@ -101,4 +105,62 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
 	nombreSalida += catalogo;
 	nombreSalida += ".mat";
 	parsers.merge<RegistroMatriz>(nombreBase,0,cantParticiones,nombreSalida);
+
+	//guardo la matriz plegada.
+	std::ifstream matrizTranspuesta;
+	matrizTranspuesta.open(nombreSalida.c_str(), std::ios::in);
+	if(!matrizTranspuesta.good()){
+		std::cerr << "Error al abrir el archivo de la matriz de cosenos!!" << std::endl;
+		#warning "ver como se va a manejar este error";
+		return;
+	}
+	uint32_t x = 0;
+	uint32_t y = 0;
+	double valor = 0.0;
+	uint32_t index = 0;
+	path.clear();
+	path = FileManager::obtenerPathBase();
+	path += catalogo;
+	path += ".mc";
+	std::string path1 = path + "1";
+	std::ofstream matCoseno1(path1.c_str(),std::ios::out | std::ios::trunc);
+	std::string path2 = path + "2";
+	std::ofstream matCoseno2(path2.c_str(),std::ios::out | std::ios::trunc);
+	std::string path3 = path + "3";
+	std::ofstream matCoseno3(path3.c_str(),std::ios::out | std::ios::trunc);
+	if(!matCoseno1.good() || !matCoseno2.good() || !matCoseno3.good()){
+		std::cerr << "Error al crear el archivo de la matriz de cosenos!!" << std::endl;
+		#warning "ver como se va a manejar este error";
+		return;
+	}
+
+	bool primero = true;
+	bool cambieFila = false;
+	uint32_t xAnt = 0;
+	while(matrizTranspuesta.good()){
+		matrizTranspuesta.read((char*)&y, sizeof(uint32_t));
+		matrizTranspuesta.read((char*)&x, sizeof(uint32_t));
+		matrizTranspuesta.read((char*)&valor, sizeof(double));
+
+		if(xAnt != x) cambieFila = true;
+		xAnt = x;
+
+		if(valor && matrizTranspuesta.good()){
+			matCoseno1.write((char*)&valor,sizeof(double));
+			matCoseno2.write((char*)&y,sizeof(uint32_t));
+			if(cambieFila || primero){
+				matCoseno3.write((char*)&index,sizeof(uint32_t));
+				primero = false;
+				cambieFila = false;
+			}
+			index++;
+		}
+
+	}
+
+	matrizTranspuesta.close();
+	matCoseno1.close();
+	matCoseno2.close();
+	matCoseno3.close();
+
 }
