@@ -116,6 +116,7 @@ void Interfaz::cargarMenu() {
 		"    <menu action='FileMenu'>"
 		"      <menuitem action='FileAdd'/>"
 		"      <menuitem action='DirRem'/>"
+		"      <separator/>"
 		"      <menuitem action='IdxRem'/>"
 		"      <separator/>"
 		"      <menuitem action='List'/>"
@@ -165,12 +166,10 @@ void Interfaz::on_menu_quit() {
 void Interfaz::on_button_list_clicked() {
 	if (estado == E_NADA) {
 		estado = E_LIST;
-		directorio = select_window->get_filename();
 		mostrarProgreso("Listando");
 		status_bar->push("Listando los Directorios Indexados");
 		button_buscar->set_sensitive(false);
 		entry_consulta->set_sensitive(false);
-		liststore_dirs->clear();
 		id_esperando = Glib::signal_timeout().connect(sigc::mem_fun(*this,
 								&Interfaz::esperarResultado), 200 );
 		this->execute();
@@ -348,6 +347,19 @@ void Interfaz::finEspera() {
 		else
 			status_bar->push("No se encontraron resultados.");
 	}else {
+	if (estado==E_LIST) {
+		liststore_dirs->clear();
+		if (!lista_dirs->empty()) {
+			std::list<std::string>::iterator it;
+			for (it=lista_dirs->begin(); it != lista_dirs->end(); it++) {
+				Gtk::TreeModel::Row row = *(liststore_dirs->append());
+				row[columna_dir.m_col_dir] = *it;
+			}
+			status_bar->push("Listado finalizado.");
+		}
+		else
+			status_bar->push("No hay directorios indexados.");
+	}
 //rellenar
 	}
 	}

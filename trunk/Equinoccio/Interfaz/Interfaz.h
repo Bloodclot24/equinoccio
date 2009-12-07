@@ -101,23 +101,29 @@ private:
 	int estado;	//indica que se esta realizando. Si activo, es distinto de cero
 	bool error;
 	std::list<std::string> *paths_resultado;
+	std::list<std::string> *lista_dirs;
 
 	void* run() {
 		if (estado == E_SEARCH) {
 			//busqueda
 			std::string cat = catalogo;
 			std::string cons = consulta;
-			const char* com_c[] = {"./Equinoccio", "-c", cat.c_str(), "-s", cons.c_str()};
+			const char* com_c[] = {"./Equinoccio", ARG_CAT, cat.c_str(), ARG_SEARCH, cons.c_str()};
 			Equinoccio::main(5, com_c);
 			paths_resultado = Equinoccio::getPaths();
 		}else {
 		if (estado == E_INDEX) {
 			//agrego directorio
 			std::string dir = directorio;
-			const char* com_c[] = {"./Equinoccio", "-pa", dir.c_str()};
+			const char* com_c[] = {"./Equinoccio", ARG_ADD, dir.c_str()};
 			Equinoccio::main(3,com_c);
 		}
 		else {
+		if (estado == E_LIST) {
+			const char* com_c[] = {"./Equinoccio", ARG_LIST};
+			Equinoccio::main(2,com_c);
+			lista_dirs = Equinoccio::getDirIndexados();
+		}
 //TODO.. agregar los casos que faltan :)
 		}
 		}
