@@ -19,7 +19,8 @@ bool ParserAudio::parsear(std::string nombre, uint32_t documento) {
      EXTRACTOR_KeywordList *keywordList= extractor.getKeyword(nombre.c_str());
      EXTRACTOR_KeywordList *keywords= keywordList;
   
-     std::string nombre_dump = FileManager::obtenerPathBase();
+     // Siempre parseo en el ultimo segmento
+     std::string nombre_dump = FileManager::obtenerPathBase(FileManager::getCantidadSegmentos());
      bool audio= false;
   
      if(keywords) {
@@ -86,7 +87,8 @@ bool ParserAudio::parsear(std::string nombre, uint32_t documento) {
 			 dump.close();
 			 archivos++;
 			 nombre_dump.clear();
-			 nombre_dump = FileManager::obtenerPathBase();
+			 // Siempre parseo en el ultimo segmento
+			 nombre_dump = FileManager::obtenerPathBase(FileManager::getCantidadSegmentos());
 			 nombre_dump+= AUDIO_DUMP_BASENAME;
 			 nombre_dump+= Util::intToString(archivos);
 			 dump.open(nombre_dump.c_str(), std::fstream::out);

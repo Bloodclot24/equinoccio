@@ -2,16 +2,16 @@
 
 void Notificador::buscarModificaciones() {
 
-	FileManager::setSegmento(999);
-
 	//Nombre directorio
-	std::string directorio= FileManager::obtenerPathIdxDirs();
+     // TODO: en TODOS los segmentos
+	std::string directorio= FileManager::obtenerPathIdxDirs(0);
 	//Abro directorio para busqueda
 	std::fstream archDirectorio;
 	archDirectorio.open(directorio.c_str(), std::fstream::in);
 
 	//Nombre lexico directorio
-	std::string lexico_dir= FileManager::obtenerPathLexDirs();
+     // TODO: en TODOS los segmentos
+	std::string lexico_dir= FileManager::obtenerPathLexDirs(0);
 	//Abro lexico de directorio para busqueda
 	std::fstream archLexicoDir;
 	archLexicoDir.open(lexico_dir.c_str(), std::fstream::in);
@@ -48,9 +48,11 @@ void Notificador::buscarModificaciones() {
 
 		catalogo= catalogos.front();
 		catalogos.pop_front();
-		archivo= FileManager::obtenerPathIdxArchCatalogo(catalogo);
+		// TODO: en TODOS los segmentos
+		archivo= FileManager::obtenerPathIdxArchCatalogo(catalogo, 0);
 		archArchivo.open(archivo.c_str(), std::fstream::in);
-		arch_lexico= FileManager::obtenerPathLexArchCatalogo(catalogo);
+		// TODO: en TODOS los segmentos
+		arch_lexico= FileManager::obtenerPathLexArchCatalogo(catalogo,0);
 		archLexico.open(arch_lexico.c_str(), std::fstream::in);
 
 		std::cout << "archivo: " << archivo << std::endl;

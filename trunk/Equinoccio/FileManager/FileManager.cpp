@@ -70,7 +70,7 @@ void FileManager::crearConfiguracion() {
      }
 }
 
-std::string FileManager::obtenerPathBase(){
+std::string FileManager::obtenerPathBase(uint32_t segmento){
      
      std::string path(PATH_TRES);
      if(segmento != 0){
@@ -82,20 +82,20 @@ std::string FileManager::obtenerPathBase(){
      return path;
 }
 
-std::string FileManager::obtenerPathIdxArch(){
-     return obtenerPathBase()+IDX_ARCH2;
+std::string FileManager::obtenerPathIdxArch(uint32_t segmento){
+     return obtenerPathBase(segmento)+IDX_ARCH2;
 }
 
-std::string FileManager::obtenerPathLexArch(){
-     return obtenerPathBase()+LEX_ARCH2;
+std::string FileManager::obtenerPathLexArch(uint32_t segmento){
+     return obtenerPathBase(segmento)+LEX_ARCH2;
 }
 
-std::string FileManager::obtenerPathIdxDirs(){
-     return obtenerPathBase()+IDX_DIRS2;
+std::string FileManager::obtenerPathIdxDirs(uint32_t segmento){
+     return obtenerPathBase(segmento)+IDX_DIRS2;
 }
 
-std::string FileManager::obtenerPathLexDirs(){
-     return obtenerPathBase()+LEX_DIRS2;
+std::string FileManager::obtenerPathLexDirs(uint32_t segmento){
+     return obtenerPathBase(segmento)+LEX_DIRS2;
 }
 
 std::string FileManager::obtenerExtCatalogo(const std::string& catalogo) {
@@ -113,22 +113,27 @@ std::string FileManager::obtenerExtCatalogo(const std::string& catalogo) {
 	return ext;
 }
 
-std::string FileManager::obtenerPathIdxArchCatalogo(const std::string &catalogo) {
+std::string FileManager::obtenerPathIdxArchCatalogo(const std::string &catalogo, uint32_t segmento) {
 
-    return obtenerPathBase()+IDX_ARCH2+obtenerExtCatalogo(catalogo);
+    return obtenerPathBase(segmento)+IDX_ARCH2+obtenerExtCatalogo(catalogo);
 }
 
-std::string FileManager::obtenerPathLexArchCatalogo(const std::string &catalogo) {
+std::string FileManager::obtenerPathLexArchCatalogo(const std::string &catalogo, uint32_t segmento) {
 
-    return obtenerPathBase()+LEX_ARCH2+obtenerExtCatalogo(catalogo);
+    return obtenerPathBase(segmento)+LEX_ARCH2+obtenerExtCatalogo(catalogo);
 }
 
-void FileManager::setSegmento(uint32_t numero){
-     segmento=numero;
+void FileManager::agregarSegmento(){
+     segmentos++;
 }
+
+uint32_t FileManager::getCantidadSegmentos(){
+     return segmentos;
+}
+
+uint32_t FileManager::segmentos = 0;
 
 void FileManager::borrarIndice() {
 	//remove(PATH_TRES); TODO
 }
 
-uint32_t FileManager::segmento = 0;

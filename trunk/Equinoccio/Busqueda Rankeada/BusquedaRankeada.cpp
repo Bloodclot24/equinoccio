@@ -2,9 +2,9 @@
 #include <math.h>
 
 void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
-	std::string path;
-	FileManager::setSegmento(999);
-	path = FileManager::obtenerPathBase();
+     std::string path;
+     // TODO: en cual segmento??
+	path = FileManager::obtenerPathBase(0);
 	path += catalogo;
 	path += ".idx";
 	std::fstream indice;
@@ -16,7 +16,8 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
 		return;
 	}
 	path.clear();
-	path = FileManager::obtenerPathBase();
+     // TODO: en cual segmento??
+	path = FileManager::obtenerPathBase(0);
 	path += catalogo;
 	path += ".pun";
 	std::ifstream punteros;
@@ -29,7 +30,7 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
 
 	std::ofstream matriz;
 	path.clear();
-	path = FileManager::obtenerPathBase();
+	path = FileManager::obtenerPathBase(0);
 	path += catalogo;
 	path += ".matrix";
 
@@ -87,14 +88,16 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
 	uint32_t cantParticiones = 0;
 	//Transpongo la matriz.
 	std::string nombreBase;
-	nombreBase = FileManager::obtenerPathBase();
+     // TODO: en cual segmento??
+	nombreBase = FileManager::obtenerPathBase(0);
 	nombreBase += "matrizSort";
 	std::cout << "SORT!\n ";
 	cantParticiones = Sorter<RegistroMatriz>::Sort(path,nombreBase,0,1000);
 	std::cout << "Salio del SORT! \n";
 	Parsers parsers;
 	std::string nombreSalida;
-	nombreSalida = FileManager::obtenerPathBase();
+     // TODO: en cual segmento??
+	nombreSalida = FileManager::obtenerPathBase(0);
 	nombreSalida += catalogo;
 	nombreSalida += ".mat";
 	parsers.merge<RegistroMatriz>(nombreBase,0,cantParticiones,nombreSalida);

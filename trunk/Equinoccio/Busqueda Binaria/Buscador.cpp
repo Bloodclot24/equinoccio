@@ -13,9 +13,10 @@ RegistroIndice Buscador::buscar(const std::string& termino,const std::string& ca
 	RegistroIndice regInd;
 	char cadena[50];
 	bool error = false;
-	std::string indice =  FileManager::obtenerPathBase();
+	// TODO: deberia buscar en todos los segmentos
+	std::string indice =  FileManager::obtenerPathBase(0);
 	indice += catalogo + ".idx";
-	std::string lexico =  FileManager::obtenerPathBase();
+	std::string lexico =  FileManager::obtenerPathBase(0);
 	lexico += catalogo + ".lex";
 	
 	// Abro los archivos para lectura
@@ -68,7 +69,8 @@ RegistroNGrama Buscador::buscarNgrama(const std::string ngrama,const std::string
 	uint32_t derecha = 0;
 	bool encontrado = false;
 	bool error = false;
-	std::string archNgrama =  FileManager::obtenerPathBase();
+	// TODO: debería buscar en todos los segmentos
+	std::string archNgrama =  FileManager::obtenerPathBase(0);
 	archNgrama += catalogo + EXT_NG_IDX;
 	std::fstream archivo;
 	RegistroNGrama regNgrama;

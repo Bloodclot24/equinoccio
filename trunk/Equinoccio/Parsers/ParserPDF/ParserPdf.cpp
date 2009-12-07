@@ -57,7 +57,8 @@ bool ParserPdf::parsear(std::string nombre, uint32_t documento) {
 		}while(keywords != NULL);
 
 		if (is_ok) {
-			std::string dump_name =  FileManager::obtenerPathBase();
+		     // siempre parseo en elultimo segmento
+			std::string dump_name =  FileManager::obtenerPathBase(FileManager::getCantidadSegmentos());
 			dump_name += PDF_DUMP_BASENAME;
 			dump_name += Util::intToString(archivos);
 
@@ -76,7 +77,8 @@ bool ParserPdf::parsear(std::string nombre, uint32_t documento) {
 					cantReg = 1;
 					archivos++;
 					dump.close();
-					dump_name =  FileManager::obtenerPathBase();
+					// siempre parseo en el ultimo segmento
+					dump_name =  FileManager::obtenerPathBase(FileManager::getCantidadSegmentos());
 					dump_name += PDF_DUMP_BASENAME;
 					dump_name += Util::intToString(archivos);
 					dump.open(dump_name.c_str(), std::ofstream::out);

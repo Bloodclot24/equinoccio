@@ -13,7 +13,7 @@
 class FileManager {
 
 private:
-     static uint32_t segmento;
+     static uint32_t segmentos;
 
 public:
 		/**
@@ -47,23 +47,26 @@ public:
 		 */
 		static void cargarConfiguracion();
 
-     static std::string obtenerPathBase();
+     static std::string obtenerPathBase(uint32_t segmento);
 
-     static std::string obtenerPathIdxArch();
+     static std::string obtenerPathIdxArch(uint32_t segmento);
 
-     static std::string obtenerPathLexArch();
+     static std::string obtenerPathLexArch(uint32_t segmento);
 
-     static std::string obtenerPathIdxDirs();
+     static std::string obtenerPathIdxDirs(uint32_t segmento);
 
-     static std::string obtenerPathLexDirs();
+     static std::string obtenerPathLexDirs(uint32_t segmento);
 
      static std::string obtenerExtCatalogo(const std::string& catalogo);
 
-     static std::string obtenerPathIdxArchCatalogo(const std::string &catalogo);
+     static std::string obtenerPathIdxArchCatalogo(const std::string &catalogo, uint32_t segmento);
 
-     static std::string obtenerPathLexArchCatalogo(const std::string &catalogo);
+     static std::string obtenerPathLexArchCatalogo(const std::string &catalogo, uint32_t segmento);
 
-     static void setSegmento(uint32_t numero);
+     static void agregarSegmento();
+     
+     static uint32_t getCantidadSegmentos();
+     
 
      /* borra la carpeta Resources */
      static void borrarIndice();

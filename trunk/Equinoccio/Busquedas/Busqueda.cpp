@@ -12,7 +12,6 @@ Busqueda::~Busqueda() {
 }
 
 std::list<std::string>* Busqueda::buscar(std::string& consulta, std::string catalogo) {
-     FileManager::setSegmento(999);
 	std::list<std::string> *paths = NULL;
 	if (consulta.size() != 0) {
 		size_t pos = 0;
@@ -34,19 +33,19 @@ std::list<std::string>* Busqueda::buscar(std::string& consulta, std::string cata
 				delete punteros[i];
 		}
 		else {
-			std::cout<<" * AND * "<<std::endl;
-			 Busqueda::andPunteros2(this->punteros,this->punteros_match);
+		     std::cout<<" * AND * "<<std::endl;
+		     Busqueda::andPunteros2(this->punteros,this->punteros_match);
 		     std::cout << "tamanio de la lista final: " << punteros_match.size() << std::endl;
 
 		     //agregar los paths a la lista
 		     if (punteros_match.size() != 0) {
-		    	 paths = new std::list<std::string>;
-		    	 do{
-		    		 std::string path_documento = buscarPath(punteros_match.front(), catalogo);
-					 std::cout<<"MATCH: "<<path_documento<<std::endl;
-					 paths->push_back(path_documento);
-					 punteros_match.pop_front();
-				 }while(punteros_match.size()>0);
+			  paths = new std::list<std::string>;
+			  do{
+			       std::string path_documento = buscarPath(punteros_match.front(), catalogo);
+			       std::cout<<"MATCH: "<<path_documento<<std::endl;
+			       paths->push_back(path_documento);
+			       punteros_match.pop_front();
+			  }while(punteros_match.size()>0);
 		     }
 		}
 	}
@@ -65,7 +64,8 @@ bool Busqueda::buscarEnIndice(std::string consulta, std::string catalogo) {
 			std::cout<<"Frecuencia: "<<reg.frec<<std::endl;
 			if ( reg.frec != 0) {
 				//obtener los punteros
-				std::string nombre_pun =  FileManager::obtenerPathBase();
+			     // TODO: debería obtener los punteros en elindice que se corresponda con la busqueda
+				std::string nombre_pun =  FileManager::obtenerPathBase(0);
 				nombre_pun += catalogo;
 				nombre_pun += ".pun";
 				std::cout<<nombre_pun<<std::endl;
@@ -93,22 +93,26 @@ bool Busqueda::buscarEnIndice(std::string consulta, std::string catalogo) {
 
 bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 
-	std::string path = FileManager::obtenerPathBase();
+     // TODO: deberia buscar en todos los segmentos
+	std::string path = FileManager::obtenerPathBase(0);
 	path += catalogo;
 	path += ".idx";
 	std::cout<<path<<std::endl;
 	std::ifstream indice(path.c_str(), std::ios::in | std::ios::binary);
-	path = FileManager::obtenerPathBase();
+	// TODO: IDEM
+	path = FileManager::obtenerPathBase(0);
 	path += catalogo;
 	path += EXT_NG_PUN;
 	std::cout<<path<<std::endl;
 	std::ifstream pun_ng(path.c_str(),  std::ios::in | std::ios::binary);
-	path = FileManager::obtenerPathBase();
+	// TODO: IDEMx2
+	path = FileManager::obtenerPathBase(0);
 	path += catalogo;
 	path += ".lex";
 	std::cout<<path<<std::endl;
 	std::ifstream lexico (path.c_str(), std::ios::in | std::ios::binary);
-	path = FileManager::obtenerPathBase();
+	// TODO: IDEMx3
+	path = FileManager::obtenerPathBase(0);
 	path += catalogo;
 	path += ".pun";
 	std::cout<<path<<std::endl;
@@ -310,7 +314,7 @@ void Busqueda::andPunteros2(std::vector< std::list<uint32_t>* > &punteros, std::
 
 	  min=*vec_it[0];
 	  for(int i=0;i<(int)punteros.size() && !salir;i++){
-	       while(*vec_it[i] < min && vec_it[i]!=punteros[i]->end())
+	       while(vec_it[i]!=punteros[i]->end() && *vec_it[i] < min)
 		    vec_it[i]++;
 	       if(vec_it[i] == punteros[i]->end())
 		    salir=true;
@@ -331,6 +335,10 @@ void Busqueda::andPunteros2(std::vector< std::list<uint32_t>* > &punteros, std::
     else{
 	  std::cout << "se saltea el AND\n";
 	  punteros_and = *punteros[0];
+    }
+
+    for(int i=0;i<(int)punteros.size();i++){
+	 delete punteros[i];
     }
 }
 
@@ -419,7 +427,7 @@ std::list<uint32_t>* Busqueda::unionPunteros2(std::vector< std::list<uint32_t>* 
 	  uint32_t min=(uint32_t)-1;
 	  uint32_t proximo=(uint32_t)-1;
 
-	  for(int i=0;i<punteros.size();i++){
+	  for(int i=0;i<(int)punteros.size();i++){
 	       iteradores.push_back(punteros[i]->begin());
 	       if(*iteradores[i] < min)
 		    min = *iteradores[i];
@@ -428,11 +436,12 @@ std::list<uint32_t>* Busqueda::unionPunteros2(std::vector< std::list<uint32_t>* 
 	  pun_union = new std::list<uint32_t>;
 
 	  while(iteradores.size()>0){
-	       for(int i=0;i<iteradores.size(); i++){
-		    while(*iteradores[i]<=min && iteradores[i]!= punteros[i]->end())
+	       for(int i=0;i<(int)iteradores.size(); i++){
+		    while(iteradores[i]!= punteros[i]->end() && *iteradores[i]<=min)
 			 iteradores[i]++;
 
 		    if(iteradores[i] == punteros[i]->end()){
+			 delete punteros[i];
 			 punteros.erase(punteros.begin()+i);
 			 iteradores.erase(iteradores.begin()+i);
 			 i--;
@@ -454,7 +463,8 @@ std::string Busqueda::buscarPath(uint32_t puntero,std::string catalogo ) {
 
 	std::string path;
 	uint32_t par[2]; //par offsetLex - numDir
-	std::string nombre = FileManager::obtenerPathIdxArch() ;
+	// deberia buscar el path en el segmento que corresponda a la busqueda
+	std::string nombre = FileManager::obtenerPathIdxArch(0);
 	nombre +=catalogo;
 
 	std::ifstream indiceDocs(nombre.c_str(),  std::ios::in | std::ios::binary);
@@ -464,7 +474,8 @@ std::string Busqueda::buscarPath(uint32_t puntero,std::string catalogo ) {
 		indiceDocs.read((char*)par, 2*sizeof(uint32_t));
 		indiceDocs.close();
 
-		nombre = FileManager::obtenerPathLexArch();
+		// TODO: deberia buscar en el segmento que se corresponde con la busqueda realizada
+		nombre = FileManager::obtenerPathLexArch(0);
 		nombre += catalogo;
 		std::ifstream lexDocs(nombre.c_str(), std::ios::in);
 		if(lexDocs.good()) {
@@ -475,15 +486,16 @@ std::string Busqueda::buscarPath(uint32_t puntero,std::string catalogo ) {
 
 			//busco el directorio
 
-			lexDocs.open(FileManager::obtenerPathIdxDirs().c_str(), std::ios::in | std::ios::binary);
+			// TODO: deberia buscar en el segmento que se corresponda con la busqueda
+			lexDocs.open(FileManager::obtenerPathIdxDirs(0).c_str(), std::ios::in | std::ios::binary);
 			if(lexDocs.good()){
 				//obtengo el offset del directorio
 				uint32_t offset;
 				lexDocs.seekg(4*par[1]);
 				lexDocs.read((char*)&offset, sizeof(uint32_t));
 				lexDocs.close();
-
-				lexDocs.open(FileManager::obtenerPathLexDirs().c_str(),  std::ios::in);
+				// TODO: deberia buscar en el segmento que se corresponda con la busqueda
+				lexDocs.open(FileManager::obtenerPathLexDirs(0).c_str(),  std::ios::in);
 				if (lexDocs.good()) {
 					lexDocs.seekg(offset);
 					std::getline(lexDocs, path, '\0');

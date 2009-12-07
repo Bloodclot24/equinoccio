@@ -57,7 +57,8 @@ bool ParserImagen::parsear(std::string nombre, uint32_t documento) {
 		}while(keywords != NULL);
 
 		if (is_ok) {
-			std::string dump_name = FileManager::obtenerPathBase();
+		     // Siempre parseo en el ultimo segmento
+			std::string dump_name = FileManager::obtenerPathBase(FileManager::getCantidadSegmentos());
 			dump_name += IMAGEN_DUMP_BASENAME;
 			dump_name += Util::intToString(archivos);
 
@@ -77,7 +78,8 @@ bool ParserImagen::parsear(std::string nombre, uint32_t documento) {
 					archivos++;
 					dump.close();
 
-					dump_name = FileManager::obtenerPathBase();
+					// siempre parseo en el ultimo segmento
+					dump_name = FileManager::obtenerPathBase(FileManager::getCantidadSegmentos());
 					dump_name += IMAGEN_DUMP_BASENAME;
 					dump_name += Util::intToString(archivos);
 					dump.open(dump_name.c_str(), std::ofstream::out);

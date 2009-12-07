@@ -52,6 +52,7 @@ private:
      std::fstream idxArchivos;
      std::fstream lexArchivos;
      uint32_t numeroDirectorio;
+     static Equinoccio *E;
 
      bool esDirectorio(const std::string& nombre){
 	  struct stat sb;
@@ -166,20 +167,24 @@ private:
      uint32_t guardarDirectorio(const std::string& nombre){
 	  if(!idxDirectorios.is_open()){
 
-	       idxDirectorios.open(FileManager::obtenerPathIdxDirs().c_str(), std::fstream::in | std::fstream::out | std::fstream::trunc);
-	       lexDirectorios.open(FileManager::obtenerPathLexDirs().c_str(), std::fstream::in | std::fstream::out | std::fstream::trunc);
+	       // (siempre indexo en el ultimo segmento)
+	       idxDirectorios.open(FileManager::obtenerPathIdxDirs(FileManager::getCantidadSegmentos()).c_str(), std::fstream::in | std::fstream::out | std::fstream::trunc);
+	       lexDirectorios.open(FileManager::obtenerPathLexDirs(FileManager::getCantidadSegmentos()).c_str(), std::fstream::in | std::fstream::out | std::fstream::trunc);
 	  }
 	  uint32_t p = lexDirectorios.tellp();
 	  idxDirectorios.write((char*)&p,sizeof(uint32_t));
 	  lexDirectorios.write(nombre.c_str(), nombre.size()+1);
+	  idxDirectorios.flush();
+	  lexDirectorios.flush();
 	  return 0;
      }
 
      bool existeDirectorio(const std::string& nombre){
 	  if(!idxDirectorios.is_open()){
 	       // Los abro sin truncar
-	       idxDirectorios.open(FileManager::obtenerPathIdxDirs().c_str(), std::fstream::in | std::fstream::out);
-	       lexDirectorios.open(FileManager::obtenerPathLexDirs().c_str(), std::fstream::in | std::fstream::out);
+	       // (siempre indexo en el ultimo segmento)
+	       idxDirectorios.open(FileManager::obtenerPathIdxDirs(FileManager::getCantidadSegmentos()).c_str(), std::fstream::in | std::fstream::out);
+	       lexDirectorios.open(FileManager::obtenerPathLexDirs(FileManager::getCantidadSegmentos()).c_str(), std::fstream::in | std::fstream::out);
 	  }
 
 	  lexDirectorios.seekg(0);
@@ -212,7 +217,17 @@ private:
     	 FileManager::cargarConfiguracion();
     	 FileManager::crearJerarquias();
     	 FileManager::crearAlertaFallo();
+
     	 numeroDirectorio = (uint32_t) -1;
+
+	 parsers.agregarParser(new ParserPython(1000000));
+	 parsers.agregarParser(new ParserC(1000000));
+	 parsers.agregarParser(new ParserPhp(1000000));
+	 parsers.agregarParser(new ParserImagen(1000000));
+	 parsers.agregarParser(new ParserAudio(1000000));
+	 parsers.agregarParser(new ParserTxt(1000000));
+	 parsers.agregarParser(new ParserPdf(1000000));
+
      };
      Equinoccio(const Equinoccio&){};
      ~Equinoccio(){
@@ -225,6 +240,8 @@ public:
      static std::list<std::string>* getPaths();
      static std::list<std::string>* getDirIndexados();
      static int main(int argc, const char** argv);
+     static void destruir();
+
 };
 
 

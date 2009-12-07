@@ -43,7 +43,7 @@ TESTSOURCES=Arbol/arbol.cpp\
 	Notificador/testNotificador.cpp	\
 	Busqueda\ Rankeada/testArmadoMartizCoseno.cpp
 
-MAIN=Equinoccio.cpp
+MAIN=main.cpp
 
 CFLAGS+=-g3 -ggdb -Wall `pkg-config --cflags --libs gtkmm-2.4`
 LDFLAGS=-lextractor `pkg-config --cflags --libs gtkmm-2.4`

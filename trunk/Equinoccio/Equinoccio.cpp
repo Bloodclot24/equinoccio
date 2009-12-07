@@ -58,24 +58,18 @@ int Equinoccio::magic(int argc, const char** argv){
 	   return error;
 	}
 
-	parsers.agregarParser(new ParserPython(1000000));
-	parsers.agregarParser(new ParserC(1000000));
-	parsers.agregarParser(new ParserPhp(1000000));
-	parsers.agregarParser(new ParserImagen(1000000));
-	parsers.agregarParser(new ParserAudio(1000000));
-	parsers.agregarParser(new ParserTxt(1000000));
-	parsers.agregarParser(new ParserPdf(1000000));
-
-	FileManager::setSegmento(999);
-
 	if(arg_list)
 	   std::cout << "Listado de directorios.\n";
 	if(arg_add_dir){
 	   std::cout << "Agregar el directorio: " << arg_add_dir << std::endl;
+	   
 	   std::string pesado(arg_add_dir);
 	   agregarDirectorio(parsearDirectorio(pesado));
 	   parsers.armarIndices();
+
+	   FileManager::agregarSegmento();
 	   huboCambios= true;
+
 	}
 	if(arg_del_dir){
 	   std::cout << "Eliminar el directorio: " << arg_del_dir << std::endl;
@@ -103,20 +97,26 @@ std::list<std::string>* Equinoccio::getPaths() {
 	return path_result;
 }
 
+void Equinoccio::destruir(){
+     if(E)
+	  delete E;
+}
+
 std::list<std::string>* Equinoccio::getDirIndexados() {
 
 	if(dir_indexados->empty() || huboCambios) {
 		//TODO: CUIDADO!
-		FileManager::setSegmento(999);
 
 		//Nombre directorio
-		std::string directorio= FileManager::obtenerPathIdxDirs();
+	     // TODO: ¿?¿?¿? necesito segmento?
+		std::string directorio= FileManager::obtenerPathIdxDirs(0);
 		//Abro directorio para busqueda
 		std::fstream archDirectorio;
 		archDirectorio.open(directorio.c_str(), std::fstream::in);
 
 		//Nombre lexico directorio
-		std::string lexico_dir= FileManager::obtenerPathLexDirs();
+		// TODO: ¿Cual segmento?
+		std::string lexico_dir= FileManager::obtenerPathLexDirs(0);
 		//Abro lexico de directorio para busqueda
 		std::fstream archLexicoDir;
 		archLexicoDir.open(lexico_dir.c_str(), std::fstream::in);
@@ -159,10 +159,9 @@ std::list<std::string>* Equinoccio::getDirIndexados() {
 }
 
 int Equinoccio::main(int argc, const char** argv){
-    Equinoccio E;
-    return E.magic(argc, argv);
+     if(E==NULL)
+	  E=new Equinoccio;
+    return E->magic(argc, argv);
 }
 
-//int main(int argc, const char** argv){
-//     return Equinoccio::main(argc, argv);
-//}
+Equinoccio *Equinoccio::E = NULL;

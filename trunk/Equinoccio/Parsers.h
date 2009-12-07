@@ -50,7 +50,7 @@ class Parsers{
 						   * lexico de
 						   * archivos segun
 						   * catalogo */
-     std::map<std::string, std::fstream*> indice; /**< Archivode
+     std::map<std::string, std::fstream*> indice; /**< Archivo de
 						   * indice de
 						   * archivos segun
 						   * catalogo */
@@ -132,7 +132,9 @@ public:
 	       // formo el nombre del archivo utilizando el nombre
 	       // base de los indices de archivo y concatenandole '.'
 	       // y el nombre del catalogo
-	       std::string nombre = FileManager::obtenerPathIdxArch(); //NOMBRE_IDX_ARCHIVOS;
+
+	       //NOMBRE_IDX_ARCHIVOS (siempre indexo en el ultimo segmento)
+	       std::string nombre = FileManager::obtenerPathIdxArch(FileManager::getCantidadSegmentos()); 
 	       nombre+=catalogo;
 	       // abro el archivo
 	       idxArchivos.open(nombre.c_str(), std::fstream::in | std::fstream::out | std::fstream::trunc);
@@ -140,7 +142,9 @@ public:
 	       // formo el nombre del archivo utilizando el nombre
 	       // base del lexico de archivos y concatenandole '.' y el nombre del
 	       // catalogo
-	       nombre=FileManager::obtenerPathLexArch(); //NOMBRE_LEX_ARCHIVOS;
+
+	       //NOMBRE_LEX_ARCHIVOS (siempre indexo en el ultimo segmento)
+	       nombre=FileManager::obtenerPathLexArch(FileManager::getCantidadSegmentos()); 
 	       nombre+=catalogo;
 	       // abro el archivo
 	       lexArchivos.open(nombre.c_str(), std::fstream::in | std::fstream::out | std::fstream::trunc);
@@ -212,8 +216,10 @@ public:
 	       std::cerr << "Catalogo: " << (*it2).first << "\n";
 	       std::list<Parser*> parsers;
 	       /* Obtengo el nombre del indice del catalogo */
-	       std::string nombreIndice = FileManager::obtenerPathBase(); // primero el path
-						    // donde se guarda
+	       // primero el path (siempre indexo en el ultimo segmento)
+
+	       std::string nombreIndice = FileManager::obtenerPathBase(FileManager::getCantidadSegmentos()); 
+	       // donde se guarda
 
 	       nombreIndice += "IDX_"; // prefijo de los indices
 
@@ -236,7 +242,8 @@ public:
 		    ultimo = p->getCantArchivosParseados();
 
 		    /* y que nombre base tiene cada uno */
-		    std::string nombreBase = FileManager::obtenerPathBase() + p->getNombreBase();
+		    // Siempre indexo en el ulimo segmento
+		    std::string nombreBase = FileManager::obtenerPathBase(FileManager::getCantidadSegmentos()) + p->getNombreBase();
 
 		    std::cerr << "Primero,Ultimo: " << primero << " " << ultimo << std::endl;
 		    // hasta parsear el ultimo...
@@ -260,13 +267,34 @@ public:
 		    merge<Registro>(nombreIndice+".sorted",0,generadas-1, nombreIndice);
 	       }
 	       // armo el nombre del indice final del catalogo
-	       std::string nombreCat = FileManager::obtenerPathBase();
+	       // (siempre indexo en el ultimo segmento)
+	       std::string nombreCat = FileManager::obtenerPathBase(FileManager::getCantidadSegmentos());
 	       nombreCat += p->getNombreCatalogo();
 	       // y lo armo (separo el auxiliar)
 	       uint32_t cantidadTerminos=0;
 	       cantidadTerminos = separarAuxiliar(nombreIndice,nombreCat);
 	       terminosCatalogo[p->getNombreCatalogo()] += cantidadTerminos;
 	  }
+
+	  // cierro los archivos (ya los termine de procesar)
+	  
+	  std::map<std::string, std::fstream*>::iterator itIdx;
+	  for(itIdx=indice.begin();itIdx!=indice.end();itIdx++)
+	       (*itIdx).second->close();
+
+	  std::map<std::string, std::fstream*>::iterator itLex;
+	  for(itLex=lexico.begin();itLex!=lexico.end();itLex++)
+	       (*itLex).second->close();
+
+	  // Reseteo la cantidad de documentos en cada catalogo a cero
+	  std::map<std::string, unsigned long>::iterator itDoc;
+	  for(itDoc=documentos.begin();itDoc!=documentos.end();itDoc++)
+	       (*itDoc).second = 0;
+
+	  // Reseteo la cantidad de terminos de cada catalogo a cero
+	  std::map<std::string, uint32_t>::iterator itTer;
+	  for(itTer=terminosCatalogo.begin();itTer!=terminosCatalogo.end();itTer++)
+	       (*itTer).second = 0;
 
 	  return 0;
      }

@@ -42,7 +42,8 @@ void ParserGenerico::flush(){
 
 void ParserGenerico::guardarTermino(const std::string& termino, uint32_t documento){
      if(!salida.is_open()){
-	  std::string nombre( FileManager::obtenerPathBase());
+	  // Siempre parseo en el ultimo segmento
+	  std::string nombre( FileManager::obtenerPathBase(FileManager::getCantidadSegmentos()));
 	  nombre += nombreDump;
 	  nombre += Util::intToString(archivos);
 	  salida.open(nombre.c_str(), std::ios::out);
@@ -56,7 +57,8 @@ void ParserGenerico::guardarTermino(const std::string& termino, uint32_t documen
 	       cantReg=0;
 	       salida.close();
 	       archivos++;
-	       std::string nombre( FileManager::obtenerPathBase());
+	       // Siempre parseo en el ultimo segmento
+	       std::string nombre( FileManager::obtenerPathBase(FileManager::getCantidadSegmentos()));
 	       nombre += nombreDump;
 	       nombre += Util::intToString(archivos);
 	       salida.open(nombre.c_str(), std::ios::out);
