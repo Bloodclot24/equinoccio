@@ -13,6 +13,7 @@
     <property name="height_request">400</property>
     <property name="title" translatable="yes">.: Equinoccio :.</property>
     <property name="window_position">center-always</property>
+    <property name="icon">icono.png</property>
     <child>
       <object class="GtkVBox" id="box">
         <property name="visible">True</property>
@@ -203,16 +204,59 @@
               </packing>
             </child>
             <child>
-              <object class="GtkScrolledWindow" id="scrolledwindow1">
+              <object class="GtkNotebook" id="notebook1">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="hscrollbar_policy">automatic</property>
-                <property name="vscrollbar_policy">automatic</property>
+                <property name="tab_pos">bottom</property>
                 <child>
-                  <object class="GtkTreeView" id="treeview">
+                  <object class="GtkScrolledWindow" id="scrolledwindow1">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="hscrollbar_policy">automatic</property>
+                    <property name="vscrollbar_policy">automatic</property>
+                    <child>
+                      <object class="GtkTreeView" id="treeview">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                      </object>
+                    </child>
                   </object>
+                </child>
+                <child type="tab">
+                  <object class="GtkLabel" id="label7">
+                    <property name="visible">True</property>
+                    <property name="label" translatable="yes">Busqueda</property>
+                  </object>
+                  <packing>
+                    <property name="tab_fill">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkScrolledWindow" id="scrolledwindow2">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="hscrollbar_policy">automatic</property>
+                    <property name="vscrollbar_policy">automatic</property>
+                    <child>
+                      <object class="GtkTreeView" id="treeview2">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child type="tab">
+                  <object class="GtkLabel" id="label9">
+                    <property name="visible">True</property>
+                    <property name="label" translatable="yes">Directorios</property>
+                  </object>
+                  <packing>
+                    <property name="position">1</property>
+                    <property name="tab_fill">False</property>
+                  </packing>
                 </child>
               </object>
               <packing>
@@ -258,6 +302,7 @@
     <property name="resizable">False</property>
     <property name="window_position">center-always</property>
     <property name="destroy_with_parent">True</property>
+    <property name="icon">icono.png</property>
     <property name="type_hint">normal</property>
     <property name="skip_taskbar_hint">True</property>
     <property name="program_name">Equinoccio</property>
@@ -304,6 +349,7 @@ Veronica Bukaczewski</property>
     <property name="title" translatable="yes">Seleccion de Directorio a Agregar</property>
     <property name="modal">True</property>
     <property name="window_position">center-always</property>
+    <property name="icon">icono.png</property>
     <property name="type_hint">normal</property>
     <property name="skip_taskbar_hint">True</property>
     <property name="has_separator">False</property>

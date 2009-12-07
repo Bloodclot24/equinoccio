@@ -127,4 +127,8 @@ void FileManager::setSegmento(uint32_t numero){
      segmento=numero;
 }
 
+void FileManager::borrarIndice() {
+	//remove(PATH_TRES); TODO
+}
+
 uint32_t FileManager::segmento = 0;

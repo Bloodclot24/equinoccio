@@ -5,10 +5,9 @@
 
 Interfaz::Interfaz() {
 	error=false;
-	activo=false;
+	estado = E_NADA;
 	paths_resultado = NULL;
 	fin = false;
-	add_dir = false;
 	consulta = "";
 	directorio = "";
 	try {
@@ -35,6 +34,12 @@ Interfaz::Interfaz() {
 					&Interfaz::on_button_buscar_clicked));
 		builder->get_widget("statusbar", status_bar);
 
+		builder->get_widget("treeview2", tree_dirs);
+		liststore_dirs= Gtk::ListStore::create(columna_dir);
+		tree_dirs->set_model(liststore_dirs);
+		tree_dirs->append_column("Directorios Indexados", columna_dir.m_col_dir);
+
+
 		builder->get_widget("treeview", tree_view);
 		liststore_busqueda= Gtk::ListStore::create(columna_busqueda);
 		tree_view->set_model(liststore_busqueda);
@@ -58,6 +63,12 @@ Interfaz::Interfaz() {
 		std::cerr << ex3.what() << std::endl;
 		error = true;
 	}
+	//agregar catalogos
+	agregarCatalogo("Imagen", "IMG");
+	agregarCatalogo("Audio", "SND");
+	agregarCatalogo("Texto", "TXT");
+	agregarCatalogo("Fuentes", "SRC");
+
 }
 
 Interfaz::~Interfaz() {}
@@ -78,9 +89,15 @@ void Interfaz::cargarMenu() {
 	menu_archivo->add(Gtk::Action::create("FileAdd", Gtk::Stock::OPEN,
 			"_Agregar Directorio", "Indexa el nuevo directorio"),
 			sigc::mem_fun(*this, &Interfaz::on_button_add_clicked));
-//	menu_archivo->add(Gtk::Action::create("FileAdd", Gtk::Stock::OPEN,
-//			"_Eliminar Directorio", "Saca al directorio de la busqueda"),
-//			sigc::mem_fun(*this, &Interfaz::on_button_add_clicked));
+	menu_archivo->add(Gtk::Action::create("DirRem", Gtk::Stock::REMOVE,
+			"_Eliminar Directorio", "Saca al directorio del indice de busqueda"),
+			sigc::mem_fun(*this, &Interfaz::on_button_rem_clicked));
+	menu_archivo->add(Gtk::Action::create("IdxRem", Gtk::Stock::DELETE,
+			"_Eliminar Todos", "Saca del indice a todos los directorios"),
+			sigc::mem_fun(*this, &Interfaz::on_button_remall_clicked));
+	menu_archivo->add(Gtk::Action::create("List", Gtk::Stock::DIRECTORY,
+				"_Listar Directorios", "Lista todos los directorios"),
+				sigc::mem_fun(*this, &Interfaz::on_button_list_clicked));
 	menu_ayuda->add(Gtk::Action::create("HelpMenu", "Ayuda"));
 	menu_ayuda->add(Gtk::Action::create("HelpAbout", Gtk::Stock::ABOUT,"A_cerca De", "Acerca de Equinoccio"),
 			sigc::mem_fun(*this, &Interfaz::on_menu_about));
@@ -98,6 +115,10 @@ void Interfaz::cargarMenu() {
 		"  <menubar name='MenuBar'>"
 		"    <menu action='FileMenu'>"
 		"      <menuitem action='FileAdd'/>"
+		"      <menuitem action='DirRem'/>"
+		"      <menuitem action='IdxRem'/>"
+		"      <separator/>"
+		"      <menuitem action='List'/>"
 		"      <separator/>"
 		"      <menuitem action='FileQuit'/>"
 		"    </menu>"
@@ -141,16 +162,65 @@ void Interfaz::on_menu_quit() {
 	main_window->hide();
 }
 
-void Interfaz::on_button_add_clicked() {
-	if (!activo && !add_dir) {
+void Interfaz::on_button_list_clicked() {
+	if (estado == E_NADA) {
+		estado = E_LIST;
+		directorio = select_window->get_filename();
+		mostrarProgreso("Listando");
+		status_bar->push("Listando los Directorios Indexados");
+		button_buscar->set_sensitive(false);
+		entry_consulta->set_sensitive(false);
+		liststore_dirs->clear();
+		id_esperando = Glib::signal_timeout().connect(sigc::mem_fun(*this,
+								&Interfaz::esperarResultado), 200 );
+		this->execute();
+	}
+}
+
+void Interfaz::on_button_remall_clicked() {
+	if (estado == E_NADA) {
+		estado = E_RALL;
+		mostrarProgreso("Eliminando");
+		status_bar->push("Eliminando Todos los Directorios del Indice");
+		button_buscar->set_sensitive(false);
+		entry_consulta->set_sensitive(false);
+		id_esperando = Glib::signal_timeout().connect(sigc::mem_fun(*this,
+								&Interfaz::esperarResultado), 200 );
+		this->execute();
+	}
+}
+
+void Interfaz::on_button_rem_clicked() {
+	if (estado == E_NADA) {
 		if (select_window->run() == Gtk::RESPONSE_OK) {
+			estado = E_REM;
+			directorio = select_window->get_filename();
+			mostrarProgreso("Eliminando");
+			Glib::ustring text = "Eliminando directorio: ";
+			text += directorio;
+			text += " del indice.";
+			status_bar->push(text);
+			button_buscar->set_sensitive(false);
+			entry_consulta->set_sensitive(false);
+			id_esperando = Glib::signal_timeout().connect(sigc::mem_fun(*this,
+									&Interfaz::esperarResultado), 200 );
+			this->execute();
+		}
+		select_window->hide();
+	}
+}
+
+void Interfaz::on_button_add_clicked() {
+	if (estado == E_NADA) {
+		if (select_window->run() == Gtk::RESPONSE_OK) {
+			estado = E_INDEX;
 			directorio = select_window->get_filename();
 			mostrarProgreso("Indexando");
 			Glib::ustring text = "Agregando directorio: ";
 			text += directorio;
 			status_bar->push(text);
-			add_dir = true;
-			activo = true;
+			button_buscar->set_sensitive(false);
+			entry_consulta->set_sensitive(false);
 			id_esperando = Glib::signal_timeout().connect(sigc::mem_fun(*this,
 									&Interfaz::esperarResultado), 200 );
 			this->execute();
@@ -160,20 +230,22 @@ void Interfaz::on_button_add_clicked() {
 }
 
 void Interfaz::on_button_buscar_clicked() {
-	if(!activo){
+	if(estado == E_NADA){
 		Gtk::TreeModel::iterator iter_active= combo_catalogo->get_active();
 		if(iter_active) {
 			consulta = entry_consulta->get_text();
 			if (consulta != "") {
+				estado = E_SEARCH;
 				liststore_busqueda->clear();
 				Gtk::TreeModel::Row row= *iter_active;
 				catalogo= row[columna_catalogo.m_col_codigo];
+				descr_catalogo = row[columna_catalogo.m_col_catalogo];
 				Glib::ustring cod_cat = row[columna_catalogo.m_col_codigo];
-				std::cout<<"Consulta: "<<consulta<<" - Catalogo: "<<row[columna_catalogo.m_col_catalogo]<<" - Codigo: "<<cod_cat<<std::endl;
+				std::cout<<"Consulta: "<<consulta<<" - Catalogo: "<<descr_catalogo<<" - Codigo: "<<cod_cat<<std::endl;
 				mostrarProgreso("Buscando..");
-				activo = true;
 				status_bar->push(" ");
-				button_buscar->set_sensitive(false); //activar al sacaar todos los test
+				button_buscar->set_sensitive(false);
+				entry_consulta->set_sensitive(false);
 				paths_resultado = NULL;
 				id_esperando = Glib::signal_timeout().connect(sigc::mem_fun(*this,
 							&Interfaz::esperarResultado), 200 );
@@ -182,7 +254,6 @@ void Interfaz::on_button_buscar_clicked() {
 			else {
 				status_bar->push("Debe ingresar consulta");
 			}
-
 		} else {
 			status_bar->push("Debe ingresar un catalogo");
 		}
@@ -215,10 +286,12 @@ bool Interfaz::mover() {
 
 void Interfaz::detenerBarra() {
 	id_activity.disconnect();
-	activo = false;
+	estado = E_NADA;
 	progress_bar->set_text(" ");
 	progress_bar->set_fraction(0);
 	progress_bar->hide();
+	button_buscar->set_sensitive(true);
+	entry_consulta->set_sensitive(true);
 }
 
 void Interfaz::iniciar() {
@@ -230,7 +303,6 @@ void Interfaz::iniciar() {
 }
 
 void Interfaz::agregarCatalogo(const std::string& catalogo,const std::string codigo) {
-
 	Gtk::TreeModel::Row row = *(liststore_catalogo->append());
 	row[columna_catalogo.m_col_catalogo] = catalogo;
 	row[columna_catalogo.m_col_codigo] = codigo;
@@ -239,7 +311,7 @@ void Interfaz::agregarCatalogo(const std::string& catalogo,const std::string cod
 void Interfaz::agregarFila(const std::string path) {
 	Gtk::TreeModel::Row row = *(liststore_busqueda->append());
 	row[columna_busqueda.m_col_path] = path;
-	row[columna_busqueda.m_col_catalogo] = catalogo;
+	row[columna_busqueda.m_col_catalogo] = descr_catalogo;
 }
 
 bool Interfaz::esperarResultado() {
@@ -253,16 +325,14 @@ bool Interfaz::esperarResultado() {
 
 void Interfaz::finEspera() {
 	id_esperando.disconnect();
-	detenerBarra();
-	fin = false;
-	if(add_dir) {
-		add_dir = false;
+	if(estado==E_INDEX) {
 		Glib::ustring text = "Directorio ";
 		text += directorio;
 		text += " indexado";
 		directorio = "";
 		status_bar->push(text);
 	}else {
+	if (estado==E_SEARCH) {
 		if (paths_resultado != NULL) {
 			Glib::ustring res= "Se encontraron ";
 			res += Util::intToString(paths_resultado->size());
@@ -272,9 +342,15 @@ void Interfaz::finEspera() {
 			for(it=paths_resultado->begin(); it!=paths_resultado->end(); it++) {
 				agregarFila(*it);
 			}
+			delete paths_resultado;
+			paths_resultado = NULL;
 		}
 		else
 			status_bar->push("No se encontraron resultados.");
-		button_buscar->set_sensitive(true);
+	}else {
+//rellenar
 	}
+	}
+	detenerBarra();
+	fin = false;
 }

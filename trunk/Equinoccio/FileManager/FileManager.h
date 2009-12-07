@@ -64,6 +64,9 @@ public:
      static std::string obtenerPathLexArchCatalogo(const std::string &catalogo);
 
      static void setSegmento(uint32_t numero);
+
+     /* borra la carpeta Resources */
+     static void borrarIndice();
 };
 #endif /*FILEMANAGER_H_*/
 

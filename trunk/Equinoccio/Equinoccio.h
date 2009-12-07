@@ -158,7 +158,8 @@ private:
 	       closedir(directory);
 	  }
 	  while(subdir.size()>0){
-	       subdir.pop_front();
+		  agregarDirectorio(subdir.front());
+	      subdir.pop_front();
 	  }
      }
 

@@ -43,9 +43,11 @@ RegistroIndice Buscador::buscar(const std::string& termino,const std::string& ca
 			std::cout << "La frecuencia es: " << regInd.frec << "\n";
 		
 		}else{
-			
-			if(termino.compare(cadena) < 0) derecha = medio - 1;
-			else 
+			if (izquierda==derecha && izquierda==medio) {
+				encontrado = false;
+				error = true;
+			}else if(termino.compare(cadena) < 0) derecha = medio - 1;
+			else
 				izquierda = medio + 1;
 		}		
 	} 
@@ -88,9 +90,11 @@ RegistroNGrama Buscador::buscarNgrama(const std::string ngrama,const std::string
 			archivo.read((char*)&(regNgrama.pDocs),sizeof(uint32_t));
 		
 		}else{
-			
-			if(ngrama.compare(regNgrama.ngrama) < 0) derecha = medio -1;
-			else 
+			if (izquierda==derecha && izquierda==medio) {
+				encontrado = false;
+				error = true;
+			}else if(ngrama.compare(regNgrama.ngrama) < 0) derecha = medio -1;
+			else
 				izquierda = medio +1;
 		}		
 	} 
