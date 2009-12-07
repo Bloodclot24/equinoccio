@@ -43,8 +43,8 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
 	//TODO voy a tener la cantidad de terminos y de documentos en el indice.
 	//Usar los metodos, obtenerCantidadTerminos y obtenerCantidadDocumentos
 	//de Parsers.h
-	uint32_t cantTerminos = 11;
-	uint32_t cantidadDocumentos = 2;
+	uint32_t cantTerminos = 340350;
+	uint32_t cantidadDocumentos = 28209;
 	//****************************************************************
 
 	uint32_t pTermino = 0;
@@ -52,9 +52,22 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
 	uint32_t pDocs = 0;
 	uint32_t frecLocal = 0;
 	uint32_t documento = 0;
-	double peso = 0;
-	int j = 0;
+	double peso = 0.0;
+	double puntajeTermino = 0.0;
+	double norma = 0.0;
 
+	std::ofstream puntajes;
+	// TODO: en cual segmento??
+	std::string ruta = FileManager::obtenerPathBase(0);
+	ruta += catalogo;
+	ruta += ".frec";
+	puntajes.open(ruta.c_str(),std::ios::out | std::ios::trunc);
+
+	if(!puntajes.good()){
+		std::cerr << "Error al crear  el archivo de puntajes de terminos para la matriz de cosenos!!" << std::endl;
+		#warning "ver como se va a manejar este error";
+		return;
+	}
 
 	for(uint32_t i = 0; i < cantTerminos; i++){
 		indice.read((char*)&pTermino, sizeof(uint32_t));
@@ -63,21 +76,21 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
 		std::list<Registro::Punteros>* punt = new std::list<Registro::Punteros>;
 		Registro::obtenerPunterosEnLista(punteros,pDocs,frecGlobal,punt);
 		std::list<Registro::Punteros>::iterator it;
+
+		puntajeTermino = log10((double) cantidadDocumentos/frecGlobal);
+	    puntajes.write((char*)&puntajeTermino,sizeof(double));
+
 		for(it = punt->begin(); it != punt->end(); it++){
 		    std::cout << "Entre al bucle de punteros:P \n";
 		    std::cout << "frecuencia local: " << (*it).frecuencia << std::endl;
 		    std::cout << "cantidadDocumentos/frecGlobal: " << (double) cantidadDocumentos/frecGlobal << std::endl;
-		    peso = (double) (*it).frecuencia * log10((double) cantidadDocumentos/frecGlobal);
+		    peso = (double) (*it).frecuencia * puntajeTermino;//log10((double) cantidadDocumentos/frecGlobal);
 		    RegistroMatriz registro(i,(*it).documento,peso);
 		    std::cout << "Voy a escribir un registro en la matriz! " << std::endl;
 		    std::cout << "Peso: " << peso<< std::endl;
 		    std::cout << "x: " << i << std::endl;
 		    std::cout << "y: " << (*it).documento << std::endl;
 		    registro.escribir(matriz,0);
-		    //vNoNulos.push_back(peso);
-//			vColumna.push_back((*it).documento);
-//			vIndice.push_back(j);
-			j++;
 		}
 		std::cout << "Bucle Afuera:P \n " ;
 		delete punt;
@@ -87,6 +100,7 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
     matriz.close();
     indice.close();
     punteros.close();
+    puntajes.close();
 
 	std::cout << "VA A ENTRARRRRRR AL SORRTTTTTTTTTTTTTTTTT PARAAAAAAAAAAAAAALOOOOOOOOOOOOOOOOOOO!!!!!!!! \n";
 	uint32_t cantParticiones = 0;
@@ -134,9 +148,40 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
 		return;
 	}
 
+	//Tengo que calcular la norma por cada documento, es decir
+	//sumo los pesos de la fila de la matriz, y los voy guardando
+	//para despues dividir por ella el peso de cada termino de la fila
+	//ver si conviene en memoria o en disco.
+	uint32_t colAnt = 0;
+	uint32_t columna = 0;
 	bool primero = true;
 	bool cambieFila = false;
+	uint32_t j = 0;
+
+	std::vector<double> normas;
+
+	while(matrizTranspuesta.good()){
+		matrizTranspuesta.read((char*)&columna, sizeof(uint32_t));
+		matrizTranspuesta.read((char*)&x, sizeof(uint32_t));
+		matrizTranspuesta.read((char*)&valor, sizeof(double));
+
+		if((colAnt != columna) && (!primero)){
+			normas[j] = norma;
+			norma = 0;
+			primero = false;
+			j++;
+		}
+		colAnt = columna;
+
+		if(matrizTranspuesta.good()){
+			norma += pow(valor,2);
+		}
+	}
+
+	primero = true;
+	cambieFila = false;
 	uint32_t xAnt = 0;
+
 	while(matrizTranspuesta.good()){
 		matrizTranspuesta.read((char*)&y, sizeof(uint32_t));
 		matrizTranspuesta.read((char*)&x, sizeof(uint32_t));
@@ -159,6 +204,7 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
 	}
 
 	matrizTranspuesta.close();
+	remove(nombreSalida.c_str());
 	matCoseno1.close();
 	matCoseno2.close();
 	matCoseno3.close();
