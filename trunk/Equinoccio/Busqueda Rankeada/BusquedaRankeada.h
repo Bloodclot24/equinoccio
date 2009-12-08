@@ -40,7 +40,7 @@ class BusquedaRankeada{
 			 *
 			 * @return false en caso de error
 			 */
-			bool coseno(std::string &consulta, std::string &catalogo);
+			static bool coseno(std::string &consulta, std::string &catalogo);
 };
 
 #endif /* BUSQUEDARANKEADA_H_ */

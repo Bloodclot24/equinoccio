@@ -35,7 +35,6 @@ std::list<std::string>* Busqueda::buscar(std::string& consulta, std::string cata
 		else {
 		     std::cout<<" * AND * "<<std::endl;
 		     Busqueda::andPunteros2(this->punteros,this->punteros_match);
-		     std::cout << "tamanio de la lista final: " << punteros_match.size() << std::endl;
 
 		     //agregar los paths a la lista
 		     if (punteros_match.size() != 0) {
@@ -61,7 +60,6 @@ bool Busqueda::buscarEnIndice(std::string consulta, std::string catalogo) {
 		std::cout<<"Busqueda simple: \""<<consulta<<"\""<<std::endl;
 		if (consulta.size() != 0) {
 			RegistroIndice reg = Buscador::buscar(consulta, catalogo);
-			std::cout<<"Frecuencia: "<<reg.frec<<std::endl;
 			if ( reg.frec != 0) {
 				//obtener los punteros
 			     // TODO: debería obtener los punteros en elindice que se corresponda con la busqueda
@@ -80,7 +78,6 @@ bool Busqueda::buscarEnIndice(std::string consulta, std::string catalogo) {
 				std::cout<<"error al abrir el arch de punteros: "<<nombre_pun<<std::endl;
 				return false;
 			}
-			std::cout<<"frecuencia igual cero"<<std::endl;
 		}
 	}
 	else {
@@ -140,14 +137,12 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 		if (where == std::string::npos) {
 			str +='$';
 		}
-		std::cout<<"substr: "<<str<<std::endl;
 		if (str.size() >= 2){
 			hay_bigrama = true;
 			//armo bigramas y llamo a buscar para cada uno
 			substr.push_back(str);
 			for (size_t car=0; car<(str.size()-1) ;car++) {
 
-				std::cout<<"bigrama: \""<<str.substr(car,2)<<"\""<<std::endl;
 				RegistroNGrama regN = Buscador::buscarNgrama(str.substr(car,2),catalogo);
 				//en pDocs esta el offset al archivo con los offsets al indice general
 
@@ -155,12 +150,10 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 					//busco la lista de offsets al indice asociado a ese biGrama
 					lista_offset = new std::list<uint32_t>;
 					RegistroNGramas::obtenerPunterosEnLista(pun_ng,regN.pDocs, regN.frec, lista_offset);
-					std::cout<<"	cant Punteros NG: "<<lista_offset->size()<<std::endl;
 					offset_indice.push_back(lista_offset);
 				}
 				else {
 					//liberar listas
-					std::cout<<"no existe el bigrama: "<<str.substr(car,2)<<std::endl;
 					for (unsigned int i=0; i<offset_indice.size();i++)
 						delete offset_indice[i];
 					indice.close();
@@ -173,7 +166,6 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 		}
 		else {
 			if (str.size() == 1 && str[0] != '$') {
-				std::cout<<"caracter solo: "<<str[0]<<std::endl;
 				substr.push_back(str);
 			}
 		}
@@ -186,14 +178,12 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 		lexico.close();
 		indice.close();
 		pun_docs.close();
-		std::cout<<"no hay bigrama"<<std::endl;
 		return false;
 	}
 
 	//Realizo el AND entre los punteros al indice obtenidos
 	std::list<uint32_t> offset_and;
 	Busqueda::andPunteros2(offset_indice, offset_and);
-	std::cout<<"cant Punteros AND: "<<offset_and.size()<<std::endl;	//VER!!!! ngrama repetidos
 
 	RegIndice *r;
 	uint32_t off = 0;
@@ -234,8 +224,6 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 
 	std::vector< std::list<uint32_t>* > punteros_docs;
 	//obtengo la lista de punteros de cada termino
-	//agregar los docs al vector punteros
-	//liberar todas las listas auxiliares
 	std::list<uint32_t> *punt = NULL;
 	while (!reg_match.empty()) {
 		punt = new std::list<uint32_t>;
@@ -257,8 +245,6 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 void Busqueda::andPunteros(std::vector< std::list<uint32_t>* > &punteros, std::list<uint32_t> &punteros_and) {
 
     if (punteros.size() > 1) {
-
-	  std::cout << punteros.size() << " listas\n";
 	  uint32_t pos_min=0;
 	  uint32_t min=(uint32_t)-1;
 	  std::vector<uint32_t> vec_min;
@@ -292,7 +278,6 @@ void Busqueda::andPunteros(std::vector< std::list<uint32_t>* > &punteros, std::l
 	  }
     }
     else{
-	  std::cout << "se saltea el AND\n";
 	  punteros_and = *punteros[0];
     }
 }
@@ -330,7 +315,6 @@ void Busqueda::andPunteros2(std::vector< std::list<uint32_t>* > &punteros, std::
 	  }
     }
     else{
-	  std::cout << "se saltea el AND\n";
 	  punteros_and = *punteros[0];
     }
 
@@ -406,7 +390,6 @@ std::list<uint32_t>* Busqueda::unionPunteros(std::vector< std::list<uint32_t>* >
 		}
 	}
 	else {
-		std::cout<<"size de union menor o igual a 1"<<std::endl;
 		if (punteros.size() == 1)
 			pun_union = punteros[0]; //tiene un solo elemento
 	}
@@ -453,7 +436,6 @@ std::list<uint32_t>* Busqueda::unionPunteros2(std::vector< std::list<uint32_t>* 
 	  }
      }else{
     	 if (punteros.size()==1){
-			 std::cout<<"saltea union"<<std::endl;
 			 pun_union = punteros[0];
     	 }
      }

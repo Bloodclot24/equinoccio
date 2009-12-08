@@ -43,6 +43,7 @@ TESTSOURCES=Arbol/arbol.cpp\
 	Bitmap/testBitmap.cpp \
 	Notificador/testNotificador.cpp	\
 	Busqueda\ Rankeada/testArmadoMartizCoseno.cpp \
+	Busqueda\ Rankeada/testCoseno.cpp \
 
 MAIN=main.cpp
 

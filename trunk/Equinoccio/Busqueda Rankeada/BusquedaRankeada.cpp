@@ -44,8 +44,8 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
 	//TODO voy a tener la cantidad de terminos y de documentos en el indice.
 	//Usar los metodos, obtenerCantidadTerminos y obtenerCantidadDocumentos
 	//de Parsers.h
-	uint32_t cantTerminos = 340350;
-	uint32_t cantidadDocumentos = 28209;
+	uint32_t cantTerminos = 3832;
+	uint32_t cantidadDocumentos = 256;
 	//****************************************************************
 
 	uint32_t pTermino = 0;
@@ -196,7 +196,7 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
 		if(valor && matrizTranspuesta.good()){
 			std::cerr << "K lpm!" << k << std::endl;
 			std::cerr << "Peso antes de la norma: " << normas[k] << std::endl;
-			valor =(double)((double) valor / (double)sqrt(normas[k]));
+//			valor =(double)((double) valor / (double)sqrt(normas[k]));
 			std::cerr << "Peso despues de calcular la norma: " << valor << std::endl;
 			k++;
 			matCoseno1.write((char*)&valor,sizeof(double));
@@ -259,53 +259,54 @@ bool BusquedaRankeada::coseno(std::string &consulta, std::string &catalogo) {
 	uint32_t where = 0;
 	std::vector<RegConsulta> v_consulta;
 	RegConsulta reg;
+	std::cout<<"Busqueda Rankeada"<<std::endl;
 
 	do {
 		where = consulta.find(' ',pos);
-		std::cout<<"Busqueda Rankeada"<<std::endl;
-		if ( Buscador::buscarNroTermino(consulta.substr(where,where-pos), catalogo, reg.nro) ) {
+		if ( Buscador::buscarNroTermino(consulta.substr(pos,where-pos), catalogo, reg.nro) ) {
 			//entro al archivo de pesos
 			arch_peso.seekg(reg.nro * sizeof(double));
 			arch_peso.read((char*)&reg.peso, sizeof(double));
 			v_consulta.push_back(reg);
+			std::cout<<consulta.substr(pos,where-pos)<<"	nro: "<<reg.nro<<"	peso: "<<reg.peso<<std::endl;
 		}
 		else {
 			//cri cri
 			//si no encuentra un termino que hago? ^_^
 			//podria repetir para todos los segmentos hasta que se terminen :)
+			std::cout<<"No encontrado: "<<consulta.substr(where,where-pos)<<std::endl;
 		}
 		pos = where+1;
 	}while (where != std::string::npos);
 	arch_peso.close();
 //ORDENAR vector de consulta por numero de termino
+	arch_mc2.seekg(0,std::ios::end);
+	const uint32_t eof =  arch_mc2.tellg()/ sizeof(uint32_t);
+	arch_mc2.seekg(std::ios::beg);
 
 	//entro a la matriz y hago el producto interno con las filas de documentos
 	uint32_t off = 0;
-	arch_mc3.read((char*)&off, sizeof(uint32_t));;
-	uint32_t sgte = 0;
+	arch_mc3.read((char*)&off, sizeof(uint32_t));
+	uint32_t sgte = off;
 	uint32_t  n;
 	uint32_t col;
 	RegConsulta doc;
 	doc.nro = 0;
 	doc.peso = 0;
-	double coseno;
-	bool eof = false;
-
+	double coseno =0;
+	std::cout<<"\n Busqueda en la matriz \n\n";
 	//para cada documento hago el producto
 	while(arch_mc3.good()) {
+		off = sgte;
 		n= 0;
 		col = 0;
 		doc.peso = 0;
 		coseno = 0;
-		arch_mc3.read((char*)&sgte, sizeof(uint32_t)); //veo cuando empieza la siguiente fila
-		if (arch_mc3.eof()) {
-			eof = true;		//CUIDADO EOF!!!
-			sgte = 0;
-		}
-		//para cada termino del documento
+		arch_mc3.read((char*)&sgte, sizeof(uint32_t));
 		arch_mc2.seekg(off*sizeof(uint32_t));
-		bool buscar_sgte = true;
+		//para cada termino del documento
 		do {
+			bool buscar_sgte = true;
 			//busco el termino
 			do {
 				arch_mc2.read((char*)&col,sizeof(uint32_t));
@@ -314,17 +315,19 @@ bool BusquedaRankeada::coseno(std::string &consulta, std::string &catalogo) {
 					arch_mc1.seekg(off*sizeof(double)); //busco el peso del termino
 					arch_mc1.read((char*)&coseno,sizeof(double));
 					doc.peso += coseno*v_consulta[n].peso; //falta normalizar!!!
+					std::cout<<"Termino nro: "<<v_consulta[n].nro<<"	en Doc: "<<doc.nro<<std::endl;
 					//push del coseno al arbol°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°|
 					//arbol.push(doc)
 				}
 				off++;
-			} while (buscar_sgte && (off<sgte || eof));//TODO !!!! mal la condicion
+			} while (buscar_sgte && off<eof && off<sgte);
 			n++;	//paso al siguiente termino
-			doc.peso = 0;
-		}while((off<sgte || eof)&& n<v_consulta.size());//hasta q no haya mas terminos en la consulta o en el doc
-		off = sgte; //busco en la siguiente fila
+		}while(off<eof && off<sgte && n<v_consulta.size()); //hasta q no haya mas terminos en la consulta o en el doc
+		std::cout<<"Peso del Doc "<<doc.nro<<": "<<doc.peso<<std::endl<<std::endl;
 		doc.nro++;
+		doc.peso = 0;
 	}
+	std::cout<<"*****Fin****\n";
 	return true;
 }
 
