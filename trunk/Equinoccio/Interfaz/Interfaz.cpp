@@ -355,7 +355,9 @@ void Interfaz::finEspera() {
 				Gtk::TreeModel::Row row = *(liststore_dirs->append());
 				row[columna_dir.m_col_dir] = *it;
 			}
-			status_bar->push("Listado finalizado.");
+			Glib::ustring text = Util::intToString(lista_dirs->size());
+			text += " directorios indexados.";
+			status_bar->push(text);
 		}
 		else
 			status_bar->push("No hay directorios indexados.");

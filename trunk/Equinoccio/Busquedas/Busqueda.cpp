@@ -145,7 +145,6 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 				if (str[car] != '?' && str[car+1]!= '?') {
 					RegistroNGrama regN = Buscador::buscarNgrama(str.substr(car,2),catalogo);
 					//en pDocs esta el offset al archivo con los offsets al indice general
-					std::cout<<"___bigrama: "<<str.substr(car,2)<<std::endl;
 					if (regN.frec > 0) {
 						//busco la lista de offsets al indice asociado a ese biGrama
 						lista_offset = new std::list<uint32_t>;
@@ -166,7 +165,7 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 			}
 		}
 		else {
-			if (str.size() == 1 && str[0] != '$' && str[0]!='?') {
+			if (str.size() == 1 && str[0]!='?') {
 				substr.push_back(str);
 			}
 		}
@@ -379,8 +378,13 @@ void Busqueda::filtrarFalsosPositivos(std::list<std::string>& consulta, std::lis
 
 			bool encontrado = true;
 			size_t pos_wild, pos=0;
+			char c;
 			while (encontrado && it_str != consulta.end() && pos<termino.size()) {
 				pos_wild=0;
+				c=(*it_str)[0];
+				if(c!='?') {
+					pos = termino.find(c,pos);
+				}
 				while(encontrado && pos_wild<it_str->size() && pos<termino.size()){
 					if ((*it_str)[pos_wild] != '?') {
 						if((*it_str)[pos_wild] != termino[pos])
