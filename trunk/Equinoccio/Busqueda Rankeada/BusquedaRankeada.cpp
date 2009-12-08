@@ -1,6 +1,7 @@
 #include "BusquedaRankeada.h"
 #include "../Busqueda Binaria/Buscador.h"
 #include <math.h>
+#include <stdlib.h>
 
 void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
      std::string path;
@@ -256,25 +257,30 @@ bool BusquedaRankeada::coseno(std::string &consulta, std::string &catalogo) {
 
 	//busco los terminos de la consulta en el indice y armo el vector de la consulta
 	uint32_t pos = 0;
-	uint32_t where = 0;
+	uint32_t where = 0, mul=0, extra=1;
 	std::vector<RegConsulta> v_consulta;
 	RegConsulta reg;
 	std::cout<<"Busqueda Rankeada"<<std::endl;
 
 	do {
 		where = consulta.find(' ',pos);
-		if ( Buscador::buscarNroTermino(consulta.substr(pos,where-pos), catalogo, reg.nro) ) {
+		if ((mul = consulta.find_last_of('^',where)) != std::string::npos){
+			extra = atoi(consulta.substr(mul+1, where-(mul+1)).c_str());
+			std::cout<<"Peso extra: "<<extra<<std::endl;
+		}
+		if ( Buscador::buscarNroTermino(consulta.substr(pos,mul-pos), catalogo, reg.nro) ) {
 			//entro al archivo de pesos
 			arch_peso.seekg(reg.nro * sizeof(double));
 			arch_peso.read((char*)&reg.peso, sizeof(double));
+			reg.peso *=extra;
 			v_consulta.push_back(reg);
-			std::cout<<consulta.substr(pos,where-pos)<<"	nro: "<<reg.nro<<"	peso: "<<reg.peso<<std::endl;
+			std::cout<<consulta.substr(pos,mul-pos)<<"	nro: "<<reg.nro<<"	peso: "<<reg.peso<<std::endl;
 		}
 		else {
 			//cri cri
 			//si no encuentra un termino que hago? ^_^
 			//podria repetir para todos los segmentos hasta que se terminen :)
-			std::cout<<"No encontrado: "<<consulta.substr(where,where-pos)<<std::endl;
+			std::cout<<"No encontrado: "<<consulta.substr(pos,mul-pos)<<std::endl;
 		}
 		pos = where+1;
 	}while (where != std::string::npos);
