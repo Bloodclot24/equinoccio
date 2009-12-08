@@ -24,6 +24,7 @@ enum AUDIO_KeywordType {
 
 #define MIME_TYPE_MP3 "audio/mpeg"
 #define MIME_TYPE_OGG "application/ogg"
+#define MIME_TYPE_WAV "audio/x-wav"
 
 /****************************************************************************/
 class ParserAudio: public Parser {

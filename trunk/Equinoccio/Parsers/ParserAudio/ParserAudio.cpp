@@ -55,7 +55,7 @@ bool ParserAudio::parsear(std::string nombre, uint32_t documento) {
 		    } else if(type == AUDIO_MIMETYPE) {
 
 			 if((keyword.compare(MIME_TYPE_MP3) != 0) && 
-			    (keyword.compare(MIME_TYPE_OGG) != 0))
+			    (keyword.compare(MIME_TYPE_OGG) != 0) && (keyword.compare(MIME_TYPE_WAV) != 0))
 			      audio= false;
 			 else {
 			      unsigned int indexExt= nombre.find_last_of('.');
