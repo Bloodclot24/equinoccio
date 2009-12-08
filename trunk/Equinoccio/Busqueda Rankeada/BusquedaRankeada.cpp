@@ -80,7 +80,7 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
 		Registro::obtenerPunterosEnLista(punteros,pDocs,frecGlobal,punt);
 		std::list<Registro::Punteros>::iterator it;
 		puntajeTermino = log10((double) cantidadDocumentos/frecGlobal);
-	    puntajes.write((char*)&puntajeTermino,sizeof(double));
+		puntajes.write((char*)&puntajeTermino,sizeof(double));
 
 		for(it = punt->begin(); it != punt->end(); it++){
 		    peso = (double) (*it).frecuencia * puntajeTermino;//log10((double) cantidadDocumentos/frecGlobal);
@@ -153,8 +153,9 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
 		if((filaAnt != x)|| (!primero)){
 			normas.push_back(norma);
 			norma = 0.0;
+			filaAnt = x;
 		}
-		filaAnt = x;
+
 
 		if(matrizTranspuesta.good()) norma += pow(valor,2);
 
@@ -163,32 +164,27 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
 
 	matrizTranspuesta.close();
 	matrizTranspuesta.open(nombreSalida.c_str(), std::ios::in);
-	cambieFila = false;
+	cambieFila = true;
 	uint32_t xAnt = 0;
 	uint32_t k = 0;
-	bool principio = true;
 
 	while(matrizTranspuesta.good()){
 		matrizTranspuesta.read((char*)&y, sizeof(uint32_t));
 		matrizTranspuesta.read((char*)&x, sizeof(uint32_t));
 		matrizTranspuesta.read((char*)&valor, sizeof(double));
 
-		if(xAnt != x || principio){
+		if(xAnt != x){
 			cambieFila = true;
-			if(principio) principio = false;
-			else k++;
-
+			k++;
+			xAnt = x;
 		}
-
-		xAnt = x;
 
 		if(valor && matrizTranspuesta.good()){
 			valor =(double)((double) valor / (double)sqrt(normas[k]));
 			matCoseno1.write((char*)&valor,sizeof(double));
 			matCoseno2.write((char*)&y,sizeof(uint32_t));
-			if(cambieFila || primero){
+			if(cambieFila){
 				matCoseno3.write((char*)&index,sizeof(uint32_t));
-				primero = false;
 				cambieFila = false;
 			}
 			index++;

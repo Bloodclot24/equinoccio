@@ -1,17 +1,9 @@
 #ifndef NOTIFICADOR_H_
 #define NOTIFICADOR_H_
 
-#include <iostream>
-#include <fstream>
 #include <stdint.h>
 #include <sys/types.h>
-#include <dirent.h>
-#include <string.h>
-#include <list>
-#include <map>
-#include "../FileManager/FileManager.h"
-#include "../Parsers.h"
-
+#include <iostream>
 
 typedef struct RegistroDirectorio {
 	uint32_t pLexico;
@@ -35,8 +27,13 @@ typedef struct RegistroDisco {
 	time_t time;
 } RegistroDisco;
 
-class Notificador {
-
+#include <fstream>
+#include <dirent.h>
+#include <string.h>
+#include <list>
+#include <map>
+#include "../FileManager/FileManager.h"
+#include "../Parsers.h"
 
 class Notificador {
 
