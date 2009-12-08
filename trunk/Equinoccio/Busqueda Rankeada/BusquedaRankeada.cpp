@@ -183,7 +183,7 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
 		xAnt = x;
 
 		if(valor && matrizTranspuesta.good()){
-//			valor =(double)((double) valor / (double)sqrt(normas[k]));
+			valor =(double)((double) valor / (double)sqrt(normas[k]));
 			matCoseno1.write((char*)&valor,sizeof(double));
 			matCoseno2.write((char*)&y,sizeof(uint32_t));
 			if(cambieFila || primero){
