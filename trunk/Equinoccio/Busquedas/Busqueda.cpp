@@ -54,7 +54,7 @@ std::list<std::string>* Busqueda::buscar(std::string& consulta, std::string cata
 	
 bool Busqueda::buscarEnIndice(std::string consulta, std::string catalogo) {
 
-	if ( consulta.find('*') == std::string::npos) {
+	if ( consulta.find('*')==std::string::npos && consulta.find('?')==std::string::npos) {
 		//busqueda simple
 		Util::aMinusculas(consulta);
 		std::cout<<"Busqueda simple: \""<<consulta<<"\""<<std::endl;
@@ -142,30 +142,31 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 			//armo bigramas y llamo a buscar para cada uno
 			substr.push_back(str);
 			for (size_t car=0; car<(str.size()-1) ;car++) {
-
-				RegistroNGrama regN = Buscador::buscarNgrama(str.substr(car,2),catalogo);
-				//en pDocs esta el offset al archivo con los offsets al indice general
-
-				if (regN.frec > 0) {
-					//busco la lista de offsets al indice asociado a ese biGrama
-					lista_offset = new std::list<uint32_t>;
-					RegistroNGramas::obtenerPunterosEnLista(pun_ng,regN.pDocs, regN.frec, lista_offset);
-					offset_indice.push_back(lista_offset);
-				}
-				else {
-					//liberar listas
-					for (unsigned int i=0; i<offset_indice.size();i++)
-						delete offset_indice[i];
-					indice.close();
-					lexico.close();
-					pun_ng.close();
-					pun_docs.close();
-					return false;
+				if (str[car] != '?' && str[car+1]!= '?') {
+					RegistroNGrama regN = Buscador::buscarNgrama(str.substr(car,2),catalogo);
+					//en pDocs esta el offset al archivo con los offsets al indice general
+					std::cout<<"___bigrama: "<<str.substr(car,2)<<std::endl;
+					if (regN.frec > 0) {
+						//busco la lista de offsets al indice asociado a ese biGrama
+						lista_offset = new std::list<uint32_t>;
+						RegistroNGramas::obtenerPunterosEnLista(pun_ng,regN.pDocs, regN.frec, lista_offset);
+						offset_indice.push_back(lista_offset);
+					}
+					else {
+						//liberar listas
+						for (unsigned int i=0; i<offset_indice.size();i++)
+							delete offset_indice[i];
+						indice.close();
+						lexico.close();
+						pun_ng.close();
+						pun_docs.close();
+						return false;
+					}
 				}
 			}
 		}
 		else {
-			if (str.size() == 1 && str[0] != '$') {
+			if (str.size() == 1 && str[0] != '$' && str[0]!='?') {
 				substr.push_back(str);
 			}
 		}
@@ -330,7 +331,6 @@ void Busqueda::filtrarFalsosPositivos(std::list<std::string>& consulta, std::lis
 		std::list<std::string>::iterator it_str;
 		std::string termino;
 		RegIndice* reg;
-		size_t pos;
 
 		//recorro todos los registros verificando los falsos positivos
 		while (!lista.empty()){
@@ -339,12 +339,60 @@ void Busqueda::filtrarFalsosPositivos(std::list<std::string>& consulta, std::lis
 			termino += reg->termino;
 			termino += '$';
 			it_str = consulta.begin();
-			pos = 0;
-			while (it_str != consulta.end() && ((pos = termino.find(*it_str, pos))!=std::string::npos)) {
-				pos += it_str->length();
+//			while (it_str != consulta.end() && ((pos = termino.find(*it_str, pos))!=std::string::npos)) {
+//				pos += it_str->length();
+//				it_str++;
+//			}
+//			size_t pos_wild=0, where_wild=0, pos=0, where=0;  //para los *
+//			while (it_str != consulta.end() && where != std::string::npos) {
+//				//separo para los '?'
+//				pos_wild=0;
+//				do {
+//					where_wild = it_str->find('?', pos_wild);
+//					if (where_wild != std::string::npos){
+//						where = termino.find(it_str->substr(pos_wild, where-pos_wild),pos);
+//						pos = where_wild-pos_wild + where+1;
+//						pos_wild = where_wild+1;
+//					}
+//				}while(where != std::string::npos && where_wild != std::string::npos);
+//				it_str++;
+//			}
+
+//			size_t pos=-1;
+//			size_t pos_wild, where_wild, tam;
+//			bool encontrado = true;
+//			do {
+//				pos_wild=0;
+//				where_wild = it_str->find('?',pos_wild);
+//				tam = where_wild-pos_wild;
+//				do {
+//					pos++;
+//					if (termino.substr(pos, tam) != it_str.substr(pos_wild, tam))
+//						encontrado = false;
+//					pos += tam;
+//					pos_wild = where_wild+1;
+//					where_wild = it_str->find('?',pos_wild);
+//					tam = where_wild-pos_wild;
+//				}while (where_wild != std::string::npos && (pos+tam) < termino.size() && encontrado);
+//				it++;
+//			} while (it_str!=consulta.end() && pos < (termino.size()-1) && encontrado);
+
+			bool encontrado = true;
+			size_t pos_wild, pos=0;
+			while (encontrado && it_str != consulta.end() && pos<termino.size()) {
+				pos_wild=0;
+				while(encontrado && pos_wild<it_str->size() && pos<termino.size()){
+					if ((*it_str)[pos_wild] != '?') {
+						if((*it_str)[pos_wild] != termino[pos])
+							encontrado=false;
+					}
+					pos++;
+					pos_wild++;
+				}
 				it_str++;
 			}
-			if (pos != std::string::npos) {
+
+			if (it_str == consulta.end() && encontrado && pos==termino.size()) {
 				//salio porque encontro todos los subterminos, entonces agrego el registro a la lista
 				filtrada.push_back(reg);
 				std::cout<<"palabra match: "<<reg->termino<< " Frec: "<<reg->frec<<std::endl;

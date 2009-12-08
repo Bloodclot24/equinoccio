@@ -44,8 +44,8 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
 	//TODO voy a tener la cantidad de terminos y de documentos en el indice.
 	//Usar los metodos, obtenerCantidadTerminos y obtenerCantidadDocumentos
 	//de Parsers.h
-	uint32_t cantTerminos = 3832;
-	uint32_t cantidadDocumentos = 256;
+	uint32_t cantTerminos = 96836;//3832;
+	uint32_t cantidadDocumentos = 5740;//256;
 	//****************************************************************
 
 	uint32_t pTermino = 0;

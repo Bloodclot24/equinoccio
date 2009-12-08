@@ -12,7 +12,7 @@ ParserImagen::~ParserImagen() {}
 
 bool ParserImagen::parsear(std::string nombre, uint32_t documento) {
 
-     const char* validas[]={".png", ".jpg",0};
+     const char* validas[]={".png", ".jpg", ".bmp",0};
      if(!verificarExtension(nombre,validas))
 	  return false;
 
@@ -38,7 +38,7 @@ bool ParserImagen::parsear(std::string nombre, uint32_t documento) {
 			}
 
 			if (keyType == IMG_MIME_TYPE) {
-				if (keyword != MIME_TYPE_JPEG && keyword != MIME_TYPE_PNG)
+				if (keyword != MIME_TYPE_JPEG && keyword != MIME_TYPE_PNG && keyword != MIME_TYPE_BMP)
 					is_ok = false;
 
 				else {
@@ -54,7 +54,7 @@ bool ParserImagen::parsear(std::string nombre, uint32_t documento) {
 			}
 
 			keywords= extractor.getNext(keywords);
-		}while(keywords != NULL);
+		}while(keywords != NULL && is_ok);
 
 		if (is_ok) {
 		     // Siempre parseo en el ultimo segmento

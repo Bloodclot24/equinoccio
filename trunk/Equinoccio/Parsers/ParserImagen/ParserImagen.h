@@ -7,6 +7,8 @@
 
 #define MIME_TYPE_JPEG "image/jpeg"
 #define MIME_TYPE_PNG "image/png"
+#define MIME_TYPE_BMP "image/x-bmp"
+
 
 enum IMG_KeywordType {
 	IMG_FILENAME = 1,
