@@ -110,3 +110,61 @@ RegistroNGrama Buscador::buscarNgrama(const std::string ngrama,const std::string
 
 }
 
+bool Buscador::buscarNroTermino(const std::string &termino, const std::string &catalogo, uint32_t& nro) {
+
+	uint32_t medio = 0;
+	uint32_t izquierda = 0;
+	uint32_t derecha = 0;
+	std::fstream archIdx;
+	std::fstream archLex;
+	uint32_t pLexico;
+	char cadena[50];
+	bool error = false;
+	bool encontrado = false;
+
+	// TODO: deberia buscar en todos los segmentos
+	std::string indice =  FileManager::obtenerPathBase(0);
+	indice += catalogo + ".idx";
+	std::string lexico =  FileManager::obtenerPathBase(0);
+	lexico += catalogo + ".lex";
+
+	// Abro los archivos para lectura
+	archIdx.open(indice.c_str(), std::fstream::in);
+	archLex.open(lexico.c_str(), std::fstream::in);
+
+	//si se produjo un error al abrirlos cambio el flag
+	if ((!archIdx.is_open()) || (!archLex.is_open())) error = true;
+
+	archIdx.seekg(0,std::fstream::end);
+	derecha = archIdx.tellg()/sizeof(RegistroIndice);
+
+	while ((!encontrado) && (izquierda <= derecha) && (!error)){
+		//calculo la mitad
+		medio = (derecha + izquierda) / 2;
+		archIdx.seekg(medio*sizeof(RegistroIndice));
+		archIdx.read((char*)&(pLexico),sizeof(uint32_t));
+		archLex.seekg(pLexico,std::fstream::beg);
+		archLex.get((char*)cadena,50,'\0');
+
+		if(termino.compare(cadena) == 0){
+			encontrado = true;
+			nro = medio;
+			std::cout<<"numero de termino: "<<nro<<std::endl;
+		}else{
+			if (izquierda==derecha && izquierda==medio) {
+				encontrado = false;
+				error = true;
+			}else if(termino.compare(cadena) < 0) derecha = medio - 1;
+			else
+				izquierda = medio + 1;
+		}
+	}
+	//si no lo encontre, o se produjo un error, devuelvo la estructura cargada de 0's
+	if((!encontrado) || (error)){
+		encontrado = false;
+	}
+
+	return encontrado;
+}
+
+

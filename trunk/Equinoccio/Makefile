@@ -37,11 +37,12 @@ TESTSOURCES=Arbol/arbol.cpp\
 	Sort/testSort.cpp\
 	Merge/testMerge.cpp \
 	Busqueda\ Binaria/testBusquedaBinaria.cpp \
+	Busqueda\ Binaria/testNro.cpp \
 	Busquedas/testBusqueda.cpp \
 	Interfaz/testVista.cpp \
 	Bitmap/testBitmap.cpp \
 	Notificador/testNotificador.cpp	\
-	Busqueda\ Rankeada/testArmadoMartizCoseno.cpp
+	Busqueda\ Rankeada/testArmadoMartizCoseno.cpp \
 
 MAIN=main.cpp
 

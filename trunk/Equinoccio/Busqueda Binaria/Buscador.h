@@ -40,6 +40,16 @@ class Buscador
 		static RegistroIndice buscar(const std::string& termino, const std::string& catalogo);
 		
 		static RegistroNGrama buscarNgrama(const std::string ngrama,const std::string& catalogo);
+
+		/*
+		 * Dado un termino devuelve su numero de termino en el indice
+		 *
+		 * @param nro guarda el numero de resultado.
+		 *
+		 * @return true si encuentra el termino. Devuelve false si no encuentra y el campo nro no tiene significado
+		 * */
+		static bool buscarNroTermino(const std::string &termino, const std::string &catalogo, uint32_t &nro);
+
 };
 
 #endif /*BUSCADOR_H_*/

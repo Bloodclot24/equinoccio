@@ -1,4 +1,5 @@
 #include "BusquedaRankeada.h"
+#include "../Busqueda Binaria/Buscador.h"
 #include <math.h>
 
 void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
@@ -208,5 +209,115 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
 	matCoseno1.close();
 	matCoseno2.close();
 	matCoseno3.close();
-
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+bool BusquedaRankeada::coseno(std::string &consulta, std::string &catalogo) {
+	std::string nombre = FileManager::obtenerPathBase(0);//para todos los segmentos TODO!!!!!
+	nombre += catalogo;
+	nombre += EXT_FREC;
+	std::fstream arch_peso(nombre.c_str(), std::ios::binary | std::ios::in);
+	nombre = FileManager::obtenerPathBase(0);
+	nombre += catalogo;
+	std::fstream arch_mc1((nombre + ".mc1").c_str(), std::ios::binary | std::ios::in);
+	std::fstream arch_mc2((nombre + ".mc2").c_str(), std::ios::binary | std::ios::in);
+	std::fstream arch_mc3((nombre + ".mc3").c_str(), std::ios::binary | std::ios::in);
+
+	if (!arch_mc1.good() || !arch_mc2.good() || !arch_mc3.good() || !arch_peso.good()) {
+		std::cout<<"error al abrir los archivos de consulta rankeada"<<std::endl;
+		arch_mc1.close(); arch_mc2.close(); arch_mc3.close(); arch_peso.close();
+		return false;
+	}
+
+	//busco los terminos de la consulta en el indice y armo el vector de la consulta
+	uint32_t pos = 0;
+	uint32_t where = 0;
+	std::vector<RegConsulta> v_consulta;
+	RegConsulta reg;
+
+	do {
+		where = consulta.find(' ',pos);
+		std::cout<<"Busqueda Rankeada"<<std::endl;
+		if ( Buscador::buscarNroTermino(consulta.substr(where,where-pos), catalogo, reg.nro) ) {
+			//entro al archivo de pesos
+			arch_peso.seekg(reg.nro * sizeof(double));
+			arch_peso.read((char*)&reg.peso, sizeof(double));
+			v_consulta.push_back(reg);
+		}
+		else {
+			//cri cri
+			//si no encuentra un termino que hago? ^_^
+			//podria repetir para todos los segmentos hasta que se terminen :)
+		}
+		pos = where+1;
+	}while (where != std::string::npos);
+	arch_peso.close();
+//ORDENAR vector de consulta por numero de termino
+
+	//entro a la matriz y hago el producto interno con las filas de documentos
+	uint32_t off = 0;
+	arch_mc3.read((char*)&off, sizeof(uint32_t));;
+	uint32_t sgte = 0;
+	uint32_t  n;
+	uint32_t col;
+	RegConsulta doc;
+	doc.nro = 0;
+	doc.peso = 0;
+	double coseno;
+	bool eof = false;
+
+	//para cada documento hago el producto
+	while(arch_mc3.good()) {
+		n= 0;
+		col = 0;
+		doc.peso = 0;
+		coseno = 0;
+		arch_mc3.read((char*)&sgte, sizeof(uint32_t)); //veo cuando empieza la siguiente fila
+		if (arch_mc3.eof()) {
+			eof = true;		//CUIDADO EOF!!!
+			sgte = 0;
+		}
+		//para cada termino del documento
+		arch_mc2.seekg(off*sizeof(uint32_t));
+		bool buscar_sgte = true;
+		do {
+			//busco el termino
+			do {
+				arch_mc2.read((char*)&col,sizeof(uint32_t));
+				if (col == v_consulta[n].nro) { //si el termino esta en el documento
+					buscar_sgte = false;
+					arch_mc1.seekg(off*sizeof(double)); //busco el peso del termino
+					arch_mc1.read((char*)&coseno,sizeof(double));
+					doc.peso += coseno*v_consulta[n].peso; //falta normalizar!!!
+					//push del coseno al arbol°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°|
+					//arbol.push(doc)
+				}
+				off++;
+			} while (buscar_sgte && (off<sgte || eof));//TODO !!!! mal la condicion
+			n++;	//paso al siguiente termino
+			doc.peso = 0;
+		}while((off<sgte || eof)&& n<v_consulta.size());//hasta q no haya mas terminos en la consulta o en el doc
+		off = sgte; //busco en la siguiente fila
+		doc.nro++;
+	}
+	return true;
+}
+

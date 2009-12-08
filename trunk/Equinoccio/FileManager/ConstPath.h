@@ -11,6 +11,7 @@
 #define LEX_DIRS2 "LEX_DIRS.lex"
 #define EXT_NG_PUN ".ng.pun"
 #define EXT_NG_IDX ".ng.idx"
+#define EXT_FREC ".frec"
 
 #define EXT_IMG "IMG"
 #define EXT_TXT "TXT"
