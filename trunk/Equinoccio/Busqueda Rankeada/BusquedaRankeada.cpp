@@ -140,16 +140,16 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
 	}
 
 	uint32_t filaAnt = 0;
-	uint32_t columna = 0;
 	bool primero = true;
 	bool cambieFila = false;
 
 	std::vector<double> normas;
 
 	while(matrizTranspuesta.good()){
-		matrizTranspuesta.read((char*)&columna, sizeof(uint32_t));
+		matrizTranspuesta.read((char*)&y, sizeof(uint32_t));
 		matrizTranspuesta.read((char*)&x, sizeof(uint32_t));
 		matrizTranspuesta.read((char*)&valor, sizeof(double));
+		std::cerr << "Documentos: " << x << std::endl;
 		if((filaAnt != x)|| (!primero)){
 			normas.push_back(norma);
 			norma = 0.0;

@@ -19,7 +19,7 @@ SOURCES=CodigoGamma/TDA_Codigos.cpp \
 	Bitmap/Bitmap.cpp \
 	Registros/RegistroMatriz.cpp \
 	Busqueda\ Rankeada/BusquedaRankeada.cpp \
-	Notificador/Notificador.cpp	\
+	Notificador/Notificador.cpp\
 	Thread/Thread.cpp \
 	Thread/Mutex.cpp \
 	Equinoccio.cpp
@@ -41,9 +41,9 @@ TESTSOURCES=Arbol/arbol.cpp\
 	Busquedas/testBusqueda.cpp \
 	Interfaz/testVista.cpp \
 	Bitmap/testBitmap.cpp \
-	Notificador/testNotificador.cpp	\
-	Busqueda\ Rankeada/testArmadoMartizCoseno.cpp 
-	Busqueda\ Rankeada/testCoseno.cpp \
+	Notificador/testNotificador.cpp\
+	Busqueda\ Rankeada/testArmadoMartizCoseno.cpp\
+	Busqueda\ Rankeada/testCoseno.cpp 
 
 MAIN=main.cpp
 
