@@ -23,10 +23,10 @@ RegistroMatriz* RegistroMatriz::leer(std::ifstream &archivo, int compresion){
 }
 
 int RegistroMatriz::escribir(std::ofstream &archivo, int compresion){
-    std::cout << "voy a escribir un registro en la matriz xD \n";
-    std::cout << " x: " << registro.x << std::endl;
-    std::cout << "y: " << registro.y << std::endl;
-    std::cout << "peso: " << registro.peso << std::endl;
+//    std::cout << "voy a escribir un registro en la matriz xD \n";
+//    std::cout << " x: " << registro.x << std::endl;
+//    std::cout << "y: " << registro.y << std::endl;
+//    std::cout << "peso: " << registro.peso << std::endl;
     archivo.write((char*)&registro.x,sizeof(uint32_t));
 	archivo.write((char*)&registro.y,sizeof(uint32_t));
 	archivo.write((char*)&registro.peso,sizeof(double));

@@ -82,18 +82,18 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
 	    puntajes.write((char*)&puntajeTermino,sizeof(double));
 
 		for(it = punt->begin(); it != punt->end(); it++){
-		    std::cout << "Entre al bucle de punteros:P \n";
-		    std::cout << "frecuencia local: " << (*it).frecuencia << std::endl;
-		    std::cout << "cantidadDocumentos/frecGlobal: " << (double) cantidadDocumentos/frecGlobal << std::endl;
+//		    std::cout << "Entre al bucle de punteros:P \n";
+//		    std::cout << "frecuencia local: " << (*it).frecuencia << std::endl;
+//		    std::cout << "cantidadDocumentos/frecGlobal: " << (double) cantidadDocumentos/frecGlobal << std::endl;
 		    peso = (double) (*it).frecuencia * puntajeTermino;//log10((double) cantidadDocumentos/frecGlobal);
 		    RegistroMatriz registro(i,(*it).documento,peso);
-		    std::cout << "Voy a escribir un registro en la matriz! " << std::endl;
-		    std::cout << "Peso: " << peso<< std::endl;
-		    std::cout << "x: " << i << std::endl;
-		    std::cout << "y: " << (*it).documento << std::endl;
+//		    std::cout << "Voy a escribir un registro en la matriz! " << std::endl;
+//		    std::cout << "Peso: " << peso<< std::endl;
+//		    std::cout << "x: " << i << std::endl;
+//		    std::cout << "y: " << (*it).documento << std::endl;
 		    registro.escribir(matriz,0);
 		}
-		std::cout << "Bucle Afuera:P \n " ;
+//		std::cout << "Bucle Afuera:P \n " ;
 		delete punt;
 	}
 
@@ -103,16 +103,16 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
     punteros.close();
     puntajes.close();
 
-	std::cout << "VA A ENTRARRRRRR AL SORRTTTTTTTTTTTTTTTTT PARAAAAAAAAAAAAAALOOOOOOOOOOOOOOOOOOO!!!!!!!! \n";
+//	std::cout << "VA A ENTRARRRRRR AL SORRTTTTTTTTTTTTTTTTT PARAAAAAAAAAAAAAALOOOOOOOOOOOOOOOOOOO!!!!!!!! \n";
 	uint32_t cantParticiones = 0;
 	//Transpongo la matriz.
 	std::string nombreBase;
      // TODO: en cual segmento??
 	nombreBase = FileManager::obtenerPathBase(0);
 	nombreBase += "matrizSort";
-	std::cout << "SORT!\n ";
-	cantParticiones = Sorter<RegistroMatriz>::Sort(path,nombreBase,0,1000);
-	std::cout << "Salio del SORT! \n";
+//	std::cout << "SORT!\n ";
+	cantParticiones = Sorter<RegistroMatriz>::Sort(path,nombreBase,0,5000);
+//	std::cout << "Salio del SORT! \n";
 	Parsers parsers;
 	std::string nombreSalida;
      // TODO: en cual segmento??
@@ -157,7 +157,6 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
 	uint32_t columna = 0;
 	bool primero = true;
 	bool cambieFila = false;
-	uint32_t j = 0;
 
 	std::vector<double> normas;
 
@@ -166,11 +165,11 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
 		matrizTranspuesta.read((char*)&x, sizeof(uint32_t));
 		matrizTranspuesta.read((char*)&valor, sizeof(double));
 
-		if((colAnt != columna) && (!primero)){
-			normas[j] = norma;
+		if((colAnt != columna) || (!primero)){
+		//	std::cerr << "Calculo la norma del documento: " << norma << std::endl;
+			normas.push_back(norma);
 			norma = 0;
 			primero = false;
-			j++;
 		}
 		colAnt = columna;
 
@@ -179,19 +178,27 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
 		}
 	}
 
+	matrizTranspuesta.close();
+	matrizTranspuesta.open(nombreSalida.c_str(), std::ios::in);
 	primero = true;
 	cambieFila = false;
 	uint32_t xAnt = 0;
+	uint32_t k = 0;
 
 	while(matrizTranspuesta.good()){
 		matrizTranspuesta.read((char*)&y, sizeof(uint32_t));
 		matrizTranspuesta.read((char*)&x, sizeof(uint32_t));
 		matrizTranspuesta.read((char*)&valor, sizeof(double));
-
+		std::cerr << "aposte:P" << std::endl;
 		if(xAnt != x) cambieFila = true;
 		xAnt = x;
 
 		if(valor && matrizTranspuesta.good()){
+			std::cerr << "K lpm!" << k << std::endl;
+			std::cerr << "Peso antes de la norma: " << normas[k] << std::endl;
+			valor =(double)((double) valor / (double)sqrt(normas[k]));
+			std::cerr << "Peso despues de calcular la norma: " << valor << std::endl;
+			k++;
 			matCoseno1.write((char*)&valor,sizeof(double));
 			matCoseno2.write((char*)&y,sizeof(uint32_t));
 			if(cambieFila || primero){
@@ -205,7 +212,7 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
 	}
 
 	matrizTranspuesta.close();
-	remove(nombreSalida.c_str());
+//	remove(nombreSalida.c_str());
 	matCoseno1.close();
 	matCoseno2.close();
 	matCoseno3.close();
