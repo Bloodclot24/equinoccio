@@ -10,10 +10,8 @@
 #include <list>
 #include <map>
 #include "../FileManager/FileManager.h"
+#include "../Parsers.h"
 
-class Notificador {
-
-std::list<std::string> catalogos;
 
 typedef struct RegistroDirectorio {
 	uint32_t pLexico;
@@ -37,6 +35,7 @@ typedef struct RegistroDisco {
 	time_t time;
 } RegistroDisco;
 
+class Notificador {
 
 public:
 
@@ -62,8 +61,10 @@ public:
 
 	void buscarModificaciones();
 
-	void cargarRegistrosDelDirectorio(uint32_t nro_dir, std::fstream &archDirectorio, std::fstream &archLexicoDir, std::map<ino_t,RegistroDisco> &registrosDisco, std::list<std::string> &directoriosNuevos);
-	void avanzarArchivo(std::fstream &archArchivo, std::fstream &archLexico, RegistroArchivo &regArchivo, std::string &nombre_arch);
+	void buscarArchivos(std::fstream &archivo, std::fstream &lexico, RegistroArchivo &registro, std::map<ino_t,RegistroDisco> &registrosDisco, uint32_t dirMenor, bool existeDirectorio, uint32_t eof);
+	bool cargarRegistrosDelDirectorio(uint32_t nro_dir, std::fstream &archDirectorio, std::fstream &archLexicoDir, std::map<ino_t,RegistroDisco> &registrosDisco, std::map<std::string,char> &directoriosNuevos, std::string &directorio);
+	void avanzarArchivo(std::fstream &archArchivo, std::fstream &archLexico, RegistroArchivo &regArchivo);
+	bool verificarDirectorioNuevo(const std::string &directorio);
 };
 
 #endif /* NOTIFICADOR_H_ */
