@@ -37,6 +37,11 @@ typedef struct RegistroDisco {
 
 class Notificador {
 
+
+class Notificador {
+
+std::list<std::string> catalogos;
+
 public:
 
 	bool esDirectorio(const std::string& nombre){

@@ -7,11 +7,15 @@
 
 #define IDX_ARCH2 "IDX_ARCH.idx."
 #define LEX_ARCH2 "LEX_ARCH.lex."
+
 #define IDX_DIRS2 "IDX_DIRS.idx"
 #define LEX_DIRS2 "LEX_DIRS.lex"
 #define EXT_NG_PUN ".ng.pun"
 #define EXT_NG_IDX ".ng.idx"
 #define EXT_FREC ".frec"
+
+#define ARCH_BITMAP "ARCH_BITMAP.bit."
+#define DIR_BITMAP  "DIR_BITMAP.bit"
 
 #define EXT_IMG "IMG"
 #define EXT_TXT "TXT"

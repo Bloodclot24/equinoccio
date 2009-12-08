@@ -38,7 +38,7 @@ void FileManager::cargarConfiguracion() {
 	  fallo.close();
 	  remove(PATH_FALLO);
      }
-
+     
      std::fstream config;
      config.open(PATH_CONFIG_FILE , std::fstream::in);
      config.seekg(0, std::fstream::end);
@@ -80,6 +80,15 @@ std::string FileManager::obtenerPathBase(uint32_t segmento){
      }
      
      return path;
+}
+
+std::string FileManager::obtenerPathBitmapDirs(uint32_t segmento){
+
+     return obtenerPathBase(segmento)+DIR_BITMAP;
+}
+
+std::string FileManager::obtenerPathBitmapArch(uint32_t segmento){
+     return obtenerPathBase(segmento)+ARCH_BITMAP;
 }
 
 std::string FileManager::obtenerPathIdxArch(uint32_t segmento){

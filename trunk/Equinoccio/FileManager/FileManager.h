@@ -66,7 +66,10 @@ public:
      static void agregarSegmento();
      
      static uint32_t getCantidadSegmentos();
+
+     static std::string obtenerPathBitmapDirs(uint32_t segmento);
      
+     static std::string obtenerPathBitmapArch(uint32_t segmento);     
 
      /* borra la carpeta Resources */
      static void borrarIndice();

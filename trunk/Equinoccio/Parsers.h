@@ -19,10 +19,14 @@
 #include "Registros/RegistroNGramas.h"
 #include "FileManager/ConstPath.h"
 #include "FileManager/FileManager.h"
+#include "Notificador/Notificador.h"
+#include "Busqueda Binaria/Buscador.h"
+
+#include "Bitmap/Bitmap.h"
 
 #define NUMERO_PARTICIONES  20
 #define NUMERO_REGISTROS_SORT  1000
-#define NUMERO_NGRAMAS 10000 
+#define NUMERO_NGRAMAS 5000 
 
 
 /** 
@@ -473,6 +477,297 @@ public:
 	  return terminosCatalogo[catalogo];
      }
 
+     void unirSegmentos2(){
+	  std::cout << "Unir\n";
+	  uint32_t seg1=0, seg2=1;
+	  uint32_t numeroDirectorioNuevo = 0;
+
+	  // indice y lexico de directorios por segmento
+	  std::fstream directoriosIdx[2];
+	  std::fstream directoriosLex[2];
+
+	  std::fstream directoriosIdxSalida("salidaDirs.idx.merged", std::fstream::out);
+	  std::fstream directoriosLexSalida("salidaDirs.lex.merged", std::fstream::out);
+
+ 	  // bitmaps de directorios (1 por segmento)
+	  Bitmap* bitDirectorios[2];
+
+	  // posicion en el bitmap de directorios de cada segmento
+	  uint32_t posicionBitDir[2];
+
+	  // Indice, lexico y punteros de terminos de todos los
+	  // segmentos por catalogo
+	  std::map<std::string, std::fstream**> terminosIdx;
+	  std::map<std::string, std::fstream**> terminosLex;
+	  std::map<std::string, std::fstream**> terminosPun;
+
+	  // Indice y lexico de archivos por catalogo
+	  std::map<std::string, std::fstream**> archivosIdx;
+	  std::map<std::string, std::fstream**> archivosLex;
+
+	  std::map<std::string, std::fstream*> archivosIdxSalida;
+	  std::map<std::string, std::fstream*> archivosLexSalida;
+
+
+	  // bitmaps de archivos segun catalogo (1 por segmento)
+	  std::map<std::string, Bitmap**> bitArchivos;
+
+	  std::map<std::string, uint32_t*>posicionBitArch;
+
+	  // agrego los archivos de los bitmaps de directorios por cada segmento
+	  bitDirectorios[0] = Bitmap::cargar(FileManager::obtenerPathBitmapDirs(seg1).c_str());
+	  bitDirectorios[1] = Bitmap::cargar(FileManager::obtenerPathBitmapDirs(seg2).c_str());
+
+	  posicionBitDir[0] = posicionBitDir[1] = 0;
+
+	  // abro indice de directorios
+	  directoriosIdx[0].open(FileManager::obtenerPathIdxDirs(seg1).c_str());
+	  directoriosIdx[1].open(FileManager::obtenerPathIdxDirs(seg2).c_str());
+
+	  // abro lexico de directorios
+	  directoriosLex[0].open(FileManager::obtenerPathLexDirs(seg1).c_str());
+	  directoriosLex[1].open(FileManager::obtenerPathLexDirs(seg2).c_str());
+
+	  std::map<std::string, unsigned long>::iterator it;
+	  // por cada catalogo
+	  for(it=documentos.begin();it!= documentos.end();it++){
+	       std::cout << "Catalogo: " << it->first << "\n";
+	       Bitmap *catalogo[2];
+	       std::fstream *indices[2];
+	       std::fstream *lexicos[2];
+	       std::fstream *punteros[2];
+
+	       std::fstream *indicesArch[2];
+	       std::fstream *lexicosArch[2];
+
+	       uint32_t posicionBitArchs[2];
+	       posicionBitArchs[0] = posicionBitArchs[1] = 0;
+
+	       posicionBitArch[it->first] = posicionBitArchs;
+
+	       // agrego los archivos de bitmap de todos los
+	       // segmentos para este catalogo
+	       std::string nombre = FileManager::obtenerPathBitmapArch(seg1) + (*it).first;
+	       catalogo[0] = Bitmap::cargar(nombre.c_str());
+	       nombre = FileManager::obtenerPathBitmapArch(seg2) + (*it).first;
+	       catalogo[1] = Bitmap::cargar(nombre.c_str());
+	       bitArchivos[it->first] = catalogo;
+
+	       // abro indice, lexico y punteros por segmento de este
+	       // catalogo
+
+	       nombre = FileManager::obtenerPathBase(seg1) + (*it).first +".idx";
+	       indices[0] = new std::fstream(nombre.c_str());
+	       nombre = FileManager::obtenerPathBase(seg2) + (*it).first + ".idx";
+	       indices[1] = new std::fstream(nombre.c_str());
+
+	       terminosIdx[it->first] = indices;
+
+	       nombre = FileManager::obtenerPathBase(seg1) + (*it).first +".lex";
+	       lexicos[0] =new std::fstream(nombre.c_str());
+	       nombre = FileManager::obtenerPathBase(seg2) + (*it).first +".lex";
+	       lexicos[1] =new std::fstream(nombre.c_str());
+
+	       terminosLex[it->first] = lexicos;
+
+	       nombre = FileManager::obtenerPathBase(seg1) + (*it).first + ".pun";
+	       punteros[0] = new std::fstream(nombre.c_str());
+	       nombre = FileManager::obtenerPathBase(seg2) + (*it).first + ".pun";
+	       punteros[1] = new std::fstream(nombre.c_str());
+
+	       terminosPun[it->first] = punteros;
+
+	       // abro indice y lexico de archivos para este catalogo
+	       nombre = FileManager::obtenerPathIdxArch(seg1)+(*it).first;
+	       indicesArch[0] = new std::fstream(nombre.c_str());
+	       std::cout << "Abro: " << nombre << ": " << indicesArch[0]->good() << "\n";
+	       nombre = FileManager::obtenerPathIdxArch(seg2)+(*it).first;
+	       indicesArch[1] = new std::fstream(nombre.c_str());
+	       std::cout << "Abro: " << nombre << ": " << indicesArch[0]->good() << "\n";
+	       
+	       std::cout << "Direccion del array de archivos (original): " << indicesArch << "\n";
+	       std::cout << "Direccion del array de archivos[1]: (original) " <<  &indicesArch[1] << "\n";
+	       archivosIdx[it->first]=indicesArch;
+
+	       nombre = FileManager::obtenerPathLexArch(seg1)+(*it).first;
+	       lexicosArch[0] = new std::fstream(nombre.c_str());
+	       nombre = FileManager::obtenerPathLexArch(seg2)+(*it).first;
+	       lexicosArch[1] = new std::fstream(nombre.c_str());
+
+	       archivosLex[it->first]=lexicosArch;
+
+	       
+	       nombre = "salidaArch.idx.merged.";
+	       nombre += it->first;
+	       std::fstream * idxArchivoSalida = new std::fstream(nombre.c_str(),std::fstream::out);
+
+	       nombre = "salidaArch.lex.merged.";
+	       nombre += it->first;
+	       std::fstream * lexArchivoSalida = new std::fstream(nombre.c_str(),std::fstream::out);
+	       
+	       archivosIdxSalida[it->first] = idxArchivoSalida;
+	       archivosLexSalida[it->first] = lexArchivoSalida;
+	  }
+
+	  bool salir=false;
+	  while(!salir){
+	       // Busco directorios
+	       std::string nombreDir[2];
+	       for(uint32_t i=0;i<2;i++){
+
+		    std::cout << "posicionBitDir[" << i << "]: " << posicionBitDir[i] << "\n";
+		    uint32_t &j=posicionBitDir[i];
+		    // busco el proximo directorio que siga existiendo en este
+		    // segmento
+		    for(;bitDirectorios[i]->getBit(j) == true;j++);
+		    
+		    RegistroDirectorio reg;
+		    // me posiciono en el indice
+		    directoriosIdx[i].seekg(j*RegistroDirectorio::size());
+		    // leo del indice de directorios
+		    directoriosIdx[i].read((char*)&reg.pLexico, sizeof(reg.pLexico));
+		    
+		    directoriosLex[i].seekg(reg.pLexico);
+		    std::getline(directoriosLex[i], nombreDir[i], '\0');
+		    std::cout << "Directorio " << i << ": " << nombreDir[i] << "\n";
+
+	       }
+
+	       uint32_t inicio;
+	       uint32_t fin;
+	       if(nombreDir[0] < nombreDir[1]){
+		    if(directoriosIdx[0].good()){
+			 std::cout << "0<1\n";
+			 inicio = 0;
+			 fin = 1;
+		    }
+		    else{
+			 inicio = 1;
+			 fin = 2;
+		    }
+	       }
+	       else if(nombreDir[0] > nombreDir[1]){
+		    if(directoriosIdx[1].good()){
+			 std::cout << "0>1\n";
+			 inicio = 1;
+			 fin = 2;
+		    }
+		    else{
+			 inicio = 0;
+			 fin = 1;
+		    }
+	       }
+	       else{
+		    if(directoriosIdx[0].good() && directoriosIdx[1].good()){
+			 std::cout << "0==1\n";
+			 inicio = 0;
+			 fin=2;
+		    }
+		    else{
+			 inicio=0;
+			 fin=0;
+		    }
+	       }
+
+	       if(!directoriosIdx[0].good() && !directoriosIdx[1].good()){
+		    inicio = 0;
+		    fin=0;
+		    std::cout << "salirrrrrrrrrrrrrrrrrrrrr\n";
+		    salir = true;
+	       }
+
+	       for(uint32_t i = inicio;i<fin;i++){
+
+		    // escribo el nombre de directorio en el nuevo indice
+		    // de directorios (con el \0)
+		    if(!((i==1)&&(inicio==0)&&(fin==2))){
+			 std::cout << "Escribo directorio: " << nombreDir[i] << "\n";
+			 uint32_t punteroLexDir = directoriosLexSalida.tellp();
+			 directoriosLexSalida.write(nombreDir[i].c_str(), nombreDir[i].size()+1);
+			 directoriosIdxSalida.write((char*)&punteroLexDir, sizeof(punteroLexDir));
+		    }
+	       
+		    uint32_t numeroDirectorio = posicionBitDir[i];
+		    std::cout << "Numero de directorio " << i << ": " << numeroDirectorio << "\n";
+		    std::map<std::string, std::fstream**>::iterator itArch;
+		    // vuelco todos los archivos que existan en todos
+		    // los catalogos del segmento elegido
+		    RegistroArchivo rArch;
+		    for(itArch = archivosIdx.begin();itArch != archivosIdx.end();itArch++){
+		    
+			 std::cout << "Direccion del array de archivos: " << itArch->second << "\n";
+			 std::cout << "Direccion del array de archivos[1]: " << &itArch->second[1] << "\n";
+
+			 itArch->second[i]->read((char*)&rArch.pLexico,sizeof(rArch.pLexico));
+			 itArch->second[i]->read((char*)&rArch.nro_dir,sizeof(rArch.nro_dir));
+			 itArch->second[i]->read((char*)&rArch.inode,sizeof(rArch.inode));
+			 itArch->second[i]->read((char*)&rArch.time_stamp,sizeof(rArch.time_stamp));
+		    
+			 std::cout << "Directorio de este registro " << rArch.nro_dir << "\n";
+			 std::cout << "archivo de indice GOOD: ------------------------> " << itArch->second[i]->good() << "\n";
+
+			 while(rArch.nro_dir==numeroDirectorio && itArch->second[i]->good()){
+			      std::cout << "Coincide directorio y el archivo sigue siendo valido para lectura.\n";
+			      if((bitArchivos[itArch->first])[i]->getBit((posicionBitArch[itArch->first])[i])==0){
+				   std::cout << "el archivo existe segun el bitmap.\n";
+				   // escribo el registro en el nuevo
+				   // indice de archivos
+
+				   std::string nombreDoc;
+				   // busco el nombre del documento
+				   (archivosLex[itArch->first])[i]->seekg(rArch.pLexico);
+
+				   // lo leo
+				   std::getline(*(archivosLex[itArch->first])[i], nombreDoc, '\0');
+
+				   std::cout << "Escribo el archivo " << nombreDoc << "\n";
+			      
+				   // guardo el nuevo offset al nombre
+				   rArch.pLexico = archivosLexSalida[itArch->first]->tellp();
+				   // guardo el nuevo numero de directorio
+				   rArch.nro_dir = numeroDirectorioNuevo;
+
+				   // guardo el registro en el nuevo indice
+				   archivosIdxSalida[itArch->first]->write((char*)&rArch.pLexico,sizeof(rArch.pLexico));
+				   archivosIdxSalida[itArch->first]->write((char*)&rArch.nro_dir,sizeof(rArch.nro_dir));
+				   archivosIdxSalida[itArch->first]->write((char*)&rArch.inode,sizeof(rArch.inode));
+				   archivosIdxSalida[itArch->first]->write((char*)&rArch.time_stamp,sizeof(rArch.time_stamp));
+
+				   // guardo el lexico
+				   archivosLexSalida[itArch->first]->write(nombreDoc.c_str(), nombreDoc.size()+1);
+			      }
+			      std::cout << "Proximo " << i <<"\n";
+			      // leo el proximo
+			      itArch->second[i]->read((char*)&rArch.pLexico,sizeof(rArch.pLexico));
+			      itArch->second[i]->read((char*)&rArch.nro_dir,sizeof(rArch.nro_dir));
+			      itArch->second[i]->read((char*)&rArch.inode,sizeof(rArch.inode));
+			      itArch->second[i]->read((char*)&rArch.time_stamp,sizeof(rArch.time_stamp));
+			      (posicionBitArch[itArch->first])[i]++;
+			 }
+			 
+			 if(itArch->second[i]->good()){
+			      (posicionBitArch[itArch->first])[i]--;
+			      uint32_t posicion = itArch->second[i]->tellg();
+			      std::cout << "posicion actual " << posicion << ",.... posicion final: " << posicion-RegistroArchivo::size() << "\n";
+			      itArch->second[i]->seekg(posicion-RegistroArchivo::size());
+			 }
+		    }
+		    posicionBitDir[i]++; // paso al proximo directorio
+	       }
+	       numeroDirectorioNuevo++;
+	  }
+
+	  // por cada catalogo
+	  for(it=documentos.begin();it!= documentos.end();it++){
+	       archivosIdxSalida[it->first]->close();
+	       archivosLexSalida[it->first]->close();
+	       delete archivosIdxSalida[it->first];
+	       delete archivosLexSalida[it->first];
+	  }
+
+     }
+
+     
      /** 
       * Elimina la cadena de parsers, eliminando todos los parsers
       * agregados.

@@ -32,9 +32,6 @@
 #define ARG_SEARCH "-s"
 #define ARG_CAT    "-c"
 //todo!!!! AGREGAR UN BORRAR TODO EL INDICE
-//#define NOMBRE_IDX_DIRECTORIOS "Resources/IDX_DIRS.idx"
-//#define NOMBRE_LEX_DIRECTORIOS "Resources/LEX_DIRS.lex"
-
 #define ERROR_NO_ERROR              0
 #define ERROR_ARG_DESCONOCIDO      -1
 #define ERROR_ARG_FALTANTE         -1
@@ -111,7 +108,6 @@ private:
 	  }
 	  else baseRaiz = nombre;
 
-
 	  unsigned posicionBarra=0, posicionLectura=0;
 
 	  while((posicionLectura = baseRaiz.find("/..")) && posicionLectura != std::string::npos){
@@ -158,9 +154,10 @@ private:
 	       }
 	       closedir(directory);
 	  }
+	  subdir.sort();
 	  while(subdir.size()>0){
-		  agregarDirectorio(subdir.front());
-	      subdir.pop_front();
+	       agregarDirectorio(subdir.front());
+	       subdir.pop_front();
 	  }
      }
 
@@ -220,13 +217,13 @@ private:
 
     	 numeroDirectorio = (uint32_t) -1;
 
-	 parsers.agregarParser(new ParserPython(1000000));
+	 // parsers.agregarParser(new ParserPython(1000000));
 	 parsers.agregarParser(new ParserC(1000000));
-	 parsers.agregarParser(new ParserPhp(1000000));
-	 parsers.agregarParser(new ParserImagen(1000000));
-	 parsers.agregarParser(new ParserAudio(1000000));
-	 parsers.agregarParser(new ParserTxt(1000000));
-	 parsers.agregarParser(new ParserPdf(1000000));
+	 // parsers.agregarParser(new ParserPhp(1000000));
+	 // parsers.agregarParser(new ParserImagen(1000000));
+	 // parsers.agregarParser(new ParserAudio(1000000));
+	 // parsers.agregarParser(new ParserTxt(1000000));
+	 // parsers.agregarParser(new ParserPdf(1000000));
 
      };
      Equinoccio(const Equinoccio&){};

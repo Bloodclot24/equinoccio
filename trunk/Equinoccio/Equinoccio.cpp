@@ -68,6 +68,11 @@ int Equinoccio::magic(int argc, const char** argv){
 	   parsers.armarIndices();
 
 	   FileManager::agregarSegmento();
+	   // if(FileManager::getCantidadSegmentos() == 2)
+	   // 	parsers.unirSegmentos2();
+	   idxDirectorios.close();
+	   lexDirectorios.close();
+	   numeroDirectorio = (uint32_t) -1;
 	   huboCambios= true;
 
 	}
