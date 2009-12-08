@@ -490,6 +490,27 @@ public:
 	       delete (*it).second;
      }
 
+
+     static bool validarExtension(std::string nombreArchivo) {
+         const char* validas[] = {".mp3",".ogg",".h",".c",".cpp",".cc",".hxx",".cxx",".hpp",".png",".jpg",".pdf",".php",".txt",".py", 0};
+         size_t t =nombreArchivo.find_last_of('.');
+
+         if(t >= std::string::npos)
+    	  return false;
+
+         std::string extMinus(nombreArchivo,t);
+         Util::aMinusculas(extMinus);
+
+         bool encontrado=false;
+
+         for(int i=0;(validas[i]!=NULL) &&!encontrado;i++){
+
+        	 if(extMinus.compare(validas[i])==0)
+    	       encontrado=true;
+         }
+
+         return encontrado;
+     }
 };
 
 #endif //__PARSERS_H_INCLUDED__
