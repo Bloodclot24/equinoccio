@@ -53,14 +53,12 @@ void Notificador::buscarArchivos(std::fstream &archivo, std::fstream &lexico, Re
 void Notificador::buscarModificaciones() {
 
 	//Nombre directorio
-     // TODO: en TODOS los segmentos
 	std::string directorio= FileManager::obtenerPathIdxDirs(0);
 	//Abro directorio para busqueda
 	std::fstream archDirectorio;
 	archDirectorio.open(directorio.c_str(), std::fstream::in);
 
 	//Nombre lexico directorio
-     // TODO: en TODOS los segmentos
 	std::string lexico_dir= FileManager::obtenerPathLexDirs(0);
 	//Abro lexico de directorio para busqueda
 	std::fstream archLexicoDir;
@@ -126,10 +124,9 @@ void Notificador::buscarModificaciones() {
 	//Auxiliares
 	uint32_t dirMenor;
 	std::map<ino_t,RegistroDisco> registrosDisco;
-	std::map<std::string,char> directoriosModificados;
+	std::map<std::string,bool> directoriosModificados;
 	std::string nombre_arch;
 	std::string catalogo;
-	std::string nombreDirectorio;
 	bool existeDirectorio;
 	uint32_t posActual;
 
@@ -173,7 +170,7 @@ void Notificador::buscarModificaciones() {
 			dirMenor= buscarMenorDirectorio(regImg, regTxt, regSrc, regSnd);
 			std::cout << "dirMenor: " << dirMenor << std::endl;
 
-			existeDirectorio= cargarRegistrosDelDirectorio(dirMenor, archDirectorio, archLexicoDir, registrosDisco, directoriosModificados, nombreDirectorio);
+			existeDirectorio= cargarRegistrosDelDirectorio(dirMenor, archDirectorio, archLexicoDir, registrosDisco, directoriosModificados);
 
 			//Busco por los catalogos comparando con los archivos levantados de disco
 			if(eofImg != archImgDir.tellg() && !errorImg)
@@ -220,20 +217,17 @@ void Notificador::buscarModificaciones() {
 			}
 			registrosDisco.clear();
 			std::cout << "-----------------------------------" << std::endl;
-
-			if(!existeDirectorio)
-				directoriosModificados[nombreDirectorio]= 'e';
 		}// fin catalogos
 
 		//Los directorios modificados(agregados o eliminados)
 		std::cout << "++++++ Directorios Modificados ++++++" << std::endl;
 		if(!directoriosModificados.empty()) {
 			//PRUEBA
-			std::map<std::string,char>::iterator it;
+			std::map<std::string,bool>::iterator it;
 			for(it= directoriosModificados.begin(); it != directoriosModificados.end(); it++) {
-				if(it->second == 'a')
+				if(it->second)
 					std::cout << "- Se agrego: " << it->first << std::endl;
-				else if(it->second == 'e')
+				else
 					std::cout << "- Se elimino: " << it->first << std::endl;
 			}
 		}
@@ -257,7 +251,7 @@ void Notificador::buscarModificaciones() {
 
 }
 
-bool Notificador::cargarRegistrosDelDirectorio(uint32_t nro_dir, std::fstream &archDirectorio, std::fstream &archLexicoDir, std::map<ino_t,RegistroDisco> &registrosDisco, std::map<std::string,char> &directoriosNuevos, std::string &directorio) {
+bool Notificador::cargarRegistrosDelDirectorio(uint32_t nro_dir, std::fstream &archDirectorio, std::fstream &archLexicoDir, std::map<ino_t,RegistroDisco> &registrosDisco, std::map<std::string,bool> &directoriosNuevos) {
 
 	bool existeDirectorio= false;
 	RegistroDirectorio regDirectorio;
@@ -270,7 +264,7 @@ bool Notificador::cargarRegistrosDelDirectorio(uint32_t nro_dir, std::fstream &a
 	//Posiciono en el lexico directorio segun el puntero leido y leo el nombre del directorio
 	archLexicoDir.seekg(regDirectorio.pLexico,std::fstream::beg);
 	char c=0;
-	directorio.clear();
+	std::string directorio;
 	while((c= archLexicoDir.get()) != 0) {
 		directorio+= c;
 	}
@@ -301,18 +295,16 @@ bool Notificador::cargarRegistrosDelDirectorio(uint32_t nro_dir, std::fstream &a
 				} else if(esDirectorio(nombreCompleto) && strncmp(entry->d_name,".",1)!=0) {
 					//agrego directorios
 					std::cout << "Directorio agregado: " << nombreCompleto << std::endl;
-					if(directoriosNuevos.count(nombreCompleto) == 0) {
-						if(verificarDirectorioNuevo(nombreCompleto))
-							directoriosNuevos[nombreCompleto]= 'a';
-						else
-							directoriosNuevos[nombreCompleto]= 'n';
-					}
+					if(verificarDirectorioNuevo(nombreCompleto))
+						directoriosNuevos[nombreCompleto]= true;
 				}
 			}
 			//Cierro el directorio
 			closedir(directory);
 		}
-	  }
+	}
+	if(!existeDirectorio)
+		directoriosNuevos[directorio]= false;
 
 	return	existeDirectorio;
 }
