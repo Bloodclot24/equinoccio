@@ -110,55 +110,54 @@ void Equinoccio::destruir(){
 std::list<std::string>* Equinoccio::getDirIndexados() {
 
 	if(dir_indexados->empty() || huboCambios) {
-		//Nombre directorio
-		std::string directorio= FileManager::obtenerPathIdxDirs(0);
-		//Abro directorio para busqueda
-		std::fstream archDirectorio;
-		archDirectorio.open(directorio.c_str(), std::fstream::in);
-
-		//Nombre lexico directorio
-		std::string lexico_dir= FileManager::obtenerPathLexDirs(0);
-		//Abro lexico de directorio para busqueda
-		std::fstream archLexicoDir;
-		archLexicoDir.open(lexico_dir.c_str(), std::fstream::in);
-
 		dir_indexados->clear();
+		std::string directorio, lexico_dir;
+		std::fstream archDirectorio, archLexicoDir;
+		uint32_t segmentos= FileManager::getCantidadSegmentos();
+		for(uint32_t seg= 0; seg<segmentos;seg++) {
+			//Nombre directorio
+			directorio= FileManager::obtenerPathIdxDirs(seg);
+			//Abro directorio para busqueda
+			archDirectorio.open(directorio.c_str(), std::fstream::in);
 
-		if(archLexicoDir.good() && archDirectorio.good()) {
+			//Nombre lexico directorio
+			lexico_dir= FileManager::obtenerPathLexDirs(seg);
+			//Abro lexico de directorio para busqueda
+			archLexicoDir.open(lexico_dir.c_str(), std::fstream::in);
 
-			archDirectorio.seekg(0, std::fstream::end);
-			uint32_t eofArchivo= archDirectorio.tellg();
-			archDirectorio.seekg(0, std::fstream::beg);
+			if(archLexicoDir.good() && archDirectorio.good()) {
 
-			uint32_t nro_dir= 0;
-			uint32_t regDirectorio;
+				archDirectorio.seekg(0, std::fstream::end);
+				uint32_t eofArchivo= archDirectorio.tellg();
+				archDirectorio.seekg(0, std::fstream::beg);
 
-			//Mientras no llegue al fin del archivo
-			while(archDirectorio.tellg() != eofArchivo) {
+				uint32_t nro_dir= 0;
+				uint32_t regDirectorio;
 
-				//Posiciono en el directorio segun numero de directorio leido
-				archDirectorio.seekg(nro_dir*sizeof(regDirectorio),std::ios_base::beg);
-				//Leo el puntero al lexico del directorio
-				archDirectorio.read((char*)&regDirectorio, sizeof(regDirectorio));
+				//Mientras no llegue al fin del archivo
+				while(archDirectorio.tellg() != eofArchivo) {
+					//Posiciono en el directorio segun numero de directorio leido
+					archDirectorio.seekg(nro_dir*sizeof(regDirectorio),std::ios_base::beg);
+					//Leo el puntero al lexico del directorio
+					archDirectorio.read((char*)&regDirectorio, sizeof(regDirectorio));
 
-				//Posiciono en el lexico directorio segun el puntero leido y leo el nombre del directorio
-				archLexicoDir.seekg(regDirectorio,std::fstream::beg);
-				char c=0;
-				std::string directorio;
-				while((c= archLexicoDir.get()) != 0)
-					directorio+= c;
+					//Posiciono en el lexico directorio segun el puntero leido y leo el nombre del directorio
+					archLexicoDir.seekg(regDirectorio,std::fstream::beg);
+					char c=0;
+					std::string directorio;
+					while((c= archLexicoDir.get()) != 0)
+						directorio+= c;
 
-				dir_indexados->push_back(directorio);
-				nro_dir++;
+					dir_indexados->push_back(directorio);
+					nro_dir++;
+				}
+				//Cierro directorio
+				archDirectorio.close();
+				//Cierro el lexico del directorio
+				archLexicoDir.close();
 			}
-
-			//Cierro directorio
-			archDirectorio.close();
-			//Cierro el lexico del directorio
-			archLexicoDir.close();
-
-			huboCambios= false;
 		}
+		huboCambios= false;
 	}
 	return dir_indexados;
 }
