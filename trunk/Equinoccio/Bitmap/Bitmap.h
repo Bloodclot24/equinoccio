@@ -14,6 +14,9 @@ private:
 public:
      Bitmap(std::string nombreArchivo);
      void setBit(uint32_t bit, bool valor);
+     /*
+      * @return 1 si no existe, cero si existe
+      */
      bool getBit(uint32_t bit);
      static Bitmap* cargar(std::string nombre);
 };

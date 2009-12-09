@@ -56,9 +56,13 @@ std::list<std::string>* Busqueda::buscar(std::string& consulta, std::string cata
 						 //agregar los paths a la lista
 						 if (punteros_match.size() != 0) {
 						  do{
-							   std::string path_documento = buscarPath(punteros_match.front(), catalogos[i], seg);
-							   std::cout<<"MATCH: "<<path_documento<<std::endl;
-							   paths->push_back(path_documento);
+							  std::string path_documento = buscarPath(punteros_match.front(), catalogos[i], seg);
+							   Bitmap b(FileManager::obtenerPathBitmapArch(seg)+FileManager::obtenerExtCatalogo(catalogos[i]));
+
+							   if (!b.getBit(seg)){
+								   std::cout<<"MATCH: "<<path_documento<<std::endl;
+								   paths->push_back(path_documento);
+							   }
 							   punteros_match.pop_front();
 						  }while(punteros_match.size()>0);
 						 }
@@ -123,6 +127,7 @@ bool Busqueda::buscarEnIndice(std::string consulta, std::string catalogo, uint32
 		std::cout<<"Busqueda simple: \""<<consulta<<"\""<<std::endl;
 		if (consulta.size() != 0) {
 			RegistroIndice reg = Buscador::buscar(consulta, catalogo, segmento);
+
 			if ( reg.frec != 0) {
 				//obtener los punteros
 				std::string nombre_pun =  FileManager::obtenerPathBase(segmento);
