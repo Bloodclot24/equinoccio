@@ -68,7 +68,7 @@ Interfaz::Interfaz() {
 	agregarCatalogo("Todos", "ALL");
 	agregarCatalogo("Imagen", "IMG");
 	agregarCatalogo("Audio", "SND");
-	agregarCatalogo("Texto", "TXT");
+	agregarCatalogo("Texto", "TEX");
 	agregarCatalogo("Fuentes", "SRC");
 }
 

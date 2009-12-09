@@ -17,9 +17,10 @@ Busqueda::~Busqueda() {
 std::list<std::string>* Busqueda::buscar(std::string& consulta, std::string catalogo) {
 	std::list<std::string> *paths= new std::list<std::string>;
 	if (consulta.size() != 0) {
+	     rankeada=false;
 		uint32_t segmentos= FileManager::getCantidadSegmentos();
 		if (consulta.find('*') != std::string::npos || consulta.find('?') != std::string::npos )
-			rankeada=false;
+		     rankeada=false;
 		if(!rankeada) {
 			uint32_t n=4,i=0;
 			const char *catalogos[] = {"SRC", "SND", "IMG", "TXT"};
@@ -77,7 +78,7 @@ std::list<std::string>* Busqueda::buscar(std::string& consulta, std::string cata
 			RegRank *reg;
 			RegRank comp_reg;
 			if (catalogo=="ALL"){
-				const char *catalogos[] = {"SRC", "SND", "IMG", "TXT"};
+				const char *catalogos[] = {"SRC", "SND", "IMG", "TEX"};
 				for (uint32_t i=0; i<4; i++){
 					for (uint32_t segm=0; segm<segmentos; segm++) {
 						if (BusquedaRankeada::coseno(consulta,catalogos[i],arbol, segm)) {

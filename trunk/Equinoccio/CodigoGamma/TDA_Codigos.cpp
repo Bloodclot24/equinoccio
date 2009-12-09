@@ -15,9 +15,13 @@ uint32_t TDA_Codigos::getNGamma(std::string &str){
 	bin = strtol(strb.c_str(), NULL, 2);
 	return (bin+una);
 }
+
 std::string TDA_Codigos::getCGamma(uint32_t nro){
 	std::string aux2;
-	uint32_t loga=(uint32_t)(logl(nro)/logl(2.0));/*Calculo la funcion piso del logaritmo en base 2 de x */
+	double d = (logl(nro)/logl(2.0));
+	uint32_t loga=d;/*Calculo la funcion piso del logaritmo en base 2 de x */
+	std::cout << "nro: " << nro << "\n"; 
+	std::cout << "loga: " << loga << " (" << (logl(nro)/logl(2.0)) <<")\n";
 	uint32_t unary= 1+loga; /*le sumo 1 a ese numero*/
 	uint32_t bin=nro-(uint32_t)pow(2,loga); /*Calculo la parte Binaria*/
 	if (nro > 1)/*Valido para no hacer cuentas inncesarias*/
@@ -26,6 +30,7 @@ std::string TDA_Codigos::getCGamma(uint32_t nro){
 	     aux2="0"+aux2;
 	return (getCUnario(unary)+aux2);/*Devuelvo la Cadena*/
 }
+
 std::string TDA_Codigos::getCUnario(uint32_t number){/*Codifico el Unario de Number en formato string*/
 	std::string aux;
 	aux="0";
@@ -33,6 +38,7 @@ std::string TDA_Codigos::getCUnario(uint32_t number){/*Codifico el Unario de Num
 		aux="1"+aux;
 	return aux;
 }
+
 void TDA_Codigos::binario(uint32_t num,std::string& bina){/*Paso a Binario con logica de desplazamiento*/
 	do{
 		if ((num % 2) != 0)

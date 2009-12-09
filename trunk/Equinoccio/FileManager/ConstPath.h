@@ -18,7 +18,7 @@
 #define DIR_BITMAP  "DIR_BITMAP.bit"
 
 #define EXT_IMG "IMG"
-#define EXT_TXT "TXT"
+#define EXT_TXT "TEX"
 #define EXT_SRC "SRC"
 #define EXT_SND "SND"
 

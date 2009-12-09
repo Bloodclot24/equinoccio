@@ -69,7 +69,7 @@ int Equinoccio::magic(int argc, const char** argv){
 	   parsers.armarIndices();
 
 	   BusquedaRankeada br;
-	   const char *catalogos[] = {"SRC", "SND", "IMG", "TXT"};
+	   const char *catalogos[] = {"SRC", "SND", "IMG", "TEX"};
 	   for(int i=0;i<4;i++){
 		std::string catalogo=catalogos[i];
 		br.armarMatrizCoseno(catalogo, parsers.obtenerCantidadDocumentos(catalogo), parsers.obtenerCantidadTerminos(catalogo));
@@ -92,7 +92,7 @@ int Equinoccio::magic(int argc, const char** argv){
 	if(arg_search_string){
 	   std::cout << "Buscar la cadena: " << arg_search_string << std::endl;
 
-	   std::string catalogo="SRC";
+	   std::string catalogo="ALL";
 	   if(arg_cat_string){
 		std::cout << "Buscar en el catalogo: " << arg_cat_string << std::endl;
 		catalogo = arg_cat_string;
