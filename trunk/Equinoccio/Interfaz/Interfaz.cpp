@@ -25,6 +25,7 @@ Interfaz::Interfaz() {
 					&Interfaz::on_button_buscar_clicked));
 		builder->get_widget("progressbar", progress_bar);
 		progress_bar->hide();
+		builder->get_widget("checkbutton", check_box);
 
 		builder->get_widget("combobox", combo_catalogo);
 		liststore_catalogo= Gtk::ListStore::create(columna_catalogo);
@@ -246,6 +247,7 @@ void Interfaz::on_button_buscar_clicked() {
 				button_buscar->set_sensitive(false);
 				entry_consulta->set_sensitive(false);
 				paths_resultado = NULL;
+				rankeada = check_box->get_active();
 				id_esperando = Glib::signal_timeout().connect(sigc::mem_fun(*this,
 							&Interfaz::esperarResultado), 200 );
 				this->execute();

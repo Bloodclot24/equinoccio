@@ -30,12 +30,14 @@ private:
 	Gtk::Button *button_buscar;
 	Gtk::Entry  *entry_consulta;
 	Gtk::Statusbar *status_bar;
+	Gtk::ToggleButton *check_box;
 
 	Glib::ustring catalogo; //catalogo en el que se esta buscando
 	Glib::ustring descr_catalogo;
 	Glib::ustring consulta;
 	Glib::ustring directorio;
 	sigc::connection id_esperando;
+	bool rankeada;
 
 	void cargarMenu();
 	void on_double_click(const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* column);
@@ -109,6 +111,7 @@ private:
 			std::string cat = catalogo;
 			std::string cons = consulta;
 			const char* com_c[] = {"./Equinoccio", ARG_CAT, cat.c_str(), ARG_SEARCH, cons.c_str()};
+			Busqueda::rankeada = rankeada;
 			Equinoccio::main(5, com_c);
 			paths_resultado = Equinoccio::getPaths();
 		}else {

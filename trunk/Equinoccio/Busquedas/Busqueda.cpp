@@ -7,12 +7,14 @@
 #include "../FileManager/FileManager.h"
 #include "../Busqueda Rankeada/BusquedaRankeada.h"
 
+bool Busqueda::rankeada=true;
+
 Busqueda::Busqueda() {}
 
 Busqueda::~Busqueda() {
 }
 
-std::list<std::string>* Busqueda::buscar(std::string& consulta, std::string catalogo, bool rankeada) {
+std::list<std::string>* Busqueda::buscar(std::string& consulta, std::string catalogo) {
 	std::list<std::string> *paths= new std::list<std::string>;
 	if (consulta.size() != 0) {
 		uint32_t segmentos= FileManager::getCantidadSegmentos();
@@ -60,6 +62,8 @@ std::list<std::string>* Busqueda::buscar(std::string& consulta, std::string cata
 			BusquedaRankeada::RegConsulta *res;
 			RegRank *reg;
 			RegRank comp_reg(0,0,0);
+			//TODO!!!!!
+			segmentos=1;
 			for (uint32_t segm=0; segm<segmentos; segm++) {
 				if (BusquedaRankeada::coseno(consulta,catalogo,arbol, segm)) {
 					while (!arbol.empty()) {
@@ -74,7 +78,7 @@ std::list<std::string>* Busqueda::buscar(std::string& consulta, std::string cata
 			//busco los path de los documentos match
 			while ((reg = arbol_segm.RemoverMayorIgual(comp_reg))) {
 				std::string path_doc = buscarPath(reg->nro,catalogo,reg->segm);
-				std::cout<<"MATCH "<<"peso: "<<1-reg->peso<<" "<<path_doc<<std::endl;
+				std::cout<<"MATCH "<<"peso: "<<(1-reg->peso)<<" "<<path_doc<<std::endl;
 				paths->push_back(path_doc);
 				delete reg;
 			}

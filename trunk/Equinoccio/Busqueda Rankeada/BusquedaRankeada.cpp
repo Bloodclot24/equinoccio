@@ -269,56 +269,56 @@ bool BusquedaRankeada::coseno(std::string &consulta, std::string &catalogo, std:
      const uint32_t eof =  arch_mc2.tellg()/ sizeof(uint32_t);
      arch_mc2.seekg(std::ios::beg);
 
-     //entro a la matriz y hago el producto interno con las filas de documentos
-     uint32_t off = 0;
-     arch_mc3.read((char*)&off, sizeof(uint32_t));
-     uint32_t sgte = off;
-     uint32_t  n;
-     uint32_t col;
-     RegConsulta doc;
-     RegConsulta *aux;
-     doc.nro = 0;
-     doc.peso = 0;
-     double coseno =0;
-     norma = sqrt(norma);
-     std::cout<<"\n Busqueda en la matriz \n\n";
-     //para cada documento hago el producto
-     while(arch_mc3.good()) {
-	  off = sgte;
-	  n= 0;
-	  col = 0;
-	  doc.peso = 0;
-	  coseno = 0;
-	  arch_mc3.read((char*)&sgte, sizeof(uint32_t));
-	  arch_mc2.seekg(off*sizeof(uint32_t));
-	  //para cada termino del documento
-	  do {
-	       bool buscar_sgte = true;
-	       //busco el termino
-	       do {
-		    arch_mc2.read((char*)&col,sizeof(uint32_t));
-		    if (col == v_consulta[n].nro) { //si el termino esta en el documento
-			 buscar_sgte = false;
-			 arch_mc1.seekg(off*sizeof(double)); //busco el peso del termino
-			 arch_mc1.read((char*)&coseno,sizeof(double));
-			 doc.peso += coseno*v_consulta[n].peso;
-		    }
-		    off++;
-	       } while (buscar_sgte && off<eof && off<sgte);
-	       n++;	//paso al siguiente termino
-	  }while(off<eof && off<sgte && n<v_consulta.size()); //hasta q no haya mas terminos en la consulta o en el doc
-	  doc.peso = (double)doc.peso / (double)norma;
-	  if(doc.peso > 0) {
-	       doc.peso = 1- doc.peso;
-	       std::cout<<"Peso del Doc "<<doc.nro<<": "<<doc.peso<<std::endl;
-	       std::cout<<"Peso invertido: "<<doc.peso<<std::endl<<std::endl;
-	       aux = new RegConsulta(doc.nro,doc.peso);
-	       arbol.push_back(aux);
-	  }
-	  doc.nro++;
-	  doc.peso = 0;
-     }
-     std::cout<<"*****Fin****\n";
-     return true;
+	//entro a la matriz y hago el producto interno con las filas de documentos
+	uint32_t off = 0;
+	arch_mc3.read((char*)&off, sizeof(uint32_t));
+	uint32_t sgte = off;
+	uint32_t  n;
+	uint32_t col;
+	RegConsulta doc;
+	RegConsulta *aux;
+	doc.nro = 0;
+	doc.peso = 0;
+	double coseno =0;
+	norma = sqrt(norma);
+	std::cout<<"\n Busqueda en la matriz \n\n";
+	//para cada documento hago el producto
+	while(arch_mc3.good()) {
+		off = sgte;
+		n= 0;
+		col = 0;
+		doc.peso = 0;
+		coseno = 0;
+		arch_mc3.read((char*)&sgte, sizeof(uint32_t));
+		arch_mc2.seekg(off*sizeof(uint32_t));
+		//para cada termino del documento
+		do {
+			bool buscar_sgte = true;
+			//busco el termino
+			do {
+				arch_mc2.read((char*)&col,sizeof(uint32_t));
+				if (col == v_consulta[n].nro) { //si el termino esta en el documento
+					buscar_sgte = false;
+					arch_mc1.seekg(off*sizeof(double)); //busco el peso del termino
+					arch_mc1.read((char*)&coseno,sizeof(double));
+					doc.peso += coseno*v_consulta[n].peso;
+				}
+				off++;
+			} while (buscar_sgte && off<eof && off<sgte);
+			n++;	//paso al siguiente termino
+		}while(off<eof && off<sgte && n<v_consulta.size()); //hasta q no haya mas terminos en la consulta o en el doc
+		doc.peso = (double)doc.peso / (double)norma;
+		if(doc.peso > 0) {
+			std::cout<<"Peso del Doc "<<doc.nro<<": "<<doc.peso<<std::endl;
+			doc.peso = 1- doc.peso;
+			std::cout<<"Peso invertido: "<<doc.peso<<std::endl<<std::endl;
+			aux = new RegConsulta(doc.nro,doc.peso);
+			arbol.push_back(aux);
+		}
+		doc.nro++;
+		doc.peso = 0;
+	}
+	std::cout<<"*****Fin****\n";
+	return true;
 }
 
