@@ -62,8 +62,6 @@ std::list<std::string>* Busqueda::buscar(std::string& consulta, std::string cata
 			BusquedaRankeada::RegConsulta *res;
 			RegRank *reg;
 			RegRank comp_reg(0,0,0);
-			//TODO!!!!!
-			segmentos=1;
 			for (uint32_t segm=0; segm<segmentos; segm++) {
 				if (BusquedaRankeada::coseno(consulta,catalogo,arbol, segm)) {
 					while (!arbol.empty()) {

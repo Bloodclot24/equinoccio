@@ -209,7 +209,7 @@ bool BusquedaRankeada::coseno(std::string &consulta, std::string &catalogo, std:
      nombre += catalogo;
      nombre += EXT_FREC;
      std::fstream arch_peso(nombre.c_str(), std::ios::binary | std::ios::in);
-     nombre = FileManager::obtenerPathBase(0);
+     nombre = FileManager::obtenerPathBase(segm);
      nombre += catalogo;
      std::fstream arch_mc1((nombre + ".mc1").c_str(), std::ios::binary | std::ios::in);
      std::fstream arch_mc2((nombre + ".mc2").c_str(), std::ios::binary | std::ios::in);
@@ -241,7 +241,7 @@ bool BusquedaRankeada::coseno(std::string &consulta, std::string &catalogo, std:
 	  else
 	       mul = where;
 	       		//TODO: para todos los segmentos
-	  if ( Buscador::buscarNroTermino(consulta.substr(pos,mul-pos), catalogo, reg.nro,0) ) {
+	  if ( Buscador::buscarNroTermino(consulta.substr(pos,mul-pos), catalogo, reg.nro,segm) ) {
 	       //entro al archivo de pesos
 	       arch_peso.seekg(reg.nro * sizeof(double));
 	       arch_peso.read((char*)&reg.peso, sizeof(double));
@@ -321,4 +321,3 @@ bool BusquedaRankeada::coseno(std::string &consulta, std::string &catalogo, std:
 	std::cout<<"*****Fin****\n";
 	return true;
 }
-
