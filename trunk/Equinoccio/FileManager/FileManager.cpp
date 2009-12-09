@@ -10,7 +10,6 @@ FileManager::~FileManager() {}
 
 
 int FileManager::crearJerarquias() {
-
      mkdir(PATH_TRES, PERMISO);
      mkdir(PATH_SEGDIF, PERMISO);
      mkdir(PATH_CONFIG, PERMISO);
@@ -19,7 +18,6 @@ int FileManager::crearJerarquias() {
 }
 
 void FileManager::crearAlertaFallo() {
-
      //Creo archivo de fallo por si se produce un fallo de segmentacion
      std::fstream fallo;
      std::string pathFallo= PATH_FALLO;
@@ -28,8 +26,7 @@ void FileManager::crearAlertaFallo() {
 }
 
 void FileManager::cargarConfiguracion() {
-     
-     bool error= false;
+	bool error= false;
      //Verifico si el archivo de fallos de segmentacion existe
      std::fstream fallo;
      fallo.open(PATH_FALLO , std::fstream::in);
@@ -41,22 +38,14 @@ void FileManager::cargarConfiguracion() {
      
      std::fstream config;
      config.open(PATH_CONFIG_FILE , std::fstream::in);
-     config.seekg(0, std::fstream::end);
-     uint32_t last= config.tellg();
-     config.seekg(0, std::fstream::beg);
      
-     if(config.is_open()) {
-	  
-	  while(last != config.tellg()){
-	       
-	  }
+     if(config.good()) {
+    	 config.read((char*)&segmentos, sizeof(segmentos));
+         config.close();
      }
-     
-     config.close();
 }
 
 void FileManager::crearConfiguracion() {
-     
      //Elimino el archivo alerta de fallos de segmentacion
      remove(PATH_FALLO);
      //Creo el archivo de configuracion
@@ -64,9 +53,9 @@ void FileManager::crearConfiguracion() {
      config.open(PATH_CONFIG_FILE , std::fstream::out);
      
      if(config.is_open()){
-	  
-	  
-	  config.close();
+    	 //Guardo la cantidad de segmentos
+    	 config.write((const char*)&segmentos,sizeof(segmentos));
+    	 config.close();
      }
 }
 

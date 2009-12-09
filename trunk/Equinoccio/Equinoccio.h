@@ -211,6 +211,9 @@ private:
      int magic(int argc, const char** argv);
 
      Equinoccio(){
+
+    	 std::cout << "cargando" << std::endl;
+
     	 FileManager::cargarConfiguracion();
     	 FileManager::crearJerarquias();
     	 FileManager::crearAlertaFallo();
