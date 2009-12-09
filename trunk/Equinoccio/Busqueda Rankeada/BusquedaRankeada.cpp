@@ -261,7 +261,8 @@ bool BusquedaRankeada::coseno(std::string &consulta, std::string &catalogo, std:
 		}
 		else
 			mul = where;
-		if ( Buscador::buscarNroTermino(consulta.substr(pos,mul-pos), catalogo, reg.nro) ) {
+		//TODO: para todos los segmentos
+		if ( Buscador::buscarNroTermino(consulta.substr(pos,mul-pos), catalogo, reg.nro, 0) ) {
 			//entro al archivo de pesos
 			arch_peso.seekg(reg.nro * sizeof(double));
 			arch_peso.read((char*)&reg.peso, sizeof(double));

@@ -65,7 +65,7 @@ private:
 	/* realiza la consulta con ngramas
 	 * @return false si no hay match
 	 *  */
-	bool consultaNgramas(std::string& consulta, std::string catalogo);
+	bool consultaNgramas(std::string& consulta, std::string catalogo, uint32_t segmentos);
 
 	/*
 	 * realiza un and de los punteros en las listas
@@ -104,7 +104,7 @@ public:
 	 * path de los documentos matcheados
 	 * devuelve NULL en caso de que no haya match
 	 * */
-	std::list<std::string>* buscar(std::string& consulta, std::string catalogo, bool rankeada=true);
+	std::list<std::string>* buscar(std::string& consulta, std::string catalogo, bool rankeada=false);
 
 
 };

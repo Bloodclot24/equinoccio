@@ -40,7 +40,7 @@ class Buscador
 		 **/
 		static RegistroIndice buscar(const std::string& termino, const std::string& catalogo, uint32_t segmento);
 		
-		static RegistroNGrama buscarNgrama(const std::string ngrama,const std::string& catalogo);
+		static RegistroNGrama buscarNgrama(const std::string ngrama,const std::string& catalogo, uint32_t segmento);
 
 		/*
 		 * Dado un termino devuelve su numero de termino en el indice
@@ -49,7 +49,7 @@ class Buscador
 		 *
 		 * @return true si encuentra el termino. Devuelve false si no encuentra y el campo nro no tiene significado
 		 * */
-		static bool buscarNroTermino(const std::string &termino, const std::string &catalogo, uint32_t &nro);
+		static bool buscarNroTermino(const std::string &termino, const std::string &catalogo, uint32_t &nro, uint32_t segmento);
 
 };
 

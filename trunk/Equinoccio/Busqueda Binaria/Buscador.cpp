@@ -13,7 +13,6 @@ RegistroIndice Buscador::buscar(const std::string& termino,const std::string& ca
 	RegistroIndice regInd;
 	char cadena[50];
 	bool error = false;
-	// TODO: deberia buscar en todos los segmentos
 	std::string indice =  FileManager::obtenerPathBase(segmento);
 	indice += catalogo + ".idx";
 	std::string lexico =  FileManager::obtenerPathBase(segmento);
@@ -62,15 +61,14 @@ RegistroIndice Buscador::buscar(const std::string& termino,const std::string& ca
 	return regInd;
 }
 
-RegistroNGrama Buscador::buscarNgrama(const std::string ngrama,const std::string& catalogo)
+RegistroNGrama Buscador::buscarNgrama(const std::string ngrama,const std::string& catalogo, uint32_t segmento)
 {
 	uint32_t medio = 0;
 	uint32_t izquierda = 0;
 	uint32_t derecha = 0;
 	bool encontrado = false;
 	bool error = false;
-	// TODO: debería buscar en todos los segmentos
-	std::string archNgrama =  FileManager::obtenerPathBase(0);
+	std::string archNgrama =  FileManager::obtenerPathBase(segmento);
 	archNgrama += catalogo + EXT_NG_IDX;
 	std::fstream archivo;
 	RegistroNGrama regNgrama;
@@ -110,7 +108,7 @@ RegistroNGrama Buscador::buscarNgrama(const std::string ngrama,const std::string
 
 }
 
-bool Buscador::buscarNroTermino(const std::string &termino, const std::string &catalogo, uint32_t& nro) {
+bool Buscador::buscarNroTermino(const std::string &termino, const std::string &catalogo, uint32_t& nro, uint32_t segmento) {
 
 	uint32_t medio = 0;
 	uint32_t izquierda = 0;
@@ -122,10 +120,9 @@ bool Buscador::buscarNroTermino(const std::string &termino, const std::string &c
 	bool error = false;
 	bool encontrado = false;
 
-	// TODO: deberia buscar en todos los segmentos
-	std::string indice =  FileManager::obtenerPathBase(0);
+	std::string indice =  FileManager::obtenerPathBase(segmento);
 	indice += catalogo + ".idx";
-	std::string lexico =  FileManager::obtenerPathBase(0);
+	std::string lexico =  FileManager::obtenerPathBase(segmento);
 	lexico += catalogo + ".lex";
 
 	// Abro los archivos para lectura

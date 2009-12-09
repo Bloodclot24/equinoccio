@@ -114,33 +114,29 @@ bool Busqueda::buscarEnIndice(std::string consulta, std::string catalogo, uint32
 	else {
 		//consulta con comodines
 		std::cout<<"busqueda con comodines: "<<consulta<<std::endl;
-		return consultaNgramas(consulta, catalogo);
+		return consultaNgramas(consulta, catalogo, segmento);
 	}
 	return false;
 }
 
-bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
+bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo, uint32_t segmento) {
 
-     // TODO: deberia buscar en todos los segmentos
-	std::string path = FileManager::obtenerPathBase(0);
+	std::string path = FileManager::obtenerPathBase(segmento);
 	path += catalogo;
 	path += ".idx";
 	std::cout<<path<<std::endl;
 	std::ifstream indice(path.c_str(), std::ios::in | std::ios::binary);
-	// TODO: IDEM
-	path = FileManager::obtenerPathBase(0);
+	path = FileManager::obtenerPathBase(segmento);
 	path += catalogo;
 	path += EXT_NG_PUN;
 	std::cout<<path<<std::endl;
 	std::ifstream pun_ng(path.c_str(),  std::ios::in | std::ios::binary);
-	// TODO: IDEMx2
-	path = FileManager::obtenerPathBase(0);
+	path = FileManager::obtenerPathBase(segmento);
 	path += catalogo;
 	path += ".lex";
 	std::cout<<path<<std::endl;
 	std::ifstream lexico (path.c_str(), std::ios::in | std::ios::binary);
-	// TODO: IDEMx3
-	path = FileManager::obtenerPathBase(0);
+	path = FileManager::obtenerPathBase(segmento);
 	path += catalogo;
 	path += ".pun";
 	std::cout<<path<<std::endl;
@@ -174,7 +170,7 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo) {
 			substr.push_back(str);
 			for (size_t car=0; car<(str.size()-1) ;car++) {
 				if (str[car] != '?' && str[car+1]!= '?') {
-					RegistroNGrama regN = Buscador::buscarNgrama(str.substr(car,2),catalogo);
+					RegistroNGrama regN = Buscador::buscarNgrama(str.substr(car,2),catalogo, segmento);
 					//en pDocs esta el offset al archivo con los offsets al indice general
 					if (regN.frec > 0) {
 						//busco la lista de offsets al indice asociado a ese biGrama
