@@ -11,6 +11,7 @@
 #include "../Sort/Sort.h"
 #include "../Parsers.h"
 
+
 class BusquedaRankeada{
 	private:
 //			std::vector<double> vNoNulos;
@@ -38,6 +39,7 @@ class BusquedaRankeada{
 			nro=n;
 			peso=p;
 		}
+
 	};
 
      void armarMatrizCoseno(std::string& catalogo, uint32_t documentos, uint32_t terminos);

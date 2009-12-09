@@ -483,6 +483,7 @@ public:
 	  std::cout << "Unir\n";
 	  uint32_t seg1=0, seg2=1;
 	  uint32_t numeroDirectorioNuevo = 0;
+	  uint32_t nroDocumento = 0;
 
 	  // indice y lexico de directorios por segmento
 	  std::fstream directoriosIdx[2];
@@ -507,6 +508,11 @@ public:
 	  std::map<std::string, std::fstream**> archivosIdx;
 	  std::map<std::string, std::fstream**> archivosLex;
 
+	  // Nuevo numero de documento para la lista de terminos por
+	  // catalogo y segmento
+	  std::map<std::string, std::fstream**> archivosTermSalida;
+
+	  // archivos de salida de indice y laxico por catalogo
 	  std::map<std::string, std::fstream*> archivosIdxSalida;
 	  std::map<std::string, std::fstream*> archivosLexSalida;
 
@@ -541,6 +547,8 @@ public:
 
 	       std::fstream *indicesArch[2];
 	       std::fstream *lexicosArch[2];
+
+	       std::fstream *terminosSalida[2];
 
 	       uint32_t posicionBitArchs[2];
 	       posicionBitArchs[0] = posicionBitArchs[1] = 0;
@@ -598,6 +606,13 @@ public:
 
 	       archivosLex[it->first]=lexicosArch;
 
+	       nombre = "salidaTerminos0.term";
+	       terminosSalida[0] = new std::fstream(nombre.c_str(), std::fstream::out);
+	       nombre = "salidaTerminos2.term";
+	       terminosSalida[1] = new std::fstream(nombre.c_str(), std::fstream::out);
+
+	       archivosTermSalida[it->first] = terminosSalida;
+
 	       
 	       nombre = "salidaArch.idx.merged.";
 	       nombre += it->first;
@@ -624,16 +639,19 @@ public:
 		    for(;bitDirectorios[i]->getBit(j) == true;j++);
 		    
 		    RegistroDirectorio reg;
-		    // me posiciono en el indice
+		    // me posiciono en el indice en ese directorio
 		    directoriosIdx[i].seekg(j*RegistroDirectorio::size());
 		    // leo del indice de directorios
 		    directoriosIdx[i].read((char*)&reg.pLexico, sizeof(reg.pLexico));
 		    
+		    // leo el nombre del directorio
 		    directoriosLex[i].seekg(reg.pLexico);
 		    std::getline(directoriosLex[i], nombreDir[i], '\0');
 		    std::cout << "Directorio " << i << ": " << nombreDir[i] << "\n";
 
 	       }
+
+	       // ya tengo los nombres de los 2 directorios
 
 	       uint32_t inicio;
 	       uint32_t fin;
@@ -708,10 +726,23 @@ public:
 			 std::cout << "Directorio de este registro " << rArch.nro_dir << "\n";
 			 std::cout << "archivo de indice GOOD: ------------------------> " << itArch->second[i]->good() << "\n";
 
+
 			 while(rArch.nro_dir==numeroDirectorio && itArch->second[i]->good()){
 			      std::cout << "Coincide directorio y el archivo sigue siendo valido para lectura.\n";
+
+			      // me guardo el nuevo numero de
+			      // documento de este documento
+			 
+			      (archivosTermSalida[itArch->first])[i]->write((char*)&nroDocumento, sizeof(nroDocumento));
+
 			      if((bitArchivos[itArch->first])[i]->getBit((posicionBitArch[itArch->first])[i])==0){
 				   std::cout << "el archivo existe segun el bitmap.\n";
+
+				   nroDocumento++; // me aseguro de
+						   // asignar un
+						   // numero diferente
+						   // al siguiente
+
 				   // escribo el registro en el nuevo
 				   // indice de archivos
 
@@ -738,6 +769,7 @@ public:
 				   // guardo el lexico
 				   archivosLexSalida[itArch->first]->write(nombreDoc.c_str(), nombreDoc.size()+1);
 			      }
+
 			      std::cout << "Proximo " << i <<"\n";
 			      // leo el proximo
 			      itArch->second[i]->read((char*)&rArch.pLexico,sizeof(rArch.pLexico));
@@ -761,6 +793,11 @@ public:
 
 	  // por cada catalogo
 	  for(it=documentos.begin();it!= documentos.end();it++){
+
+	       (archivosTermSalida[it->first])[0]->close();
+	       (archivosTermSalida[it->first])[1]->close();
+	       delete (archivosTermSalida[it->first])[0];
+	       delete (archivosTermSalida[it->first])[1];
 	       archivosIdxSalida[it->first]->close();
 	       archivosLexSalida[it->first]->close();
 	       delete archivosIdxSalida[it->first];

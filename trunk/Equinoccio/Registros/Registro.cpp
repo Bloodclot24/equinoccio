@@ -11,6 +11,14 @@ Registro::Registro(const std::string& termino, uint32_t documento){
      punteros.push_back(puntero);   // agrego el puntero a la lista
 }
 
+Registro::Registro(const std::string& termino){
+     this->termino = termino;
+     frecuencia=0;
+}
+
+std::list<Registro::Punteros>& Registro::getListaPunteros(){
+     return punteros;
+}
 
 Registro* Registro::leer(std::ifstream &archivo, int compresion){
      Registro* r= new Registro(); // creo un registro
