@@ -271,7 +271,6 @@ bool BusquedaRankeada::coseno(std::string &consulta, std::string catalogo, std::
 	doc.peso = 0;
 	double coseno =0;
 	norma = sqrt(norma);
-	std::cout<<"\n Busqueda en la matriz. Norma consulta: " << norma << "\n\n";
 	//abro el bitmap
 	Bitmap b(FileManager::obtenerPathBitmapArch(segm)+FileManager::obtenerExtCatalogo(catalogo));
 
@@ -286,7 +285,6 @@ bool BusquedaRankeada::coseno(std::string &consulta, std::string catalogo, std::
 		arch_mc3.read((char*)&sgte, sizeof(uint32_t));
 		arch_mc2.seekg(off*sizeof(uint32_t));
 
-		std::cout << "sgte: " << sgte << "\n";
 		//para cada termino del documento
 		if (!b.getBit(doc.nro)) {
 			do {
@@ -296,9 +294,7 @@ bool BusquedaRankeada::coseno(std::string &consulta, std::string catalogo, std::
 				     arch_mc2.read((char*)&col,sizeof(uint32_t));
 				     while(v_consulta[n].nro < col && n < v_consulta.size())
 					  n++;
-				     std::cout << "col: " << col << " nro: " << v_consulta[n].nro << " peso: " << v_consulta[n].peso << "\n";
-				     std::cout << "n: " << v_consulta.size() << " nAct: " << n << "\n";
-					if (col == v_consulta[n].nro) { //si el termino esta en el documento
+				     if (col == v_consulta[n].nro) { //si el termino esta en el documento
 						buscar_sgte = false;
 						arch_mc1.seekg(off*sizeof(double)); //busco el peso del termino
 						arch_mc1.read((char*)&coseno,sizeof(double));
