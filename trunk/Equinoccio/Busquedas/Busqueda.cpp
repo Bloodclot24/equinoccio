@@ -61,22 +61,41 @@ std::list<std::string>* Busqueda::buscar(std::string& consulta, std::string cata
 			RedBlackTree<RegRank> arbol_segm;
 			BusquedaRankeada::RegConsulta *res;
 			RegRank *reg;
-			RegRank comp_reg(0,0,0);
-			for (uint32_t segm=0; segm<segmentos; segm++) {
-				if (BusquedaRankeada::coseno(consulta,catalogo,arbol, segm)) {
-					while (!arbol.empty()) {
-						res = arbol.front();
-						arbol.pop_front();
-						reg = new RegRank(res->nro, segm, res->peso);
-						arbol_segm.Insert(reg);
-						delete res;
+			RegRank comp_reg;
+			if (catalogo=="ALL"){
+				const char *catalogos[] = {"SRC", "SND", "IMG", "TXT"};
+				for (uint32_t i=0; i<4; i++){
+					for (uint32_t segm=0; segm<segmentos; segm++) {
+						if (BusquedaRankeada::coseno(consulta,catalogos[i],arbol, segm)) {
+							while (!arbol.empty()) {
+								res = arbol.front();
+								arbol.pop_front();
+								reg = new RegRank(res->nro, segm, catalogos[i], res->peso);
+								arbol_segm.Insert(reg);
+								delete res;
+							}
+						}
 					}
 				}
 			}
+			else {
+				for (uint32_t segm=0; segm<segmentos; segm++) {
+					if (BusquedaRankeada::coseno(consulta,catalogo,arbol, segm)) {
+						while (!arbol.empty()) {
+							res = arbol.front();
+							arbol.pop_front();
+							reg = new RegRank(res->nro, segm, catalogo, res->peso);
+							arbol_segm.Insert(reg);
+							delete res;
+						}
+					}
+				}
+			}
+
 			//busco los path de los documentos match
 			while ((reg = arbol_segm.RemoverMayorIgual(comp_reg))) {
-				std::string path_doc = buscarPath(reg->nro,catalogo,reg->segm);
-				std::cout<<"MATCH "<<"peso: "<<(1-reg->peso)<<" "<<path_doc<<std::endl;
+				std::string path_doc = buscarPath(reg->nro,reg->cat,reg->segm);
+				std::cout<<"MATCH "<<"peso: "<<(1-reg->peso)<<" CAT: "<<reg->cat<<"	"<<path_doc<<std::endl;
 				paths->push_back(path_doc);
 				delete reg;
 			}

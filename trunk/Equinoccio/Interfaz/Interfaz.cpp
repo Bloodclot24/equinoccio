@@ -65,11 +65,11 @@ Interfaz::Interfaz() {
 		error = true;
 	}
 	//agregar catalogos
+	agregarCatalogo("Todos", "ALL");
 	agregarCatalogo("Imagen", "IMG");
 	agregarCatalogo("Audio", "SND");
 	agregarCatalogo("Texto", "TXT");
 	agregarCatalogo("Fuentes", "SRC");
-
 }
 
 Interfaz::~Interfaz() {}

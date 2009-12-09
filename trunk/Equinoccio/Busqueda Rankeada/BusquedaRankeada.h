@@ -48,7 +48,7 @@ class BusquedaRankeada{
       * @param segm numero de segmento
       * @return false en caso de error
       */
-     static bool coseno(std::string &consulta, std::string &catalogo, std::list<RegConsulta*> &arbol, uint32_t segm);
+     static bool coseno(std::string &consulta, std::string catalogo, std::list<RegConsulta*> &arbol, uint32_t segm);
 };
 
 #endif /* BUSQUEDARANKEADA_H_ */

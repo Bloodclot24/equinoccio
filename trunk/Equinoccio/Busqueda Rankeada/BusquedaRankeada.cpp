@@ -204,7 +204,7 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo, uint32_t documen
 }
 
 
-bool BusquedaRankeada::coseno(std::string &consulta, std::string &catalogo, std::list<RegConsulta*> &arbol, uint32_t segm) {
+bool BusquedaRankeada::coseno(std::string &consulta, std::string catalogo, std::list<RegConsulta*> &arbol, uint32_t segm) {
      std::string nombre = FileManager::obtenerPathBase(0);//para todos los segmentos TODO!!!!!
      nombre += catalogo;
      nombre += EXT_FREC;
@@ -251,10 +251,8 @@ bool BusquedaRankeada::coseno(std::string &consulta, std::string &catalogo, std:
 	       std::cout<<consulta.substr(pos,mul-pos)<<"	nro: "<<reg.nro<<"	peso: "<<reg.peso<<std::endl;
 	  }
 	  else {
-	       //cri cri
-	       //si no encuentra un termino que hago? ^_^
-	       //podria repetir para todos los segmentos hasta que se terminen :)
 	       std::cout<<"No encontrado: "<<consulta.substr(pos,mul-pos)<<std::endl;
+	       return false;
 	  }
 	  pos = where+1;
      }while (where != std::string::npos);
