@@ -5,54 +5,82 @@
 #include "../Parsers/Parser.h"
 #include "../FileManager/ConstPath.h"
 #include "../FileManager/FileManager.h"
+#include "../Busqueda Rankeada/BusquedaRankeada.h"
 
 Busqueda::Busqueda() {}
 
 Busqueda::~Busqueda() {
 }
 
-std::list<std::string>* Busqueda::buscar(std::string& consulta, std::string catalogo) {
+std::list<std::string>* Busqueda::buscar(std::string& consulta, std::string catalogo, bool rankeada) {
 	std::list<std::string> *paths= new std::list<std::string>;
 	if (consulta.size() != 0) {
 		uint32_t segmentos= FileManager::getCantidadSegmentos();
-		size_t pos = 0;
-		size_t where = 0;
-		bool encontrado;
+		if (consulta.find('*') != std::string::npos || consulta.find('?') != std::string::npos )
+			rankeada=false;
+		if(!rankeada) {
+			size_t pos = 0;
+			size_t where = 0;
+			bool encontrado;
+			for(uint32_t seg=0; seg<segmentos; seg++) {
+				punteros.clear();
+				punteros_match.clear();
+				do {
+					//tomo la palabra y la busco en el indice
+					where = consulta.find(' ', pos);
+					encontrado = buscarEnIndice(consulta.substr(pos, where-pos), catalogo, seg);
+					pos = where+1;
+				}while (where != std::string::npos && encontrado);
 
-		for(uint32_t seg=0; seg<segmentos; seg++) {
-			punteros.clear();
-			punteros_match.clear();
-			do {
-				//tomo la palabra y la busco en el indice
-				where = consulta.find(' ', pos);
-				encontrado = buscarEnIndice(consulta.substr(pos, where-pos), catalogo, seg);
-				pos = where+1;
-			}while (where != std::string::npos && encontrado);
+				if (!encontrado) {
+					//una o mas palabras no matcheadas
+					std::cout<<" * NO MATCH SEGMENTO " << seg << " * " <<std::endl;
+					for (unsigned int i=0; i<punteros.size();i++)
+						delete punteros[i];
+				}
+				else {
+					 std::cout<<" * AND SEGMENTO " << seg << " * " <<std::endl;
+					 Busqueda::andPunteros2(this->punteros,this->punteros_match);
 
-			if (!encontrado) {
-				//una o mas palabras no matcheadas
-				std::cout<<" * NO MATCH SEGMENTO " << seg << " * " <<std::endl;
-				for (unsigned int i=0; i<punteros.size();i++)
-					delete punteros[i];
+					 //agregar los paths a la lista
+					 if (punteros_match.size() != 0) {
+					  do{
+						   std::string path_documento = buscarPath(punteros_match.front(), catalogo, seg);
+						   std::cout<<"MATCH: "<<path_documento<<std::endl;
+						   paths->push_back(path_documento);
+						   punteros_match.pop_front();
+					  }while(punteros_match.size()>0);
+					 }
+				}
+			}// for segmentos
+		}
+		else {
+			std::list<BusquedaRankeada::RegConsulta*> arbol;
+			RedBlackTree<RegRank> arbol_segm;
+			BusquedaRankeada::RegConsulta *res;
+			RegRank *reg;
+			RegRank comp_reg(0,0,0);
+			for (uint32_t segm=0; segm<segmentos; segm++) {
+				if (BusquedaRankeada::coseno(consulta,catalogo,arbol, segm)) {
+					while (!arbol.empty()) {
+						res = arbol.front();
+						arbol.pop_front();
+						reg = new RegRank(res->nro, segm, res->peso);
+						arbol_segm.Insert(reg);
+						delete res;
+					}
+				}
 			}
-			else {
-				 std::cout<<" * AND SEGMENTO " << seg << " * " <<std::endl;
-				 Busqueda::andPunteros2(this->punteros,this->punteros_match);
-
-				 //agregar los paths a la lista
-				 if (punteros_match.size() != 0) {
-				  do{
-					   std::string path_documento = buscarPath(punteros_match.front(), catalogo, seg);
-					   std::cout<<"MATCH: "<<path_documento<<std::endl;
-					   paths->push_back(path_documento);
-					   punteros_match.pop_front();
-				  }while(punteros_match.size()>0);
-				 }
+			//busco los path de los documentos match
+			while ((reg = arbol_segm.RemoverMayorIgual(comp_reg))) {
+				std::string path_doc = buscarPath(reg->nro,catalogo,reg->segm);
+				std::cout<<"MATCH "<<"peso: "<<1-reg->peso<<" "<<path_doc<<std::endl;
+				paths->push_back(path_doc);
+				delete reg;
 			}
-		} // for segmentos
+		}
 	}
 	std::cout<<"Fin buscar"<<std::endl;
-
 	return paths;
 }
 	
@@ -341,43 +369,6 @@ void Busqueda::filtrarFalsosPositivos(std::list<std::string>& consulta, std::lis
 			termino += reg->termino;
 			termino += '$';
 			it_str = consulta.begin();
-//			while (it_str != consulta.end() && ((pos = termino.find(*it_str, pos))!=std::string::npos)) {
-//				pos += it_str->length();
-//				it_str++;
-//			}
-//			size_t pos_wild=0, where_wild=0, pos=0, where=0;  //para los *
-//			while (it_str != consulta.end() && where != std::string::npos) {
-//				//separo para los '?'
-//				pos_wild=0;
-//				do {
-//					where_wild = it_str->find('?', pos_wild);
-//					if (where_wild != std::string::npos){
-//						where = termino.find(it_str->substr(pos_wild, where-pos_wild),pos);
-//						pos = where_wild-pos_wild + where+1;
-//						pos_wild = where_wild+1;
-//					}
-//				}while(where != std::string::npos && where_wild != std::string::npos);
-//				it_str++;
-//			}
-
-//			size_t pos=-1;
-//			size_t pos_wild, where_wild, tam;
-//			bool encontrado = true;
-//			do {
-//				pos_wild=0;
-//				where_wild = it_str->find('?',pos_wild);
-//				tam = where_wild-pos_wild;
-//				do {
-//					pos++;
-//					if (termino.substr(pos, tam) != it_str.substr(pos_wild, tam))
-//						encontrado = false;
-//					pos += tam;
-//					pos_wild = where_wild+1;
-//					where_wild = it_str->find('?',pos_wild);
-//					tam = where_wild-pos_wild;
-//				}while (where_wild != std::string::npos && (pos+tam) < termino.size() && encontrado);
-//				it++;
-//			} while (it_str!=consulta.end() && pos < (termino.size()-1) && encontrado);
 
 			bool encontrado = true;
 			size_t pos_wild, pos=0;

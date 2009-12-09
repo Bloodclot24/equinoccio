@@ -14,7 +14,7 @@ int main (int argc, char** argv) {
 	}
 
 	Busqueda buscador;
-	buscador.buscar(consulta, argv[1]);
+	//buscador.buscar(consulta, argv[1]);
 
 	return 0;
 }

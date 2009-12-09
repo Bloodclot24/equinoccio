@@ -217,7 +217,7 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
 
 
 
-bool BusquedaRankeada::coseno(std::string &consulta, std::string &catalogo, RedBlackTree<RegConsulta> &arbol) {
+bool BusquedaRankeada::coseno(std::string &consulta, std::string &catalogo, std::list<RegConsulta*> &arbol, uint32_t segm) {
 	std::string nombre = FileManager::obtenerPathBase(0);//para todos los segmentos TODO!!!!!
 	nombre += catalogo;
 	nombre += EXT_FREC;
@@ -271,7 +271,12 @@ bool BusquedaRankeada::coseno(std::string &consulta, std::string &catalogo, RedB
 		pos = where+1;
 	}while (where != std::string::npos);
 	arch_peso.close();
-//ORDENAR vector de consulta por numero de termino
+
+	//ordeno el vector consulta
+	std::sort(v_consulta.begin(),v_consulta.end());
+	for(uint32_t i=0; i<v_consulta.size();i++)
+		std::cout<<"Nro de termino: "<<v_consulta[i].nro<<std::endl;
+
 	arch_mc2.seekg(0,std::ios::end);
 	const uint32_t eof =  arch_mc2.tellg()/ sizeof(uint32_t);
 	arch_mc2.seekg(std::ios::beg);
@@ -309,19 +314,18 @@ bool BusquedaRankeada::coseno(std::string &consulta, std::string &catalogo, RedB
 					arch_mc1.seekg(off*sizeof(double)); //busco el peso del termino
 					arch_mc1.read((char*)&coseno,sizeof(double));
 					doc.peso += coseno*v_consulta[n].peso;
-					std::cout<<"Termino nro: "<<v_consulta[n].nro<<"	en Doc: "<<doc.nro<<std::endl;
 				}
 				off++;
 			} while (buscar_sgte && off<eof && off<sgte);
 			n++;	//paso al siguiente termino
 		}while(off<eof && off<sgte && n<v_consulta.size()); //hasta q no haya mas terminos en la consulta o en el doc
 		doc.peso = (double)doc.peso / (double)norma;
-		std::cout<<"Peso del Doc "<<doc.nro<<": "<<doc.peso<<std::endl;
 		if(doc.peso > 0) {
 			doc.peso = 1- doc.peso;
+			std::cout<<"Peso del Doc "<<doc.nro<<": "<<doc.peso<<std::endl;
 			std::cout<<"Peso invertido: "<<doc.peso<<std::endl<<std::endl;
 			aux = new RegConsulta(doc.nro,doc.peso);
-			arbol.Insert(aux);
+			arbol.push_back(aux);
 		}
 		doc.nro++;
 		doc.peso = 0;

@@ -16,6 +16,31 @@ private:
 		uint32_t pun;
 	}RegIndice;
 
+	struct RegRank {
+		uint32_t nro;
+		uint32_t segm;
+		double peso;
+		bool operator<(const RegRank& r) const{
+			return (peso<r.peso)?1:0;
+		}
+		bool operator>(const RegRank& r) const{
+			return (peso>r.peso)?1:0;
+		}
+		int unir(const RegRank &r) const {
+			return 1;
+		}
+		RegRank(){
+			nro=0;
+			peso=0;
+			segm=0;
+		}
+		RegRank(uint32_t n, uint32_t s, double p){
+			nro=n;
+			segm=s;
+			peso=p;
+		}
+	};
+
 	std::list<uint32_t> punteros_match;	//punteros resultantes de la consulta
 	std::vector< std::list<uint32_t>* > punteros; //contiene las listas de punteros de todos los terminos buscados
 
@@ -79,7 +104,7 @@ public:
 	 * path de los documentos matcheados
 	 * devuelve NULL en caso de que no haya match
 	 * */
-	std::list<std::string>* buscar(std::string& consulta, std::string catalogo);
+	std::list<std::string>* buscar(std::string& consulta, std::string catalogo, bool rankeada=true);
 
 
 };

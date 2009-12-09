@@ -43,12 +43,12 @@ class BusquedaRankeada{
 			void armarMatrizCoseno(std::string& catalogo);
 
 			/**
-			 * Recibe los terminos de la consulta y guarda en el arbol rojo negro
+			 * Recibe los terminos de la consulta y guarda en la lista
 			 * los documentos con su peso
-			 *
+			 * @param segm numero de segmento
 			 * @return false en caso de error
 			 */
-			static bool coseno(std::string &consulta, std::string &catalogo, RedBlackTree<RegConsulta> &arbol);
+			static bool coseno(std::string &consulta, std::string &catalogo, std::list<RegConsulta*> &arbol, uint32_t segm);
 };
 
 #endif /* BUSQUEDARANKEADA_H_ */
