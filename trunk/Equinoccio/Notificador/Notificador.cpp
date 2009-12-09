@@ -33,17 +33,19 @@ void Notificador::buscarArchivos(std::fstream &archivo, std::fstream &lexico, Re
 			//Busco si el inode esta en disco
 			int cant= registrosDisco.count(registro.inode);
 
-			std::cout << "Reg inode: " << registro.inode << "- cant: " << cant << std::endl;
+			//std::cout << "Reg inode: " << registro.inode << "- cant: " << cant << std::endl;
 
 			//Si existe verificar modificaciones
 			if(cant != 0) {
 				//TODO: Verificar modificaciones
 				if(registrosDisco[registro.inode].time != registro.time_stamp)
 					std::cout << "Si, Tiene que modificarse" << registrosDisco[registro.inode].nombre << std::endl;
-				registrosDisco.erase(registro.inode);
+				registrosDisco[registro.inode].tipo= '-';
 			} else {
-				std::cout << "Se borro el archivo" << registro.inode << std::endl;
+				//std::cout << "Se borro el archivo" << registro.inode << std::endl;
 				//TODO: Hay que borrar el archivo
+				registrosDisco[registro.inode].tipo= 'b';
+				registrosDisco.erase(registro.inode);
 			}
 		}
 
@@ -52,74 +54,14 @@ void Notificador::buscarArchivos(std::fstream &archivo, std::fstream &lexico, Re
 
 void Notificador::buscarModificaciones() {
 
-	//Nombre directorio
-	std::string directorio= FileManager::obtenerPathIdxDirs(0);
-	//Abro directorio para busqueda
-	std::fstream archDirectorio;
-	archDirectorio.open(directorio.c_str(), std::fstream::in);
+	uint32_t segmentos= 3;//FileManager::getCantidadSegmentos();
+	std::string directorio, lexico_dir;
+	std::fstream archDirectorio, archLexicoDir;
 
-	//Nombre lexico directorio
-	std::string lexico_dir= FileManager::obtenerPathLexDirs(0);
-	//Abro lexico de directorio para busqueda
-	std::fstream archLexicoDir;
-	archLexicoDir.open(lexico_dir.c_str(), std::fstream::in);
-
-	//Abro todos los directorios de los catalogos
-	/*Imagen*/
-	uint32_t eofImg;
-	RegistroArchivo regImg;
-	bool errorImg= true;
-	//Directorio
-	std::string dirImg= FileManager::obtenerPathIdxArchCatalogo("image",0);
-	std::fstream archImgDir;
-	archImgDir.open(dirImg.c_str(), std::fstream::in);
-	//Lexico
-	std::string lexImg= FileManager::obtenerPathLexArchCatalogo("image",0);;
-	std::fstream archImgLex;
-	archImgLex.open(lexImg.c_str(), std::fstream::in);
-	if(archImgDir.good() && archImgLex.good()) errorImg= false;
-
-	/*Texto*/
-	uint32_t eofTxt;
-	RegistroArchivo regTxt;
-	bool errorTxt= true;
-	//Directorio
-	std::string dirTxt= FileManager::obtenerPathIdxArchCatalogo("text",0);
-	std::fstream archTxtDir;
-	archTxtDir.open(dirTxt.c_str(), std::fstream::in);
-	//Lexico
-	std::string lexTxt= FileManager::obtenerPathLexArchCatalogo("text",0);;
-	std::fstream archTxtLex;
-	archTxtLex.open(lexTxt.c_str(), std::fstream::in);
-	if(archTxtDir.good() && archTxtLex.good()) errorTxt= false;
-
-	/*Fuente*/
-	uint32_t eofSrc;
-	RegistroArchivo regSrc;
-	bool errorSrc= true;
-	//Directorio
-	std::string dirSrc= FileManager::obtenerPathIdxArchCatalogo("source",0);
-	std::fstream archSrcDir;
-	archSrcDir.open(dirSrc.c_str(), std::fstream::in);
-	//Lexico
-	std::string lexSrc= FileManager::obtenerPathLexArchCatalogo("source",0);;
-	std::fstream archSrcLex;
-	archSrcLex.open(lexSrc.c_str(), std::fstream::in);
-	if(archSrcDir.good() && archSrcLex.good()) errorSrc= false;
-
-	/*Audio*/
-	uint32_t eofSnd;
-	RegistroArchivo regSnd;
-	bool errorSnd= true;
-	//Directorio
-	std::string dirSnd= FileManager::obtenerPathIdxArchCatalogo("sound",0);
-	std::fstream archSndDir;
-	archSndDir.open(dirSnd.c_str(), std::fstream::in);
-	//Lexico
-	std::string lexSnd= FileManager::obtenerPathLexArchCatalogo("sound",0);;
-	std::fstream archSndLex;
-	archSndLex.open(lexSnd.c_str(), std::fstream::in);
-	if(archSndDir.good() && archSndLex.good()) errorSnd= false;
+	uint32_t eofImg; RegistroArchivo regImg; bool errorImg; std::string dirImg; std::fstream archImgDir; std::string lexImg; std::fstream archImgLex;
+	uint32_t eofTxt; RegistroArchivo regTxt; bool errorTxt; std::string dirTxt; std::fstream archTxtDir; std::string lexTxt; std::fstream archTxtLex;
+	uint32_t eofSrc; RegistroArchivo regSrc; bool errorSrc; std::string dirSrc; std::fstream archSrcDir; std::string lexSrc; std::fstream archSrcLex;
+	uint32_t eofSnd; RegistroArchivo regSnd; bool errorSnd; std::string dirSnd; std::fstream archSndDir; std::string lexSnd; std::fstream archSndLex;
 
 	//Auxiliares
 	uint32_t dirMenor;
@@ -130,108 +72,129 @@ void Notificador::buscarModificaciones() {
 	bool existeDirectorio;
 	uint32_t posActual;
 
-	if(!errorImg || !errorTxt || !errorSrc || !errorSnd) {
-		//Leo los finales de archivo
-		eofImg= obtenerEof(archImgDir);
-		eofTxt= obtenerEof(archTxtDir);
-		eofSrc= obtenerEof(archSrcDir);
-		eofSnd= obtenerEof(archSndDir);
 
-		//Leo el primer registro de cada catalogo
-		if(!errorImg) {
-			avanzarArchivo(archImgDir, archImgLex, regImg);
-			archImgDir.seekg(0, std::fstream::beg);
-		}
-		if(!errorTxt) {
-			avanzarArchivo(archTxtDir, archTxtLex, regTxt);
-			archTxtDir.seekg(0, std::fstream::beg);
-		}
-		if(!errorSrc) {
-			avanzarArchivo(archSrcDir, archSrcLex, regSrc);
-			archSrcDir.seekg(0, std::fstream::beg);
-		}
-		if(!errorSnd) {
-			avanzarArchivo(archSndDir, archSndLex, regSnd);
-			archSndDir.seekg(0, std::fstream::beg);
-		}
+	std::cout << "Segmentos: " << segmentos << std::endl;
 
-		while((eofImg != archImgDir.tellg() && !errorImg) || (eofTxt != archTxtDir.tellg() && !errorTxt) || (eofSrc != archSrcDir.tellg() && !errorSrc) || (eofSnd != archSndDir.tellg() && !errorSnd)) {
+	for(uint32_t seg= 0; seg<segmentos; seg++) {
+		//Directorio
+		directorio= FileManager::obtenerPathIdxDirs(seg);
+		archDirectorio.open(directorio.c_str(), std::fstream::in);
+		lexico_dir= FileManager::obtenerPathLexDirs(seg);
+		archLexicoDir.open(lexico_dir.c_str(), std::fstream::in);
 
-			if(eofImg == archImgDir.tellg() || errorImg)
-				regImg.nro_dir= (uint32_t)-1;
-			if(eofTxt == archTxtDir.tellg() || errorTxt)
-				regTxt.nro_dir= (uint32_t)-1;
-			if(eofSrc == archSrcDir.tellg() || errorSrc)
-				regSrc.nro_dir= (uint32_t)-1;
-			if(eofSnd == archSndDir.tellg() || errorSnd)
-				regSnd.nro_dir= (uint32_t)-1;
+		//Abro todos los directorios de los catalogos
+		/*Imagen*/
+		errorImg= true;
+		dirImg= FileManager::obtenerPathIdxArchCatalogo("image",seg);
+		archImgDir.open(dirImg.c_str(), std::fstream::in);
+		lexImg= FileManager::obtenerPathLexArchCatalogo("image",seg);
+		archImgLex.open(lexImg.c_str(), std::fstream::in);
+		if(archImgDir.good() && archImgLex.good()) errorImg= false;
 
-			//Busco el directorio menor y cargo todos los archivos en memoria del mismo
-			dirMenor= buscarMenorDirectorio(regImg, regTxt, regSrc, regSnd);
-			std::cout << "dirMenor: " << dirMenor << std::endl;
+		/*Texto*/
+		errorTxt= true;
+		dirTxt= FileManager::obtenerPathIdxArchCatalogo("text",seg);
+		archTxtDir.open(dirTxt.c_str(), std::fstream::in);
+		lexTxt= FileManager::obtenerPathLexArchCatalogo("text",seg);
+		archTxtLex.open(lexTxt.c_str(), std::fstream::in);
+		if(archTxtDir.good() && archTxtLex.good()) errorTxt= false;
 
-			existeDirectorio= cargarRegistrosDelDirectorio(dirMenor, archDirectorio, archLexicoDir, registrosDisco, directoriosModificados);
+		/*Fuente*/
+		errorSrc= true;
+		dirSrc= FileManager::obtenerPathIdxArchCatalogo("source",seg);
+		archSrcDir.open(dirSrc.c_str(), std::fstream::in);
+		lexSrc= FileManager::obtenerPathLexArchCatalogo("source",seg);
+		archSrcLex.open(lexSrc.c_str(), std::fstream::in);
+		if(archSrcDir.good() && archSrcLex.good()) errorSrc= false;
 
-			//Busco por los catalogos comparando con los archivos levantados de disco
-			if(eofImg != archImgDir.tellg() && !errorImg)
-				buscarArchivos(archImgDir, archImgLex, regImg, registrosDisco, dirMenor, existeDirectorio, eofImg);
-			if(eofTxt != archTxtDir.tellg() && !errorTxt)
-				buscarArchivos(archTxtDir, archTxtLex, regTxt, registrosDisco, dirMenor, existeDirectorio, eofTxt);
-			if(eofSrc != archSrcDir.tellg() && !errorSrc)
-				buscarArchivos(archSrcDir, archSrcLex, regSrc, registrosDisco, dirMenor, existeDirectorio, eofSrc);
-			if(eofSnd != archSrcDir.tellg() && !errorSnd)
-				buscarArchivos(archSndDir, archSndLex, regSnd, registrosDisco, dirMenor, existeDirectorio, eofSnd);
+		/*Audio*/
+		errorSnd= true;
+		dirSnd= FileManager::obtenerPathIdxArchCatalogo("sound",seg);
+		archSndDir.open(dirSnd.c_str(), std::fstream::in);
+		lexSnd= FileManager::obtenerPathLexArchCatalogo("sound",seg);
+		archSndLex.open(lexSnd.c_str(), std::fstream::in);
+		if(archSndDir.good() && archSndLex.good()) errorSnd= false;
 
-			//Retrocedo catalogos, si no es el fin del archivo
-			if(archImgDir.tellg() == eofImg && regImg.nro_dir == dirMenor)
-				errorImg= true;
-			else if(!errorImg) {
-				posActual= archImgDir.tellg();
-				archImgDir.seekg(posActual-RegistroArchivo::size(), std::fstream::beg);
+		if(!errorImg || !errorTxt || !errorSrc || !errorSnd) {
+			//Leo los finales de archivo
+			eofImg= obtenerEof(archImgDir);
+			eofTxt= obtenerEof(archTxtDir);
+			eofSrc= obtenerEof(archSrcDir);
+			eofSnd= obtenerEof(archSndDir);
+
+			//Leo el primer registro de cada catalogo
+			if(!errorImg) {
+				avanzarArchivo(archImgDir, archImgLex, regImg);
+				archImgDir.seekg(0, std::fstream::beg);
 			}
-			if(archTxtDir.tellg() == eofTxt && regTxt.nro_dir == dirMenor)
-				errorTxt= true;
-			else if(!errorTxt) {
-				posActual= archTxtDir.tellg();
-				archTxtDir.seekg(posActual-RegistroArchivo::size(), std::fstream::beg);
+			if(!errorTxt) {
+				avanzarArchivo(archTxtDir, archTxtLex, regTxt);
+				archTxtDir.seekg(0, std::fstream::beg);
 			}
-			if(archSrcDir.tellg() == eofSrc && regSrc.nro_dir == dirMenor)
-				errorSrc= true;
-			else if(!errorSrc) {
-				posActual= archSrcDir.tellg();
-				archSrcDir.seekg(posActual-RegistroArchivo::size(), std::fstream::beg);
+			if(!errorSrc) {
+				avanzarArchivo(archSrcDir, archSrcLex, regSrc);
+				archSrcDir.seekg(0, std::fstream::beg);
 			}
-			if(archSndDir.tellg() == eofSnd && regSnd.nro_dir == dirMenor)
-				errorSnd= true;
-			else if(!errorSnd) {
-				posActual= archSndDir.tellg();
-				archSndDir.seekg(posActual-RegistroArchivo::size(), std::fstream::beg);
+			if(!errorSnd) {
+				avanzarArchivo(archSndDir, archSndLex, regSnd);
+				archSndDir.seekg(0, std::fstream::beg);
 			}
 
-			//Los archivos que nos quedaron en el map registrosDisco son archivos nuevos
-			std::cout << "-------- Archivos Nuevos --------" << std::endl;
-			if(!registrosDisco.empty()) {
-				std::map<ino_t,RegistroDisco>::iterator it;
-				for(it= registrosDisco.begin(); it != registrosDisco.end(); it++)
-						std::cout << it->first << std::endl;
-			}
-			registrosDisco.clear();
-			std::cout << "-----------------------------------" << std::endl;
-		}// fin catalogos
+			while((eofImg != archImgDir.tellg() && !errorImg) || (eofTxt != archTxtDir.tellg() && !errorTxt) || (eofSrc != archSrcDir.tellg() && !errorSrc) || (eofSnd != archSndDir.tellg() && !errorSnd)) {
 
-		//Los directorios modificados(agregados o eliminados)
-		std::cout << "++++++ Directorios Modificados ++++++" << std::endl;
-		if(!directoriosModificados.empty()) {
-			//PRUEBA
-			std::map<std::string,bool>::iterator it;
-			for(it= directoriosModificados.begin(); it != directoriosModificados.end(); it++) {
-				if(it->second)
-					std::cout << "- Se agrego: " << it->first << std::endl;
-				else
-					std::cout << "- Se elimino: " << it->first << std::endl;
-			}
-		}
-		std::cout << "++++++++++++++++++++++++++++++++++" << std::endl;
+				if(eofImg == archImgDir.tellg() || errorImg)
+					regImg.nro_dir= (uint32_t)-1;
+				if(eofTxt == archTxtDir.tellg() || errorTxt)
+					regTxt.nro_dir= (uint32_t)-1;
+				if(eofSrc == archSrcDir.tellg() || errorSrc)
+					regSrc.nro_dir= (uint32_t)-1;
+				if(eofSnd == archSndDir.tellg() || errorSnd)
+					regSnd.nro_dir= (uint32_t)-1;
+
+				//Busco el directorio menor y cargo todos los archivos en memoria del mismo
+				dirMenor= buscarMenorDirectorio(regImg, regTxt, regSrc, regSnd);
+				//std::cout << "dirMenor: " << dirMenor << std::endl;
+
+				existeDirectorio= cargarRegistrosDelDirectorio(dirMenor, archDirectorio, archLexicoDir, registrosDisco, directoriosModificados);
+
+				//Busco por los catalogos comparando con los archivos levantados de disco
+				if(eofImg != archImgDir.tellg() && !errorImg)
+					buscarArchivos(archImgDir, archImgLex, regImg, registrosDisco, dirMenor, existeDirectorio, eofImg);
+				if(eofTxt != archTxtDir.tellg() && !errorTxt)
+					buscarArchivos(archTxtDir, archTxtLex, regTxt, registrosDisco, dirMenor, existeDirectorio, eofTxt);
+				if(eofSrc != archSrcDir.tellg() && !errorSrc)
+					buscarArchivos(archSrcDir, archSrcLex, regSrc, registrosDisco, dirMenor, existeDirectorio, eofSrc);
+				if(eofSnd != archSrcDir.tellg() && !errorSnd)
+					buscarArchivos(archSndDir, archSndLex, regSnd, registrosDisco, dirMenor, existeDirectorio, eofSnd);
+
+				//Retrocedo catalogos, si no es el fin del archivo
+				if(archImgDir.tellg() == eofImg && regImg.nro_dir == dirMenor)
+					errorImg= true;
+				else if(!errorImg) {
+					posActual= archImgDir.tellg();
+					archImgDir.seekg(posActual-RegistroArchivo::size(), std::fstream::beg);
+				}
+				if(archTxtDir.tellg() == eofTxt && regTxt.nro_dir == dirMenor)
+					errorTxt= true;
+				else if(!errorTxt) {
+					posActual= archTxtDir.tellg();
+					archTxtDir.seekg(posActual-RegistroArchivo::size(), std::fstream::beg);
+				}
+				if(archSrcDir.tellg() == eofSrc && regSrc.nro_dir == dirMenor)
+					errorSrc= true;
+				else if(!errorSrc) {
+					posActual= archSrcDir.tellg();
+					archSrcDir.seekg(posActual-RegistroArchivo::size(), std::fstream::beg);
+				}
+				if(archSndDir.tellg() == eofSnd && regSnd.nro_dir == dirMenor)
+					errorSnd= true;
+				else if(!errorSnd) {
+					posActual= archSndDir.tellg();
+					archSndDir.seekg(posActual-RegistroArchivo::size(), std::fstream::beg);
+				}
+
+			}// fin catalogos
+		} //if
 
 		//Cierro los catalogos
 		archImgDir.close();
@@ -242,13 +205,35 @@ void Notificador::buscarModificaciones() {
 		archSndLex.close();
 		archSrcDir.close();
 		archSrcLex.close();
+		//Cierro directorio
+		archDirectorio.close();
+		archLexicoDir.close();
+	} //for catalogos
+
+	//Los archivos que nos quedaron en el map registrosDisco son archivos nuevos
+	//std::cout << "-------- Archivos Nuevos --------" << std::endl;
+//	if(!registrosDisco.empty()) {
+//		std::map<ino_t,RegistroDisco>::iterator it;
+//		for(it= registrosDisco.begin(); it != registrosDisco.end(); it++)
+//			if(registrosDisco[it->first].tipo == 'a')
+//				std::cout << "alta: " << it->first << std::endl;
+//	}
+	registrosDisco.clear();
+	//std::cout << "-----------------------------------" << std::endl;
+
+	//Los directorios modificados(agregados o eliminados)
+	std::cout << "++++++ Directorios Modificados ++++++" << std::endl;
+	if(!directoriosModificados.empty()) {
+		//PRUEBA
+		std::map<std::string,bool>::iterator it;
+		for(it= directoriosModificados.begin(); it != directoriosModificados.end(); it++) {
+			if(it->second)
+				std::cout << "- Se agrego: " << it->first << std::endl;
+			else
+				std::cout << "- Se elimino: " << it->first << std::endl;
+		}
 	}
-
-	//Cierro directorio
-	archDirectorio.close();
-	//Cierro el lexico del directorio
-	archLexicoDir.close();
-
+	std::cout << "++++++++++++++++++++++++++++++++++" << std::endl;
 }
 
 bool Notificador::cargarRegistrosDelDirectorio(uint32_t nro_dir, std::fstream &archDirectorio, std::fstream &archLexicoDir, std::map<ino_t,RegistroDisco> &registrosDisco, std::map<std::string,bool> &directoriosNuevos) {
@@ -286,11 +271,12 @@ bool Notificador::cargarRegistrosDelDirectorio(uint32_t nro_dir, std::fstream &a
 				std::string nombreCompleto(directorio+'/'+entry->d_name);
 				if(esArchivo(nombreCompleto)) {
 					regDisco.nombre= nombreCompleto;
-					std::cout << "De disco: " << nombreCompleto << std::endl;
-					  if(lstat(nombreCompleto.c_str(), &sb) != -1 && Parsers::validarExtension(nombreCompleto)) {
+		//			std::cout << "De disco: " << nombreCompleto << std::endl;
+					  if(lstat(nombreCompleto.c_str(), &sb) != -1 && Parsers::validarExtension(nombreCompleto) && registrosDisco.count(sb.st_ino) == 0) {
 							  regDisco.time= sb.st_mtime;
 							  registrosDisco[sb.st_ino]= regDisco;
-							  std::cout << "Inode: " << sb.st_ino << std::endl;
+							  registrosDisco[sb.st_ino].tipo= 'a';
+	//						  std::cout << "Inode: " << sb.st_ino << std::endl;
 					  }
 				} else if(esDirectorio(nombreCompleto) && strncmp(entry->d_name,".",1)!=0) {
 					//agrego directorios
@@ -325,7 +311,7 @@ void Notificador::avanzarArchivo(std::fstream &archArchivo, std::fstream &archLe
 		nombre_arch+= c;
 	}
 
-	std::cout << "Nombre Archivo: " << nombre_arch << std::endl;
+//	std::cout << "Nombre Archivo: " << nombre_arch << std::endl;
 }
 
 bool Notificador::verificarDirectorioNuevo(const std::string &directorio) {

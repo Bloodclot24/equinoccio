@@ -25,6 +25,7 @@ typedef struct RegistroArchivo {
 typedef struct RegistroDisco {
 	std::string nombre;
 	time_t time;
+	char tipo;
 } RegistroDisco;
 
 #include <fstream>
