@@ -1,8 +1,9 @@
 #include "Equinoccio.h"
 #include "Busqueda Rankeada/BusquedaRankeada.h"
 
-std::list<std::string>* Equinoccio::path_result = NULL;
+std::list<std::string>* Equinoccio::path_result = new std::list<std::string>;
 std::list<std::string>* Equinoccio::dir_indexados = new std::list<std::string>;
+bool Equinoccio::silencio = false;
 bool huboCambios= false;
 
 int Equinoccio::magic(int argc, const char** argv){
@@ -59,8 +60,15 @@ int Equinoccio::magic(int argc, const char** argv){
 	   return error;
 	}
 
-	if(arg_list)
+	if(arg_list) {
 	   std::cout << "Listado de directorios.\n";
+	   getDirIndexados();
+	   if(!silencio) {
+		   std::list<std::string>::iterator it;
+		   for (it=dir_indexados->begin();it != dir_indexados->end();it++)
+			   std::cout<<*it<<std::endl;
+	   }
+	}
 	if(arg_add_dir){
 	   std::cout << "Agregar el directorio: " << arg_add_dir << std::endl;
 	   
@@ -101,7 +109,14 @@ int Equinoccio::magic(int argc, const char** argv){
 
 	   Busqueda buscador;
 	   std::string busqueda=arg_search_string;
-	   path_result = buscador.buscar(busqueda, catalogo);
+	   path_result->clear();
+	   buscador.buscar(busqueda, catalogo, path_result);
+	   if (!silencio) {
+		   std::list<std::string>::iterator it;
+		   for (it=path_result->begin();it != path_result->end();it++) {
+			   std::cout<<"Doc: "<<*it<<std::endl;
+		   }
+	   }
 	}
 
 	return ERROR_NO_ERROR;

@@ -51,6 +51,13 @@ Interfaz::Interfaz() {
 									&Interfaz::on_double_click));
 		cargarMenu();
 
+		//agregar catalogos
+		agregarCatalogo("Todos", "ALL");
+		agregarCatalogo("Imagen", "IMG");
+		agregarCatalogo("Audio", "SND");
+		agregarCatalogo("Texto", "TEX");
+		agregarCatalogo("Fuentes", "SRC");
+
 	} catch (Glib::FileError& ex1) {
 		std::cerr << "error al cargar el archivo de la vista" << std::endl;
 		std::cerr << ex1.what() << std::endl;
@@ -64,12 +71,6 @@ Interfaz::Interfaz() {
 		std::cerr << ex3.what() << std::endl;
 		error = true;
 	}
-	//agregar catalogos
-	agregarCatalogo("Todos", "ALL");
-	agregarCatalogo("Imagen", "IMG");
-	agregarCatalogo("Audio", "SND");
-	agregarCatalogo("Texto", "TEX");
-	agregarCatalogo("Fuentes", "SRC");
 }
 
 Interfaz::~Interfaz() {}
@@ -172,7 +173,7 @@ void Interfaz::on_button_list_clicked() {
 		button_buscar->set_sensitive(false);
 		entry_consulta->set_sensitive(false);
 		id_esperando = Glib::signal_timeout().connect(sigc::mem_fun(*this,
-								&Interfaz::esperarResultado), 200 );
+								&Interfaz::esperarResultado), 300 );
 		this->execute();
 	}
 }
@@ -185,7 +186,7 @@ void Interfaz::on_button_remall_clicked() {
 		button_buscar->set_sensitive(false);
 		entry_consulta->set_sensitive(false);
 		id_esperando = Glib::signal_timeout().connect(sigc::mem_fun(*this,
-								&Interfaz::esperarResultado), 200 );
+								&Interfaz::esperarResultado), 300 );
 		this->execute();
 	}
 }
@@ -203,7 +204,7 @@ void Interfaz::on_button_rem_clicked() {
 			button_buscar->set_sensitive(false);
 			entry_consulta->set_sensitive(false);
 			id_esperando = Glib::signal_timeout().connect(sigc::mem_fun(*this,
-									&Interfaz::esperarResultado), 200 );
+									&Interfaz::esperarResultado), 300 );
 			this->execute();
 		}
 		select_window->hide();
@@ -222,7 +223,7 @@ void Interfaz::on_button_add_clicked() {
 			button_buscar->set_sensitive(false);
 			entry_consulta->set_sensitive(false);
 			id_esperando = Glib::signal_timeout().connect(sigc::mem_fun(*this,
-									&Interfaz::esperarResultado), 200 );
+									&Interfaz::esperarResultado), 300 );
 			this->execute();
 		}
 		select_window->hide();
@@ -276,7 +277,7 @@ void Interfaz::mostrarProgreso(Glib::ustring texto){
 	progress_bar->set_text(texto);
 	//actualiza la barra de progreso cada un determinado tiempo
 	id_activity = Glib::signal_timeout().connect(sigc::mem_fun(*this,
-		        &Interfaz::mover), 200 );
+		        &Interfaz::mover), 300 );
 	progress_bar->show();
 }
 
@@ -343,7 +344,6 @@ void Interfaz::finEspera() {
 			for(it=paths_resultado->begin(); it!=paths_resultado->end(); it++) {
 				agregarFila(*it);
 			}
-			delete paths_resultado;
 			paths_resultado = NULL;
 		}
 		else

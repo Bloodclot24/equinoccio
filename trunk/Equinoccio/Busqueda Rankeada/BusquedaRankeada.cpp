@@ -12,7 +12,7 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo, uint32_t documen
      std::fstream indice;
      indice.open(path.c_str(),std::ios::in);
      if(!indice.good()){
-	  std::cerr << "Error al abrir el indice para la matriz de cosenos!!" << std::endl;
+	  std::cerr << "Error al abrir el indice para la matriz de cosenos" << std::endl;
 	  std::cout << "Nombre: " << path << std::endl;
 	  //	#warning "ver como se va a manejar este error";
 	  return;
@@ -191,11 +191,7 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo, uint32_t documen
 	       }
 	       index++;
 	  }
-
      }
-     std::cout << "Indice: " << index << "\n";
-     std::cout << "Contador: " << contador << "\n";
-	     
      matrizTranspuesta.close();
      remove(nombreSalida.c_str());
      matCoseno1.close();
@@ -227,7 +223,6 @@ bool BusquedaRankeada::coseno(std::string &consulta, std::string catalogo, std::
      double norma = 0;
      std::vector<RegConsulta> v_consulta;
      RegConsulta reg;
-     std::cout<<"Busqueda Rankeada"<<std::endl;
 
      do {
 	  extra=1;
@@ -236,7 +231,6 @@ bool BusquedaRankeada::coseno(std::string &consulta, std::string catalogo, std::
 	  mul = consulta.find_first_of('^',pos);
 	  if (mul != std::string::npos && mul < where){
 	       extra = atoi(consulta.substr(mul+1, where-(mul+1)).c_str());
-	       std::cout<<"Peso extra: "<<extra<<std::endl;
 	  }
 	  else
 	       mul = where;
@@ -247,22 +241,17 @@ bool BusquedaRankeada::coseno(std::string &consulta, std::string catalogo, std::
 	       reg.peso = reg.peso * extra;
 	       norma += pow(reg.peso,2);
 	       v_consulta.push_back(reg);
-	       std::cout<<consulta.substr(pos,mul-pos)<<"	nro: "<<reg.nro<<"	peso: "<<reg.peso<<std::endl;
-	  }
-	  else {
-	       std::cout<<"No encontrado: "<<consulta.substr(pos,mul-pos)<<std::endl;
 	  }
 	  pos = where+1;
      }while (where != std::string::npos);
      arch_peso.close();
      if (v_consulta.size()==0){
+    	 stc::cout<<"* NO MATCH *"<<std::endl;
     	 arch_mc1.close(); arch_mc2.close(); arch_mc3.close();
     	 return false;
      }
      //ordeno el vector consulta
      std::sort(v_consulta.begin(),v_consulta.end());
-     for(uint32_t i=0; i<v_consulta.size();i++)
-	  std::cout<<"Nro de termino: "<<v_consulta[i].nro<<std::endl;
 
      arch_mc2.seekg(0,std::ios::end);
      const uint32_t eof =  arch_mc2.tellg()/ sizeof(uint32_t);
@@ -282,7 +271,7 @@ bool BusquedaRankeada::coseno(std::string &consulta, std::string catalogo, std::
 	norma = sqrt(norma);
 	std::cout<<"\n Busqueda en la matriz \n\n";
 	//abro el bitmap
-	Bitmap b(FileManager::obtenerPathBitmapArch(segm)+FileManager::obtenerExtCatalogo(catalogo));
+	//Bitmap b(FileManager::obtenerPathBitmapArch(segm)+FileManager::obtenerExtCatalogo(catalogo));
 	//para cada documento hago el producto
 	while(arch_mc3.good()) {
 		off = sgte;
@@ -293,7 +282,7 @@ bool BusquedaRankeada::coseno(std::string &consulta, std::string catalogo, std::
 		arch_mc3.read((char*)&sgte, sizeof(uint32_t));
 		arch_mc2.seekg(off*sizeof(uint32_t));
 		//para cada termino del documento
-		if (!b.getBit(doc.nro)) {
+		//if (!b.getBit(doc.nro)) {
 			do {
 				bool buscar_sgte = true;
 				//busco el termino
@@ -309,18 +298,18 @@ bool BusquedaRankeada::coseno(std::string &consulta, std::string catalogo, std::
 				} while (buscar_sgte && off<eof && off<sgte);
 				n++;	//paso al siguiente termino
 			}while(off<eof && off<sgte && n<v_consulta.size()); //hasta q no haya mas terminos en la consulta o en el doc
+
+			std::cout<<"Peso del Doc "<<doc.nro<<": "<<doc.peso<<std::endl;
 			doc.peso = (double)doc.peso / (double)norma;
 			if(doc.peso > 0) {
-				std::cout<<"Peso del Doc "<<doc.nro<<": "<<doc.peso<<std::endl;
 				doc.peso = 1- doc.peso;
-				std::cout<<"Peso invertido: "<<doc.peso<<std::endl<<std::endl;
 				aux = new RegConsulta(doc.nro,doc.peso);
 				arbol.push_back(aux);
 			}
-		}
+		//}
 		doc.nro++;
 		doc.peso = 0;
 	}
-	std::cout<<"*****Fin****\n";
+
 	return true;
 }

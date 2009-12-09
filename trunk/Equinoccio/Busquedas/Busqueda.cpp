@@ -14,10 +14,9 @@ Busqueda::Busqueda() {}
 Busqueda::~Busqueda() {
 }
 
-std::list<std::string>* Busqueda::buscar(std::string& consulta, std::string catalogo) {
-	std::list<std::string> *paths= new std::list<std::string>;
+void Busqueda::buscar(std::string& consulta, std::string catalogo, std::list<std::string>* paths) {
 	if (consulta.size() != 0) {
-	     rankeada=true;
+		Util::aMinusculas(consulta);
 		uint32_t segmentos= FileManager::getCantidadSegmentos();
 		if (consulta.find('*') != std::string::npos || consulta.find('?') != std::string::npos )
 		     rankeada=false;
@@ -57,12 +56,9 @@ std::list<std::string>* Busqueda::buscar(std::string& consulta, std::string cata
 						 //agregar los paths a la lista
 						 if (punteros_match.size() != 0) {
 						  do{
-							  std::string path_documento = buscarPath(punteros_match.front(), catalogos[i], seg);
 							   Bitmap b(FileManager::obtenerPathBitmapArch(seg)+FileManager::obtenerExtCatalogo(catalogos[i]));
-
 							   if (!b.getBit(seg)){
-								   std::cout<<"MATCH: "<<path_documento<<std::endl;
-								   paths->push_back(path_documento);
+								 paths->push_back(buscarPath(punteros_match.front(), catalogos[i], seg));
 							   }
 							   punteros_match.pop_front();
 						  }while(punteros_match.size()>0);
@@ -109,15 +105,13 @@ std::list<std::string>* Busqueda::buscar(std::string& consulta, std::string cata
 
 			//busco los path de los documentos match
 			while ((reg = arbol_segm.RemoverMayorIgual(comp_reg))) {
-				std::string path_doc = buscarPath(reg->nro,reg->cat,reg->segm);
-				std::cout<<"MATCH "<<"peso: "<<(1-reg->peso)<<" CAT: "<<reg->cat<<"	"<<path_doc<<std::endl;
-				paths->push_back(path_doc);
+				std::cout<<"Peso: "<<(1-reg->peso)<<std::endl;
+				paths->push_back(buscarPath(reg->nro,reg->cat,reg->segm));
 				delete reg;
 			}
 		}
 	}
-	std::cout<<"Fin buscar"<<std::endl;
-	return paths;
+	std::cout<<"Fin busqueda"<<std::endl;
 }
 	
 bool Busqueda::buscarEnIndice(std::string consulta, std::string catalogo, uint32_t segmento) {
@@ -274,7 +268,6 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo, uint
 		while(lexico.good() && (c = lexico.get()) != 0){
 		  r->termino += c;
 		}
-		std::cout<<"Termino encontrado: "<<r->termino<<std::endl;
 		registros.push_back(r);
 		offset_and.pop_front();
 	}
@@ -304,46 +297,6 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo, uint
 		return true;
 	}
 	return false;	//falta verificar que se libere todo
-}
-
-void Busqueda::andPunteros(std::vector< std::list<uint32_t>* > &punteros, std::list<uint32_t> &punteros_and) {
-
-    if (punteros.size() > 1) {
-	  uint32_t pos_min=0;
-	  uint32_t min=(uint32_t)-1;
-	  std::vector<uint32_t> vec_min;
-	  uint32_t palabrasBuscadas = punteros.size();
-	  while(punteros.size()>0){
-	       vec_min.clear();
-	       min = (uint32_t)-1;
-	       for (uint32_t i=0;i<punteros.size();i++){
-		    if(min > punteros[i]->front()){
-			 vec_min.clear();
-			 min = punteros[i]->front();
-			 pos_min=i;
-			 vec_min.push_back(i);
-		    }else if (min==punteros[i]->front()){
-			 vec_min.push_back(i);
-		    }
-	       }
-	       if(vec_min.size() == palabrasBuscadas) //es un AND, todas tienen que ser menores
-		    punteros_and.push_back(min);
-	       for (uint32_t i=0;i<vec_min.size();i++){
-		    punteros[vec_min[i]]->pop_front();
-	       }
-	       for (uint32_t i=0;i<punteros.size();i++){
-		    if(punteros[i]->size() == 0){
-			 delete punteros[i];
-			 punteros[i] = punteros[punteros.size() -1];
-			 i--; //debe ser la tercera vez que lo hago en este TP
-			 punteros.pop_back();
-		    }
-	       }
-	  }
-    }
-    else{
-	  punteros_and = *punteros[0];
-    }
 }
 
 void Busqueda::andPunteros2(std::vector< std::list<uint32_t>* > &punteros, std::list<uint32_t> &punteros_and) {
@@ -377,13 +330,13 @@ void Busqueda::andPunteros2(std::vector< std::list<uint32_t>* > &punteros, std::
 		    i=-1;
 	       }
 	  }
+	  for(int i=0;i<(int)punteros.size();i++){
+		 delete punteros[i];
+	  }
+
     }
     else{
 	  punteros_and = *punteros[0];
-    }
-
-    for(int i=0;i<(int)punteros.size();i++){
-	 delete punteros[i];
     }
 }
 
@@ -434,47 +387,6 @@ void Busqueda::filtrarFalsosPositivos(std::list<std::string>& consulta, std::lis
 		}
 	}
 }
-
-std::list<uint32_t>* Busqueda::unionPunteros(std::vector< std::list<uint32_t>* > &punteros) {
-
-	std::list<uint32_t>* pun_union = NULL;
-
-	if (punteros.size() > 1) {
-		pun_union = new std::list<uint32_t>;
-		uint32_t anterior = -1; //ver inicial
-		do {
-			//busco el minimo
-			uint32_t min = 0; 	//lista del minimo puntero
-			for (uint32_t i=1; i < punteros.size();i++){
-				if (punteros[i]->front() <= punteros[min]->front()) {
-					min = i;
-				}
-			}
-			if (punteros[min]->front() != anterior) {
-				anterior = punteros[min]->front();
-				pun_union->push_back(anterior);
-			}
-			punteros[min]->pop_front();
-			//si la lista del minimo esta vacia la borro
-			if (punteros[min]->empty()) {
-				delete punteros[min];
-				punteros[min] = punteros[punteros.size()-1];
-				punteros.pop_back();
-			}
-		}while(!punteros.empty());
-
-		if (pun_union->empty()) {
-			delete pun_union;
-			pun_union = NULL;
-		}
-	}
-	else {
-		if (punteros.size() == 1)
-			pun_union = punteros[0]; //tiene un solo elemento
-	}
-	return pun_union;
-}
-
 
 std::list<uint32_t>* Busqueda::unionPunteros2(std::vector< std::list<uint32_t>* > &punteros) {
 
@@ -532,8 +444,7 @@ std::string Busqueda::buscarPath(uint32_t puntero,std::string catalogo, uint32_t
 	std::ifstream indiceDocs(nombre.c_str(),  std::ios::in | std::ios::binary);
 	if (indiceDocs.good()) {
 	     //obtengo el puntero al lexico de archivos
-	     std::cout << "puntero: " << puntero << "\n";
-	    indiceDocs.seekg(puntero*(2*sizeof(uint32_t)+sizeof(time_t)+sizeof(ino_t)));
+		 indiceDocs.seekg(puntero*(2*sizeof(uint32_t)+sizeof(time_t)+sizeof(ino_t)));
 	     indiceDocs.read((char*)par, 2*sizeof(uint32_t));
 	     indiceDocs.close();
 		nombre = FileManager::obtenerPathLexArch(segmento);

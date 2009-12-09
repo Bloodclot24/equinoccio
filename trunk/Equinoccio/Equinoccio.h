@@ -132,7 +132,8 @@ private:
 
 	  std::string directorio = nombre;
 
-	  std::cout << "Directorio absouto: " << directorio << "\n";
+	  if(!silencio)
+		  std::cout << "Directorio absouto: " << directorio << "\n";
 
 	  std::list<std::string> subdir;
 
@@ -144,8 +145,9 @@ private:
 	       while((entry=readdir(directory))!=NULL){
 		    std::string nombreCompleto(directorio+'/'+entry->d_name);
 		    if(esArchivo(nombreCompleto)){
-			 std::cout << "Agregar el archivo: " << nombreCompleto << "\n";
-			 parsers.parsear(nombreCompleto, dir);
+		    	if(!silencio)
+		    		std::cout << "Agregar el archivo: " << nombreCompleto << "\n";
+		    	parsers.parsear(nombreCompleto, dir);
 		    }
 		    else if(esDirectorio(nombreCompleto) && strncmp(entry->d_name,".",1)!=0){
 			 //agrego directorios recursivamente
@@ -211,24 +213,21 @@ private:
      int magic(int argc, const char** argv);
 
      Equinoccio(){
-
-    	 std::cout << "cargando" << std::endl;
-
     	 FileManager::cargarConfiguracion();
     	 FileManager::crearJerarquias();
     	 FileManager::crearAlertaFallo();
 
     	 numeroDirectorio = (uint32_t) -1;
 
-	 parsers.agregarParser(new ParserPython(1000000));
-	 parsers.agregarParser(new ParserC(1000000));
-	 parsers.agregarParser(new ParserPhp(1000000));
-	 parsers.agregarParser(new ParserImagen(1000000));
-	 parsers.agregarParser(new ParserAudio(1000000));
-	 parsers.agregarParser(new ParserTxt(1000000));
-	 parsers.agregarParser(new ParserPdf(1000000));
-
+		 parsers.agregarParser(new ParserPython(1000000));
+		 parsers.agregarParser(new ParserC(1000000));
+		 parsers.agregarParser(new ParserPhp(1000000));
+		 parsers.agregarParser(new ParserImagen(1000000));
+		 parsers.agregarParser(new ParserAudio(1000000));
+		 parsers.agregarParser(new ParserTxt(1000000));
+		 parsers.agregarParser(new ParserPdf(1000000));
      };
+
      Equinoccio(const Equinoccio&){};
      ~Equinoccio(){
     	 FileManager::crearConfiguracion();
@@ -237,6 +236,7 @@ private:
      static std::list<std::string> *dir_indexados;
 
 public:
+     static bool silencio;
      static std::list<std::string>* getPaths();
      static std::list<std::string>* getDirIndexados();
      static int main(int argc, const char** argv);

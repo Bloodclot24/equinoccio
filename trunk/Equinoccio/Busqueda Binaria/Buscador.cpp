@@ -40,8 +40,6 @@ RegistroIndice Buscador::buscar(const std::string& termino,const std::string& ca
 			encontrado = true;
 			archIdx.read((char*)&(regInd.frec),sizeof(uint32_t));
 			archIdx.read((char*)&(regInd.pDocs),sizeof(uint32_t));
-			std::cout << "La frecuencia es: " << regInd.frec << "\n";
-		
 		}else{
 			if (izquierda==derecha && izquierda==medio) {
 				encontrado = false;
@@ -146,7 +144,6 @@ bool Buscador::buscarNroTermino(const std::string &termino, const std::string &c
 		if(termino.compare(cadena) == 0){
 			encontrado = true;
 			nro = medio;
-			std::cout<<"numero de termino: "<<nro<<std::endl;
 		}else{
 			if (izquierda==derecha && izquierda==medio) {
 				encontrado = false;

@@ -112,6 +112,7 @@ private:
 			std::string cons = consulta;
 			const char* com_c[] = {"./Equinoccio", ARG_CAT, cat.c_str(), ARG_SEARCH, cons.c_str()};
 			Busqueda::rankeada = rankeada;
+			Equinoccio::silencio = true;
 			Equinoccio::main(5, com_c);
 			paths_resultado = Equinoccio::getPaths();
 		}else {
@@ -119,12 +120,12 @@ private:
 			//agrego directorio
 			std::string dir = directorio;
 			const char* com_c[] = {"./Equinoccio", ARG_ADD, dir.c_str()};
+			Equinoccio::silencio = false;
 			Equinoccio::main(3,com_c);
 		}
 		else {
 		if (estado == E_LIST) {
-			const char* com_c[] = {"./Equinoccio", ARG_LIST};
-			Equinoccio::main(2,com_c);
+			Equinoccio::silencio = true;
 			lista_dirs = Equinoccio::getDirIndexados();
 		}else{
 		if (estado ==  E_RALL) {

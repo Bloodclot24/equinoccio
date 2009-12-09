@@ -20,8 +20,6 @@ std::string TDA_Codigos::getCGamma(uint32_t nro){
 	std::string aux2;
 	double d = (logl(nro)/logl(2.0));
 	uint32_t loga=d;/*Calculo la funcion piso del logaritmo en base 2 de x */
-	std::cout << "nro: " << nro << "\n"; 
-	std::cout << "loga: " << loga << " (" << (logl(nro)/logl(2.0)) <<")\n";
 	uint32_t unary= 1+loga; /*le sumo 1 a ese numero*/
 	uint32_t bin=nro-(uint32_t)pow(2,loga); /*Calculo la parte Binaria*/
 	if (nro > 1)/*Valido para no hacer cuentas inncesarias*/

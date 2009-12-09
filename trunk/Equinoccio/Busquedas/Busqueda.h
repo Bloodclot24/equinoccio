@@ -103,11 +103,10 @@ public:
 	~Busqueda();
 
 	static bool rankeada;
-	/* busca el string en el indice y devuelve una lista con los
-	 * path de los documentos matcheados
-	 * devuelve NULL en caso de que no haya match
+	/* busca el string en el indice
+	 * @param paths lista en la que se guardan los paths de los documentos matcheados
 	 * */
-	std::list<std::string>* buscar(std::string& consulta, std::string catalogo);
+	void buscar(std::string& consulta, std::string catalogo, std::list<std::string>* paths);
 
 };
 

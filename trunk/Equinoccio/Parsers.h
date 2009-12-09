@@ -639,7 +639,7 @@ public:
 	       uint32_t fin;
 	       if(nombreDir[0] < nombreDir[1]){
 		    if(directoriosIdx[0].good()){
-			 std::cout << "0<1\n";
+			// std::cout << "0<1\n";
 			 inicio = 0;
 			 fin = 1;
 		    }
@@ -650,7 +650,7 @@ public:
 	       }
 	       else if(nombreDir[0] > nombreDir[1]){
 		    if(directoriosIdx[1].good()){
-			 std::cout << "0>1\n";
+			 //std::cout << "0>1\n";
 			 inicio = 1;
 			 fin = 2;
 		    }
@@ -661,7 +661,7 @@ public:
 	       }
 	       else{
 		    if(directoriosIdx[0].good() && directoriosIdx[1].good()){
-			 std::cout << "0==1\n";
+			 //std::cout << "0==1\n";
 			 inicio = 0;
 			 fin=2;
 		    }
@@ -674,7 +674,7 @@ public:
 	       if(!directoriosIdx[0].good() && !directoriosIdx[1].good()){
 		    inicio = 0;
 		    fin=0;
-		    std::cout << "salirrrrrrrrrrrrrrrrrrrrr\n";
+//		    std::cout << "salirrrrrrrrrrrrrrrrrrrrr\n";
 		    salir = true;
 	       }
 
