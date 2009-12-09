@@ -46,8 +46,8 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
 	//TODO voy a tener la cantidad de terminos y de documentos en el indice.
 	//Usar los metodos, obtenerCantidadTerminos y obtenerCantidadDocumentos
 	//de Parsers.h
-	uint32_t cantTerminos = /*11;*/3862;//3051;//340350;
-	uint32_t cantidadDocumentos = 256/*2;*/;//167;//28209;
+	uint32_t cantTerminos = /*11;*/340449;//3051;//340350;
+	uint32_t cantidadDocumentos = /*2;*/28209;//167;//28209;
 	//****************************************************************
 
 	uint32_t pTermino = 0;
@@ -71,30 +71,34 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
 		//#warning "ver como se va a manejar este error";
 		return;
 	}
-
-	for(uint32_t i = 0; i < cantTerminos; i++){
-		indice.read((char*)&pTermino, sizeof(uint32_t));
-		indice.read((char*)&frecGlobal, sizeof(uint32_t));
-		indice.read((char*)&pDocs, sizeof(uint32_t));
-		std::list<Registro::Punteros>* punt = new std::list<Registro::Punteros>;
-		Registro::obtenerPunterosEnLista(punteros,pDocs,frecGlobal,punt);
-		std::list<Registro::Punteros>::iterator it;
-		puntajeTermino = log10((double) cantidadDocumentos/frecGlobal);
-		puntajes.write((char*)&puntajeTermino,sizeof(double));
-
-		for(it = punt->begin(); it != punt->end(); it++){
-		    peso = (double) (*it).frecuencia * puntajeTermino;//log10((double) cantidadDocumentos/frecGlobal);
-		    RegistroMatriz registro(i,(*it).documento,peso);
-		    registro.escribir(matriz,0);
-		}
-		delete punt;
+	
+	for(uint32_t i = 0; i < cantTerminos && indice.good() ; i++){
+	     indice.read((char*)&pTermino, sizeof(uint32_t));
+	     indice.read((char*)&frecGlobal, sizeof(uint32_t));
+	     indice.read((char*)&pDocs, sizeof(uint32_t));
+	     if(indice.good()){
+		  std::list<Registro::Punteros>* punt = new std::list<Registro::Punteros>;
+		  Registro::obtenerPunterosEnLista(punteros,pDocs,frecGlobal,punt);
+		  std::list<Registro::Punteros>::iterator it;
+		  puntajeTermino = log10((double) cantidadDocumentos/frecGlobal);
+		  puntajes.write((char*)&puntajeTermino,sizeof(double));
+		  
+		  for(it = punt->begin(); it != punt->end(); it++){
+		       peso = (double) (*it).frecuencia * puntajeTermino;//log10((double) cantidadDocumentos/frecGlobal);
+		       
+		       if((*it).documento <= cantidadDocumentos){
+			    RegistroMatriz registro(i,(*it).documento,peso);
+			    registro.escribir(matriz,0);
+		       }
+		  }
+		  delete punt;
+	     }
 	}
-
-
-    matriz.close();
-    indice.close();
-    punteros.close();
-    puntajes.close();
+	
+	matriz.close();
+	indice.close();
+	punteros.close();
+	puntajes.close();
 
 	uint32_t cantParticiones = 0;
 	//Transpongo la matriz.
@@ -149,11 +153,10 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
 		matrizTranspuesta.read((char*)&y, sizeof(uint32_t));
 		matrizTranspuesta.read((char*)&x, sizeof(uint32_t));
 		matrizTranspuesta.read((char*)&valor, sizeof(double));
-//		std::cerr << "Documentos: " << x << std::endl;
 		if((filaAnt != x)|| (!primero)){
-			normas.push_back(norma);
-			norma = 0.0;
-			filaAnt = x;
+		     normas.push_back(norma);
+		     norma = 0.0;
+		     filaAnt = x;
 		}
 
 
@@ -167,7 +170,8 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
 	cambieFila = true;
 	uint32_t xAnt = 0;
 	uint32_t k = 0;
-
+	index=0;
+	uint32_t contador=0;
 	while(matrizTranspuesta.good()){
 		matrizTranspuesta.read((char*)&y, sizeof(uint32_t));
 		matrizTranspuesta.read((char*)&x, sizeof(uint32_t));
@@ -184,13 +188,17 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
 			matCoseno1.write((char*)&valor,sizeof(double));
 			matCoseno2.write((char*)&y,sizeof(uint32_t));
 			if(cambieFila){
-				matCoseno3.write((char*)&index,sizeof(uint32_t));
-				cambieFila = false;
+			     matCoseno3.write((char*)&index,sizeof(uint32_t));
+			     cambieFila = false;
+			     contador++;	
 			}
 			index++;
 		}
 
 	}
+	std::cout << "Indice: " << index << "\n";
+	std::cout << "Contador: " << contador << "\n";
+	     
 	matrizTranspuesta.close();
 //	remove(nombreSalida.c_str());
 	matCoseno1.close();

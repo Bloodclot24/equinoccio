@@ -498,14 +498,15 @@ std::string Busqueda::buscarPath(uint32_t puntero,std::string catalogo, uint32_t
 	nombre +=catalogo;
 	std::ifstream indiceDocs(nombre.c_str(),  std::ios::in | std::ios::binary);
 	if (indiceDocs.good()) {
-		//obtengo el puntero al lexico de archivos
+	     //obtengo el puntero al lexico de archivos
+	     std::cout << "puntero: " << puntero << "\n";
 	    indiceDocs.seekg(puntero*(2*sizeof(uint32_t)+sizeof(time_t)+sizeof(ino_t)));
-		indiceDocs.read((char*)par, 2*sizeof(uint32_t));
-		indiceDocs.close();
+	     indiceDocs.read((char*)par, 2*sizeof(uint32_t));
+	     indiceDocs.close();
 		nombre = FileManager::obtenerPathLexArch(segmento);
 		nombre += catalogo;
 		std::ifstream lexDocs(nombre.c_str(), std::ios::in);
-		if(lexDocs.good()) {
+		if(lexDocs.good()&&indiceDocs.good()) {
 			//obtengo el nombre del documento
 			lexDocs.seekg(par[0]);
 			std::getline(lexDocs, nombre, '\0');

@@ -108,6 +108,8 @@ int Registro::escribir(std::ofstream &archivo, int compresion){
      if(punteros.size() == 0)
 	  return 0;
 
+     frecuencia = punteros.size();
+
      // escribo el termino
      archivo.write(termino.c_str(), termino.length()+1); //+1 para que escriba el \0
      // escribo la frecuencia
@@ -128,7 +130,7 @@ int Registro::escribir(std::ofstream &archivo, int compresion){
 	  }
      }
      else{
-	  // escribo comprimodo
+	  // escribo comprimido
 	  std::string punteros = obtenerPunterosComprimidos();
 	  archivo.write((char*)punteros.c_str(), punteros.size());
      }
@@ -154,6 +156,22 @@ std::string Registro::obtenerPunterosComprimidos(){
      unsigned bits=0;
      
      std::string resultado;
+
+     // *******************************************************************
+     //    Devuelvo sin comprimir porque GAMMA no funciona del todo bien
+     // *******************************************************************
+     // recorro todos los punteros y los pongo en el string
+     for(it=punteros.begin(); it != punteros.end(); it++){
+         Registro::Punteros p;
+         p = *it;
+         resultado.append((char*)&(p.documento),4);
+         resultado.append((char*)&(p.frecuencia),4);
+         std::cout << "obtengo: " << p.documento << " " << p.frecuencia << std::endl;
+     }
+     std::cout << "Resultado: " << resultado << std::endl;
+     return resultado;
+     // ******************************************************************
+
      
      // recorro todos los punteros
      for(it=punteros.begin(); it != punteros.end(); it++){
@@ -197,6 +215,7 @@ std::string Registro::obtenerPunterosComprimidos(){
 }
 
 uint32_t Registro::obtenerFrecuencia(){
+     return punteros.size();
      return frecuencia;
 }
 
@@ -221,8 +240,6 @@ int Registro::unir(const Registro& registro){
      it1 = punteros.begin();
      it2 = registro.punteros.begin();
 
-     // inicializo la frecuencia a cero
-//     frecuencia=0;
 
      // recorro las 2 listas de punteros
      while(it1!= punteros.end() && it2 != registro.punteros.end()){
@@ -258,6 +275,8 @@ int Registro::unir(const Registro& registro){
 	  frecuencia++;
      }
 
+     frecuencia = punteros.size();
+
      return 1;
 }
 
@@ -272,6 +291,16 @@ void Registro::obtenerPunterosEnLista(std::ifstream& archivo, uint32_t offset, u
 	std::string aux;
 
 	archivo.seekg(offset);
+
+	for(uint32_t i=0;i<frec;i++){
+	     uint32_t p1;
+	     uint32_t p2;
+	     archivo.read((char*)&p1, sizeof(p1));
+	     archivo.read((char*)&p2, sizeof(p2));
+
+	     lista_punteros->push_back(p1);
+	}
+	return;
 
 	while(archivo.good() && frec > 0){
 	   if(bits==0){
@@ -308,6 +337,21 @@ void Registro::obtenerPunterosEnLista(std::ifstream& archivo, uint32_t offset, u
 	std::string aux;
 
 	archivo.seekg(offset);
+
+	for(uint32_t i=0;i<frec;i++){
+	     uint32_t p1;
+	     uint32_t p2;
+	     archivo.read((char*)&p1, sizeof(p1));
+	     archivo.read((char*)&p2, sizeof(p2));
+
+	     Registro::Punteros p;
+	     p.documento=p1;
+	     p.frecuencia=p2;
+
+	     lista_punteros->push_back(p);
+	}
+	return;
+
 
 	while(archivo.good() && frec > 0){
 	   if(bits==0){
