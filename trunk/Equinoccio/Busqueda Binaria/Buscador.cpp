@@ -2,7 +2,7 @@
 #include "../FileManager/ConstPath.h"
 #include "../FileManager/FileManager.h"
 
-RegistroIndice Buscador::buscar(const std::string& termino,const std::string& catalogo)
+RegistroIndice Buscador::buscar(const std::string& termino,const std::string& catalogo, uint32_t segmento)
 {
 	uint32_t medio = 0;
 	uint32_t izquierda = 0;
@@ -14,9 +14,9 @@ RegistroIndice Buscador::buscar(const std::string& termino,const std::string& ca
 	char cadena[50];
 	bool error = false;
 	// TODO: deberia buscar en todos los segmentos
-	std::string indice =  FileManager::obtenerPathBase(0);
+	std::string indice =  FileManager::obtenerPathBase(segmento);
 	indice += catalogo + ".idx";
-	std::string lexico =  FileManager::obtenerPathBase(0);
+	std::string lexico =  FileManager::obtenerPathBase(segmento);
 	lexico += catalogo + ".lex";
 	
 	// Abro los archivos para lectura

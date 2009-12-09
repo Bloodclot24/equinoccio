@@ -24,17 +24,18 @@ private:
 	 * devuelve false si NO se encontro en el indice
 	 *
 	 * */
-	bool buscarEnIndice(std::string consulta, std::string catalogo);
+	bool buscarEnIndice(std::string consulta, std::string catalogo, uint32_t segmento);
 
 	/*
 	 * Dado un puntero devuelve el path del documento
 	 *
 	 * @param puntero puntero al indice de documentos
 	 * @param catalogo catalogo al que pertenece el documento
+	 * "param segmento segmento del archivo
 	 *
 	 * @return path del documento
 	 * */
-	std::string buscarPath(uint32_t puntero, std::string catalogo);
+	std::string buscarPath(uint32_t puntero, std::string catalogo, uint32_t segmento);
 
 	/* realiza la consulta con ngramas
 	 * @return false si no hay match

@@ -1,20 +1,23 @@
 #include "Buscador.h"
 
-//CATALOGO MUSICA
 int main(int argc, char* argv[]) {
 
-	RegistroIndice regResultado;
 	const std::string termino= argv[1];
+	RegistroIndice regResultado;
+	uint32_t segmentos= 3;
 
-	regResultado= Buscador::buscar(termino, "SRC");
+	std::cout << "Total segmentos: " << segmentos << std::endl;
 
-	std::cout << "-- Resultado --" << std::endl;
-	if(regResultado.frec != 0) {
-		std::cout << "Frecuencia: " << regResultado.frec << std::endl;
-		std::cout << "pLexico: " << regResultado.pLexico << std::endl;
-		std::cout << "pDocs: " << regResultado.pDocs << std::endl;
-	} else {
-		std::cout << "No se encontro nada" << std::endl;
+	for(uint32_t i= 0; i<=segmentos-1; i++) {
+		regResultado= Buscador::buscar(termino, "SND", i);
+		std::cout << "-- Resultados Segmento " << i << " --" << std::endl;
+		if(regResultado.frec != 0) {
+			std::cout << "Frecuencia: " << regResultado.frec << std::endl;
+			std::cout << "pLexico: " << regResultado.pLexico << std::endl;
+			std::cout << "pDocs: " << regResultado.pDocs << std::endl;
+		} else {
+			std::cout << "No se encontro nada" << std::endl;
+		}
 	}
 
 	return 0;

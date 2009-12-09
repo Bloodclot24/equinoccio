@@ -36,8 +36,9 @@ class Buscador
 		 * 
 		 * @param termino El termino a buscar.
 		 * @param catalogo El tipo de catalogo.
+		 * @param segmento El numero de segmento.
 		 **/
-		static RegistroIndice buscar(const std::string& termino, const std::string& catalogo);
+		static RegistroIndice buscar(const std::string& termino, const std::string& catalogo, uint32_t segmento);
 		
 		static RegistroNGrama buscarNgrama(const std::string ngrama,const std::string& catalogo);
 

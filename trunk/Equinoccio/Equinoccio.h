@@ -217,13 +217,13 @@ private:
 
     	 numeroDirectorio = (uint32_t) -1;
 
-	 // parsers.agregarParser(new ParserPython(1000000));
-	 parsers.agregarParser(new ParserC(1000000));
-	 // parsers.agregarParser(new ParserPhp(1000000));
-	 // parsers.agregarParser(new ParserImagen(1000000));
-	 // parsers.agregarParser(new ParserAudio(1000000));
-	 // parsers.agregarParser(new ParserTxt(1000000));
-	 // parsers.agregarParser(new ParserPdf(1000000));
+	  parsers.agregarParser(new ParserPython(1000000));
+	  parsers.agregarParser(new ParserC(1000000));
+	  parsers.agregarParser(new ParserPhp(1000000));
+	  parsers.agregarParser(new ParserImagen(1000000));
+	  parsers.agregarParser(new ParserAudio(1000000));
+	  parsers.agregarParser(new ParserTxt(1000000));
+	  parsers.agregarParser(new ParserPdf(1000000));
 
      };
      Equinoccio(const Equinoccio&){};
