@@ -290,17 +290,19 @@ public:
 	  for(itLex=lexico.begin();itLex!=lexico.end();itLex++)
 	       (*itLex).second->close();
 
+	  return 0;
+     }
+
+     void resetear(){
 	  // Reseteo la cantidad de documentos en cada catalogo a cero
 	  std::map<std::string, unsigned long>::iterator itDoc;
 	  for(itDoc=documentos.begin();itDoc!=documentos.end();itDoc++)
 	       (*itDoc).second = 0;
-
+	  
 	  // Reseteo la cantidad de terminos de cada catalogo a cero
 	  std::map<std::string, uint32_t>::iterator itTer;
 	  for(itTer=terminosCatalogo.begin();itTer!=terminosCatalogo.end();itTer++)
 	       (*itTer).second = 0;
-
-	  return 0;
      }
 
      template <class t>

@@ -40,15 +40,15 @@ class BusquedaRankeada{
 		}
 	};
 
-			void armarMatrizCoseno(std::string& catalogo);
-
-			/**
-			 * Recibe los terminos de la consulta y guarda en la lista
-			 * los documentos con su peso
-			 * @param segm numero de segmento
-			 * @return false en caso de error
-			 */
-			static bool coseno(std::string &consulta, std::string &catalogo, std::list<RegConsulta*> &arbol, uint32_t segm);
+     void armarMatrizCoseno(std::string& catalogo, uint32_t documentos, uint32_t terminos);
+     
+     /**
+      * Recibe los terminos de la consulta y guarda en la lista
+      * los documentos con su peso
+      * @param segm numero de segmento
+      * @return false en caso de error
+      */
+     static bool coseno(std::string &consulta, std::string &catalogo, std::list<RegConsulta*> &arbol, uint32_t segm);
 };
 
 #endif /* BUSQUEDARANKEADA_H_ */

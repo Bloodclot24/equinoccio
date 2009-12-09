@@ -1,4 +1,5 @@
 #include "Equinoccio.h"
+#include "Busqueda Rankeada/BusquedaRankeada.h"
 
 std::list<std::string>* Equinoccio::path_result = NULL;
 std::list<std::string>* Equinoccio::dir_indexados = new std::list<std::string>;
@@ -66,6 +67,14 @@ int Equinoccio::magic(int argc, const char** argv){
 	   std::string pesado(arg_add_dir);
 	   agregarDirectorio(parsearDirectorio(pesado));
 	   parsers.armarIndices();
+
+	   BusquedaRankeada br;
+	   const char *catalogos[] = {"SRC", "SND", "IMG", "TXT"};
+	   for(int i=0;i<4;i++){
+		std::string catalogo=catalogos[i];
+		br.armarMatrizCoseno(catalogo, parsers.obtenerCantidadDocumentos(catalogo), parsers.obtenerCantidadTerminos(catalogo));
+	   }
+	   parsers.resetear();
 
 	   FileManager::agregarSegmento();
 	   // if(FileManager::getCantidadSegmentos() == 2)
