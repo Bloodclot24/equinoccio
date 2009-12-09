@@ -21,40 +21,50 @@ std::list<std::string>* Busqueda::buscar(std::string& consulta, std::string cata
 		if (consulta.find('*') != std::string::npos || consulta.find('?') != std::string::npos )
 			rankeada=false;
 		if(!rankeada) {
-			size_t pos = 0;
-			size_t where = 0;
-			bool encontrado;
-			for(uint32_t seg=0; seg<segmentos; seg++) {
-				punteros.clear();
-				punteros_match.clear();
-				do {
-					//tomo la palabra y la busco en el indice
-					where = consulta.find(' ', pos);
-					encontrado = buscarEnIndice(consulta.substr(pos, where-pos), catalogo, seg);
-					pos = where+1;
-				}while (where != std::string::npos && encontrado);
-
-				if (!encontrado) {
-					//una o mas palabras no matcheadas
-					std::cout<<" * NO MATCH SEGMENTO " << seg << " * " <<std::endl;
-					for (unsigned int i=0; i<punteros.size();i++)
-						delete punteros[i];
+			uint32_t n=4,i=0;
+			const char *catalogos[] = {"SRC", "SND", "IMG", "TXT"};
+			if (catalogo!="ALL"){
+				while (catalogo!=catalogos[i] && i<n){
+					i++;
 				}
-				else {
-					 std::cout<<" * AND SEGMENTO " << seg << " * " <<std::endl;
-					 Busqueda::andPunteros2(this->punteros,this->punteros_match);
+				n = i+1;
+			}
+			for (;i<n;i++){
+				size_t pos = 0;
+				size_t where = 0;
+				bool encontrado;
+				for(uint32_t seg=0; seg<segmentos; seg++) {
+					punteros.clear();
+					punteros_match.clear();
+					do {
+						//tomo la palabra y la busco en el indice
+						where = consulta.find(' ', pos);
+						encontrado = buscarEnIndice(consulta.substr(pos, where-pos), catalogos[i], seg);
+						pos = where+1;
+					}while (where != std::string::npos && encontrado);
 
-					 //agregar los paths a la lista
-					 if (punteros_match.size() != 0) {
-					  do{
-						   std::string path_documento = buscarPath(punteros_match.front(), catalogo, seg);
-						   std::cout<<"MATCH: "<<path_documento<<std::endl;
-						   paths->push_back(path_documento);
-						   punteros_match.pop_front();
-					  }while(punteros_match.size()>0);
-					 }
-				}
-			}// for segmentos
+					if (!encontrado) {
+						//una o mas palabras no matcheadas
+						std::cout<<" * NO MATCH SEGMENTO " << seg << " * " <<std::endl;
+						for (unsigned int i=0; i<punteros.size();i++)
+							delete punteros[i];
+					}
+					else {
+						 std::cout<<" * AND SEGMENTO " << seg << " * " <<std::endl;
+						 Busqueda::andPunteros2(this->punteros,this->punteros_match);
+
+						 //agregar los paths a la lista
+						 if (punteros_match.size() != 0) {
+						  do{
+							   std::string path_documento = buscarPath(punteros_match.front(), catalogos[i], seg);
+							   std::cout<<"MATCH: "<<path_documento<<std::endl;
+							   paths->push_back(path_documento);
+							   punteros_match.pop_front();
+						  }while(punteros_match.size()>0);
+						 }
+					}
+				}// for segmentos
+			}	//for catalogo
 		}
 		else {
 			std::list<BusquedaRankeada::RegConsulta*> arbol;

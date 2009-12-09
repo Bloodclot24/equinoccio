@@ -205,7 +205,7 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo, uint32_t documen
 
 
 bool BusquedaRankeada::coseno(std::string &consulta, std::string catalogo, std::list<RegConsulta*> &arbol, uint32_t segm) {
-     std::string nombre = FileManager::obtenerPathBase(0);//para todos los segmentos TODO!!!!!
+     std::string nombre = FileManager::obtenerPathBase(segm);
      nombre += catalogo;
      nombre += EXT_FREC;
      std::fstream arch_peso(nombre.c_str(), std::ios::binary | std::ios::in);
@@ -240,7 +240,6 @@ bool BusquedaRankeada::coseno(std::string &consulta, std::string catalogo, std::
 	  }
 	  else
 	       mul = where;
-	       		//TODO: para todos los segmentos
 	  if ( Buscador::buscarNroTermino(consulta.substr(pos,mul-pos), catalogo, reg.nro,segm) ) {
 	       //entro al archivo de pesos
 	       arch_peso.seekg(reg.nro * sizeof(double));
@@ -252,12 +251,14 @@ bool BusquedaRankeada::coseno(std::string &consulta, std::string catalogo, std::
 	  }
 	  else {
 	       std::cout<<"No encontrado: "<<consulta.substr(pos,mul-pos)<<std::endl;
-	       return false;
 	  }
 	  pos = where+1;
      }while (where != std::string::npos);
      arch_peso.close();
-
+     if (v_consulta.size()==0){
+    	 arch_mc1.close(); arch_mc2.close(); arch_mc3.close();
+    	 return false;
+     }
      //ordeno el vector consulta
      std::sort(v_consulta.begin(),v_consulta.end());
      for(uint32_t i=0; i<v_consulta.size();i++)
