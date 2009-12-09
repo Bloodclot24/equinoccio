@@ -16,6 +16,7 @@ class BusquedaRankeada{
 //			std::vector<double> vNoNulos;
 //			std::vector<uint32_t> vColumna;
 //			std::vector<uint32_t> vIndice;
+	public:
 
 	struct RegConsulta {
 		uint32_t nro;
@@ -29,9 +30,16 @@ class BusquedaRankeada{
 		int unir(const RegConsulta &r) const {
 			return 1;
 		}
+		RegConsulta(){
+			nro=0;
+			peso=0;
+		}
+		RegConsulta(uint32_t n, double p){
+			nro=n;
+			peso=p;
+		}
 	};
 
-	public:
 			void armarMatrizCoseno(std::string& catalogo);
 
 			/**
@@ -40,7 +48,7 @@ class BusquedaRankeada{
 			 *
 			 * @return false en caso de error
 			 */
-			static bool coseno(std::string &consulta, std::string &catalogo);
+			static bool coseno(std::string &consulta, std::string &catalogo, RedBlackTree<RegConsulta> &arbol);
 };
 
 #endif /* BUSQUEDARANKEADA_H_ */

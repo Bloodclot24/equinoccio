@@ -46,8 +46,8 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
 	//TODO voy a tener la cantidad de terminos y de documentos en el indice.
 	//Usar los metodos, obtenerCantidadTerminos y obtenerCantidadDocumentos
 	//de Parsers.h
-	uint32_t cantTerminos = /*11;*/340350;//3051;//340350;
-	uint32_t cantidadDocumentos = /*2;*/28209;//167;//28209;
+	uint32_t cantTerminos = /*11;*/3862;//3051;//340350;
+	uint32_t cantidadDocumentos = 256/*2;*/;//167;//28209;
 	//****************************************************************
 
 	uint32_t pTermino = 0;
@@ -149,7 +149,7 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
 		matrizTranspuesta.read((char*)&y, sizeof(uint32_t));
 		matrizTranspuesta.read((char*)&x, sizeof(uint32_t));
 		matrizTranspuesta.read((char*)&valor, sizeof(double));
-		std::cerr << "Documentos: " << x << std::endl;
+//		std::cerr << "Documentos: " << x << std::endl;
 		if((filaAnt != x)|| (!primero)){
 			normas.push_back(norma);
 			norma = 0.0;
@@ -217,7 +217,7 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo){
 
 
 
-bool BusquedaRankeada::coseno(std::string &consulta, std::string &catalogo) {
+bool BusquedaRankeada::coseno(std::string &consulta, std::string &catalogo, RedBlackTree<RegConsulta> &arbol) {
 	std::string nombre = FileManager::obtenerPathBase(0);//para todos los segmentos TODO!!!!!
 	nombre += catalogo;
 	nombre += EXT_FREC;
@@ -236,22 +236,29 @@ bool BusquedaRankeada::coseno(std::string &consulta, std::string &catalogo) {
 
 	//busco los terminos de la consulta en el indice y armo el vector de la consulta
 	uint32_t pos = 0;
-	uint32_t where = 0, mul=0, extra=1;
+	uint32_t where = 0, mul=0, extra;
+	double norma = 0;
 	std::vector<RegConsulta> v_consulta;
 	RegConsulta reg;
 	std::cout<<"Busqueda Rankeada"<<std::endl;
 
 	do {
+		extra=1;
+		mul=0;
 		where = consulta.find(' ',pos);
-		if ((mul = consulta.find_last_of('^',where)) != std::string::npos){
+		mul = consulta.find_first_of('^',pos);
+		if (mul != std::string::npos && mul < where){
 			extra = atoi(consulta.substr(mul+1, where-(mul+1)).c_str());
 			std::cout<<"Peso extra: "<<extra<<std::endl;
 		}
+		else
+			mul = where;
 		if ( Buscador::buscarNroTermino(consulta.substr(pos,mul-pos), catalogo, reg.nro) ) {
 			//entro al archivo de pesos
 			arch_peso.seekg(reg.nro * sizeof(double));
 			arch_peso.read((char*)&reg.peso, sizeof(double));
-			reg.peso *=extra;
+			reg.peso = reg.peso * extra;
+			norma += pow(reg.peso,2);
 			v_consulta.push_back(reg);
 			std::cout<<consulta.substr(pos,mul-pos)<<"	nro: "<<reg.nro<<"	peso: "<<reg.peso<<std::endl;
 		}
@@ -276,9 +283,11 @@ bool BusquedaRankeada::coseno(std::string &consulta, std::string &catalogo) {
 	uint32_t  n;
 	uint32_t col;
 	RegConsulta doc;
+	RegConsulta *aux;
 	doc.nro = 0;
 	doc.peso = 0;
 	double coseno =0;
+	norma = sqrt(norma);
 	std::cout<<"\n Busqueda en la matriz \n\n";
 	//para cada documento hago el producto
 	while(arch_mc3.good()) {
@@ -299,16 +308,21 @@ bool BusquedaRankeada::coseno(std::string &consulta, std::string &catalogo) {
 					buscar_sgte = false;
 					arch_mc1.seekg(off*sizeof(double)); //busco el peso del termino
 					arch_mc1.read((char*)&coseno,sizeof(double));
-					doc.peso += coseno*v_consulta[n].peso; //falta normalizar!!!
+					doc.peso += coseno*v_consulta[n].peso;
 					std::cout<<"Termino nro: "<<v_consulta[n].nro<<"	en Doc: "<<doc.nro<<std::endl;
-					//push del coseno al arbol°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°|
-					//arbol.push(doc)
 				}
 				off++;
 			} while (buscar_sgte && off<eof && off<sgte);
 			n++;	//paso al siguiente termino
 		}while(off<eof && off<sgte && n<v_consulta.size()); //hasta q no haya mas terminos en la consulta o en el doc
-		std::cout<<"Peso del Doc "<<doc.nro<<": "<<doc.peso<<std::endl<<std::endl;
+		doc.peso = (double)doc.peso / (double)norma;
+		std::cout<<"Peso del Doc "<<doc.nro<<": "<<doc.peso<<std::endl;
+		if(doc.peso > 0) {
+			doc.peso = 1- doc.peso;
+			std::cout<<"Peso invertido: "<<doc.peso<<std::endl<<std::endl;
+			aux = new RegConsulta(doc.nro,doc.peso);
+			arbol.Insert(aux);
+		}
 		doc.nro++;
 		doc.peso = 0;
 	}
