@@ -124,7 +124,6 @@ void Busqueda::buscar(std::string& consulta, std::string catalogo, std::list<std
 
 			//busco los path de los documentos match
 			while ((reg = arbol_segm.RemoverMayorIgual(comp_reg))) {
-				std::cout<<"Peso: "<<(1-reg->peso)<<std::endl;
 				std::string p = buscarPath(reg->nro,reg->cat,reg->segm);
 				if (!p.empty())
 					paths->push_back(p);

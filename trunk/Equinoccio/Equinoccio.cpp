@@ -1,10 +1,9 @@
 #include "Equinoccio.h"
-#include "Busqueda Rankeada/BusquedaRankeada.h"
 
 std::list<std::string>* Equinoccio::path_result = new std::list<std::string>;
 std::list<std::string>* Equinoccio::dir_indexados = new std::list<std::string>;
 bool Equinoccio::silencio = false;
-bool huboCambios= false;
+bool Equinoccio::huboCambios= false;
 
 int Equinoccio::magic(int argc, const char** argv){
 
@@ -15,6 +14,8 @@ int Equinoccio::magic(int argc, const char** argv){
 	baseDir +='/';
 
 	bool arg_list=false;
+	bool arg_reindexar=false;
+	bool arg_borrarTodo=false;
 	const char* arg_add_dir=NULL;
 	const char* arg_del_dir=NULL;
 	const char* arg_search_string=NULL;
@@ -31,6 +32,10 @@ int Equinoccio::magic(int argc, const char** argv){
 	for(i=1;i<argc;i++){
 	   if(strcmp(argv[i], ARG_LIST) == 0)
 		arg_list=true;
+	   else if(strcmp(argv[i], ARG_REINDEXAR) == 0)
+		arg_reindexar=true;
+	   else if(strcmp(argv[i], ARG_BORRARTODO) == 0)
+		arg_borrarTodo=true;
 	   else if(strcmp(argv[i], ARG_ADD) == 0)
 		param = &arg_add_dir;
 	   else if(strcmp(argv[i], ARG_DEL) == 0)
@@ -59,7 +64,12 @@ int Equinoccio::magic(int argc, const char** argv){
 	   mostrar_uso(argv[0]);
 	   return error;
 	}
-
+	if(arg_borrarTodo){
+	     FileManager::borrarIndice();
+	}
+	if(arg_reindexar){
+	     parsers.reindexar();
+	}
 	if(arg_list) {
 	   std::cout << "Listado de directorios.\n";
 	   getDirIndexados();
@@ -83,26 +93,8 @@ int Equinoccio::magic(int argc, const char** argv){
 			   return codigoError;
 		   }
 	   }
-	   parsers.armarIndices();
 
-	   BusquedaRankeada br;
-	   const char *catalogos[] = {"SRC", "SND", "IMG", "TEX"};
-	   for(int i=0;i<4;i++){
-		std::string catalogo=catalogos[i];
-		if(br.armarMatrizCoseno(catalogo, parsers.obtenerCantidadDocumentos(catalogo), parsers.obtenerCantidadTerminos(catalogo)) < 0){
-			if(!silencio) std::cout << "Se produjo un error en tiempo de ejecucion del programa." << std::endl;
-			return ERROR_EJECUCION;
-		}
-	   }
-	   parsers.resetear();
-
-	   FileManager::agregarSegmento();
-	   // if(FileManager::getCantidadSegmentos() == 2)
-	   // 	parsers.unirSegmentos2();
-	   idxDirectorios.close();
-	   lexDirectorios.close();
-	   numeroDirectorio = (uint32_t) -1;
-	   huboCambios= true;
+	   actualizarEstado();
 
 	}
 	if(arg_del_dir){
@@ -217,6 +209,16 @@ int Equinoccio::main(int argc, const char** argv){
      if(E==NULL)
 	  E=new Equinoccio;
     return E->magic(argc, argv);
+}
+
+void Equinoccio::indexar(const std::string& nombre){
+     if(E)
+	  E->agregarDirectorio(nombre);
+}
+
+void Equinoccio::finIndexar(){
+     if(E)
+	  E->actualizarEstado();
 }
 
 Equinoccio *Equinoccio::E = NULL;

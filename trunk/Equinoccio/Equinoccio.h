@@ -12,8 +12,8 @@
 #include <dirent.h>
 #include <libgen.h>
 #include <unistd.h>
+#include "Busqueda Rankeada/BusquedaRankeada.h"
 
-#include "Parsers.h"
 #include "Parsers/Parser.h"
 #include "Parsers/ParserImagen/ParserImagen.h"
 #include "Parsers/ParserAudio/ParserAudio.h"
@@ -25,8 +25,11 @@
 #include "FileManager/FileManager.h"
 
 #include "Busquedas/Busqueda.h"
+#include "Parsers.h"
 
 #define ARG_LIST   "-pl"
+#define ARG_REINDEXAR "-r"
+#define ARG_BORRARTODO "-da"
 #define ARG_ADD    "-pa"
 #define ARG_DEL    "-pd"
 #define ARG_SEARCH "-s"
@@ -172,6 +175,33 @@ private:
 	  return ERROR_NO_ERROR;
      }
 
+     int actualizarEstado(){
+	  parsers.armarIndices();
+
+	   BusquedaRankeada br;
+	   const char *catalogos[] = {"SRC", "SND", "IMG", "TEX"};
+	   for(int i=0;i<4;i++){
+		std::string catalogo=catalogos[i];
+		if(br.armarMatrizCoseno(catalogo, parsers.obtenerCantidadDocumentos(catalogo), parsers.obtenerCantidadTerminos(catalogo)) < 0){
+			if(!silencio) std::cout << "Se produjo un error en tiempo de ejecucion del programa." << std::endl;
+			return ERROR_EJECUCION;
+		}
+	   }
+	   parsers.resetear();
+
+	   FileManager::agregarSegmento();
+	   idxDirectorios.close();
+	   lexDirectorios.close();
+	   numeroDirectorio = (uint32_t) -1;
+	   huboCambios= true;
+
+	   // if(FileManager::getCantidadSegmentos() == 6){
+	   // 	parsers.reindexar();
+	   // }
+
+	   return 1;
+     }
+
      uint32_t guardarDirectorio(const std::string& nombre){
 	  if(!idxDirectorios.is_open()){
 
@@ -229,6 +259,7 @@ private:
 	       "] [" << ARG_ADD << " <directorio>] [" <<
 	       ARG_DEL << " <directorio>] [" << ARG_SEARCH <<
 	       " <string>] [" << ARG_CAT << " <catalogo>]" <<
+	       " -r -da" <<
 	       std::endl;
      }
 
@@ -264,6 +295,9 @@ public:
      static std::list<std::string>* getDirIndexados();
      static int main(int argc, const char** argv);
      static void destruir();
+     static void indexar(const std::string& nombre);
+     static void finIndexar();
+     static bool huboCambios;
 
 };
 

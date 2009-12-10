@@ -182,7 +182,7 @@ public:
      
      std::list<Registro::Punteros>& getListaPunteros();
 
-
+     static std::string comprimirPunteros(std::list<Registro::Punteros> *elegida);
 };
 
 #endif //REGISTRO_H_INCLUDED

@@ -1,4 +1,5 @@
 SOURCES=CodigoGamma/TDA_Codigos.cpp \
+	Parsers.cpp \
 	Parsers/Parser.cpp \
 	Parsers/ParserAudio/ParserAudio.cpp \
 	Parsers/ParserC/ParserC.cpp \

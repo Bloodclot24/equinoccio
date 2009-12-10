@@ -11,14 +11,6 @@ Registro::Registro(const std::string& termino, uint32_t documento){
      punteros.push_back(puntero);   // agrego el puntero a la lista
 }
 
-Registro::Registro(const std::string& termino){
-     this->termino = termino;
-     frecuencia=0;
-}
-
-std::list<Registro::Punteros>& Registro::getListaPunteros(){
-     return punteros;
-}
 
 Registro* Registro::leer(std::ifstream &archivo, int compresion){
      Registro* r= new Registro(); // creo un registro
@@ -205,6 +197,60 @@ std::string Registro::obtenerPunterosComprimidos(){
      // devuelvo el resultado
      return resultado;
 }
+
+
+std::string Registro::comprimirPunteros(std::list<Registro::Punteros> *elegida){
+     std::list<Registro::Punteros>::iterator it;
+     const char* ptr;
+     std::string str1, str2;
+     char byte=0;
+     unsigned bit=1<<7;
+     uint32_t docAnterior = (uint32_t) -1;
+     unsigned bits=0;
+     
+     std::string resultado;
+
+     // recorro todos los punteros
+     for(it=elegida->begin(); it != elegida->end(); it++){
+	  Registro::Punteros p;
+	  p = *it;
+	  
+	  // convierto el puntero a distancia y despues a GAMMA
+	  str1= TDA_Codigos::getCGamma(p.documento-docAnterior);
+	  docAnterior=p.documento; // almaceno el documento anterior
+
+	  // Convierto la frecuencia a GAMMA
+	  str2=TDA_Codigos::getCGamma(p.frecuencia);
+
+	  // concateno ambos codigos
+	  str1+=str2;
+	  
+	  ptr  = str1.c_str();
+	  bits = str1.length();
+	  while(bits > 0){
+	       // escribo de a bits
+	       for(;bit!=0 && bits > 0; bit >>= 1, bits--, ptr++){
+		    byte |= *ptr!='0'?bit:0;
+	       }
+	       // si termine el byte, lo escribo a disco y paso al
+	       // siguiente
+	       if(bit==0){
+		    // voy almacenando el resultado
+		    resultado+=byte;
+		    bit=1<<7;
+		    byte=0;
+	       }
+	  }
+     }
+     // si me quedo algun byte por la mitad, lo escribo asi
+     if(bit != 1<<7){
+	  resultado += byte;
+     }
+     
+     // devuelvo el resultado
+     return resultado;
+}
+
 
 uint32_t Registro::obtenerFrecuencia(){
      return punteros.size();
