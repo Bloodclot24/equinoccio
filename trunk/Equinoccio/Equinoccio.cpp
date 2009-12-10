@@ -98,7 +98,13 @@ int Equinoccio::magic(int argc, const char** argv){
 	}
 	if(arg_del_dir){
 	   std::cout << "Eliminar el directorio: " << arg_del_dir << std::endl;
-	   std::cout << "Existe directorio: " << existeDirectorio(arg_del_dir) << std::endl;
+	   std::string pesado(arg_del_dir);
+	   pesado = parsearDirectorio(pesado);
+	   bool existe = true;//existeDirectorio(pesado);
+	   std::cout << "Existe directorio: " <<  existe<< std::endl;
+	   if (existe) {
+		   FileManager::borrarDirectorio(pesado);
+	   }
 	}
 	if(arg_search_string){
 	   std::cout << "Buscar la cadena: " << arg_search_string << std::endl;
@@ -132,6 +138,10 @@ std::list<std::string>* Equinoccio::getPaths() {
 void Equinoccio::destruir(){
      if(E)
 	  delete E;
+     path_result->clear();
+     dir_indexados->clear();
+     delete dir_indexados;
+     delete path_result;
 }
 
 std::list<std::string>* Equinoccio::getDirIndexados() {

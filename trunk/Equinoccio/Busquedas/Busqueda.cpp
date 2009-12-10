@@ -57,7 +57,7 @@ void Busqueda::buscar(std::string& consulta, std::string catalogo, std::list<std
 						 if (punteros_match.size() != 0) {
 						  do{
 							   Bitmap b(FileManager::obtenerPathBitmapArch(seg)+FileManager::obtenerExtCatalogo(catalogos[i]));
-							   if (!b.getBit(seg)){
+							   if (!b.getBit(punteros_match.front())){
 								 paths->push_back(buscarPath(punteros_match.front(), catalogos[i], seg));
 							   }
 							   punteros_match.pop_front();

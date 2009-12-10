@@ -71,8 +71,14 @@ public:
      
      static std::string obtenerPathBitmapArch(uint32_t segmento);     
 
-     /* borra la carpeta Resources */
+     /* borra toda la indexacion */
      static void borrarIndice();
+
+     /*
+      * Elimina del indice al directorio y todos los sub Archivos mediante el bitmap
+      * */
+     static bool borrarDirectorio(std::string path);
+
 };
 #endif /*FILEMANAGER_H_*/
 

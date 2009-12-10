@@ -1,6 +1,6 @@
 #include "ParserTxt.h"
 
-const char* ParserTxt::validas[] = {".txt", 0};
+const char* ParserTxt::validas[] = {".txt", ".log", 0};
 
 ParserTxt::ParserTxt(uint32_t cantMaxReg): ParserGenerico::ParserGenerico(cantMaxReg) {
 	nombreCatalogo= "TEX";

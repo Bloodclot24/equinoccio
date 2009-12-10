@@ -31,7 +31,7 @@
 #define ARG_DEL    "-pd"
 #define ARG_SEARCH "-s"
 #define ARG_CAT    "-c"
-//todo!!!! AGREGAR UN BORRAR TODO EL INDICE
+#define ARG_DALL   "-da"
 #define ERROR_NO_ERROR              0
 #define ERROR_ARG_DESCONOCIDO      -1
 #define ERROR_ARG_FALTANTE         -1

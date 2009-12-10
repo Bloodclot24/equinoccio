@@ -130,11 +130,14 @@ private:
 		}else{
 		if (estado ==  E_RALL) {
 			FileManager::borrarIndice();
+		}else{
+		if (estado == E_REM) {
+			std::string dir = directorio;
+			const char* com_c[] = {"./Equinoccio", ARG_DEL, dir.c_str()};
+			Equinoccio::silencio = false;
+			Equinoccio::main(3,com_c);
 		}
-
-//TODO.. agregar los casos que faltan :)
-
-		}}}
+		}}}}
 		mx_fin.lock();
 		fin = true;
 		mx_fin.unlock();

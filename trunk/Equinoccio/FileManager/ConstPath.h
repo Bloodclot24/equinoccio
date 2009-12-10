@@ -3,7 +3,6 @@
 
 #define PATH_CONFIG	"Config/"
 #define PATH_TRES 	"Resources/"
-#define PATH_SEGDIF	"Resources/SegDiferenciales/"
 
 #define IDX_ARCH2 "IDX_ARCH.idx."
 #define LEX_ARCH2 "LEX_ARCH.lex."

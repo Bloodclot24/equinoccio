@@ -42,7 +42,8 @@ TESTSOURCES=Arbol/arbol.cpp\
 	Bitmap/testBitmap.cpp \
 	Notificador/testNotificador.cpp\
 	Busqueda\ Rankeada/testArmadoMartizCoseno.cpp\
-	Busqueda\ Rankeada/testCoseno.cpp 
+	Busqueda\ Rankeada/testCoseno.cpp \
+	Equinoccio_gtk.cpp
 
 MAIN=main.cpp
 

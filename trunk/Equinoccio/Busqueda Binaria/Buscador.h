@@ -51,6 +51,22 @@ class Buscador
 		 * */
 		static bool buscarNroTermino(const std::string &termino, const std::string &catalogo, uint32_t &nro, uint32_t segmento);
 
+		/**
+		 * Dado un nombre de directorio devuelve el numero.
+		 * @param nro guarda el numero de directorio
+		 *
+		 * @return true si encuentra el directorio.
+		 */
+		static bool buscarNroDirectorio(const std::string &path, uint32_t &nro, uint32_t &pun, uint32_t segm);
+
+		/**
+		 * @param nro numero de directorio
+		 * @param pun numero de documento del primer archivo perteneciente al directorio
+		 *
+		 * @return false si no encontro archivos para ese directorio
+		 */
+		static bool buscarArchivodeDir(std::fstream &idx_arch, uint32_t nro, uint32_t &pun);
+
 };
 
 #endif /*BUSCADOR_H_*/
