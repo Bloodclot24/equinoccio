@@ -65,7 +65,7 @@ public:
 	void buscarModificaciones();
 
 	void buscarArchivos(std::fstream &archivo, std::fstream &lexico, RegistroArchivo &registro, std::map<ino_t,RegistroDisco> &registrosDisco, uint32_t dirMenor, bool existeDirectorio, uint32_t eof);
-	bool cargarRegistrosDelDirectorio(uint32_t nro_dir, std::fstream &archDirectorio, std::fstream &archLexicoDir, std::map<ino_t,RegistroDisco> &registrosDisco, std::map<std::string,bool> &directoriosNuevos);
+     bool cargarRegistrosDelDirectorio(uint32_t nro_dir, std::fstream &archDirectorio, std::fstream &archLexicoDir, std::map<ino_t,RegistroDisco> &registrosDisco, std::map<std::string,bool> &directoriosNuevos, std::string& nombreDir);
 	void avanzarArchivo(std::fstream &archArchivo, std::fstream &archLexico, RegistroArchivo &regArchivo);
 	bool verificarDirectorioNuevo(const std::string &directorio);
 };

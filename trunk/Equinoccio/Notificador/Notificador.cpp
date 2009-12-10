@@ -1,4 +1,5 @@
 #include "Notificador.h"
+#include "../Equinoccio.h"
 
 uint32_t obtenerEof(std::fstream &archivo) {
 	//Leo el fin del IDX_ARCH catalogo
@@ -54,7 +55,7 @@ void Notificador::buscarArchivos(std::fstream &archivo, std::fstream &lexico, Re
 
 void Notificador::buscarModificaciones() {
 
-	uint32_t segmentos= 3;//FileManager::getCantidadSegmentos();
+	uint32_t segmentos= FileManager::getCantidadSegmentos();
 	std::string directorio, lexico_dir;
 	std::fstream archDirectorio, archLexicoDir;
 
@@ -155,7 +156,13 @@ void Notificador::buscarModificaciones() {
 				dirMenor= buscarMenorDirectorio(regImg, regTxt, regSrc, regSnd);
 				//std::cout << "dirMenor: " << dirMenor << std::endl;
 
-				existeDirectorio= cargarRegistrosDelDirectorio(dirMenor, archDirectorio, archLexicoDir, registrosDisco, directoriosModificados);
+				std::string nombreDir;
+				existeDirectorio= cargarRegistrosDelDirectorio(dirMenor, archDirectorio, archLexicoDir, registrosDisco, directoriosModificados, nombreDir);
+
+				if(!existeDirectorio){ // Lo tengo que dar de baja en este segmento
+				     Equinoccio::eliminarDirectorio(nombreDir);
+
+				}
 
 				//Busco por los catalogos comparando con los archivos levantados de disco
 				if(eofImg != archImgDir.tellg() && !errorImg)
@@ -211,13 +218,13 @@ void Notificador::buscarModificaciones() {
 	} //for catalogos
 
 	//Los archivos que nos quedaron en el map registrosDisco son archivos nuevos
-	//std::cout << "-------- Archivos Nuevos --------" << std::endl;
-//	if(!registrosDisco.empty()) {
-//		std::map<ino_t,RegistroDisco>::iterator it;
-//		for(it= registrosDisco.begin(); it != registrosDisco.end(); it++)
-//			if(registrosDisco[it->first].tipo == 'a')
-//				std::cout << "alta: " << it->first << std::endl;
-//	}
+	std::cout << "-------- Archivos Nuevos --------" << std::endl;
+	if(!registrosDisco.empty()) {
+		std::map<ino_t,RegistroDisco>::iterator it;
+		for(it= registrosDisco.begin(); it != registrosDisco.end(); it++)
+			if(registrosDisco[it->first].tipo == 'a')
+				std::cout << "alta: " << it->first << std::endl;
+	}
 	registrosDisco.clear();
 	//std::cout << "-----------------------------------" << std::endl;
 
@@ -227,16 +234,18 @@ void Notificador::buscarModificaciones() {
 		//PRUEBA
 		std::map<std::string,bool>::iterator it;
 		for(it= directoriosModificados.begin(); it != directoriosModificados.end(); it++) {
-			if(it->second)
+		     if(it->second){
 				std::cout << "- Se agrego: " << it->first << std::endl;
-			else
+		     }
+		     else{
 				std::cout << "- Se elimino: " << it->first << std::endl;
+		     }
 		}
 	}
 	std::cout << "++++++++++++++++++++++++++++++++++" << std::endl;
 }
 
-bool Notificador::cargarRegistrosDelDirectorio(uint32_t nro_dir, std::fstream &archDirectorio, std::fstream &archLexicoDir, std::map<ino_t,RegistroDisco> &registrosDisco, std::map<std::string,bool> &directoriosNuevos) {
+bool Notificador::cargarRegistrosDelDirectorio(uint32_t nro_dir, std::fstream &archDirectorio, std::fstream &archLexicoDir, std::map<ino_t,RegistroDisco> &registrosDisco, std::map<std::string,bool> &directoriosNuevos, std::string& nombreDir) {
 
 	bool existeDirectorio= false;
 	RegistroDirectorio regDirectorio;
@@ -253,7 +262,7 @@ bool Notificador::cargarRegistrosDelDirectorio(uint32_t nro_dir, std::fstream &a
 	while((c= archLexicoDir.get()) != 0) {
 		directorio+= c;
 	}
-
+	nombreDir=directorio;
 	std::cout << "* Directorio: " << directorio << std::endl;
 
 	//Elimino de la lista de directorios nuevo
@@ -289,8 +298,10 @@ bool Notificador::cargarRegistrosDelDirectorio(uint32_t nro_dir, std::fstream &a
 			closedir(directory);
 		}
 	}
-	if(!existeDirectorio)
-		directoriosNuevos[directorio]= false;
+	if(!existeDirectorio){
+	     directoriosNuevos[directorio]= false;
+		
+	}
 
 	return	existeDirectorio;
 }

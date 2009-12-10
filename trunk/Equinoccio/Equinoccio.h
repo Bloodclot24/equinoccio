@@ -23,6 +23,7 @@
 #include "Parsers/ParserPDF/ParserPdf.h"
 #include "Parsers/ParserPhp/ParserPHP.h"
 #include "FileManager/FileManager.h"
+#include "Notificador/Notificador.h"
 
 #include "Busquedas/Busqueda.h"
 #include "Parsers.h"
@@ -53,6 +54,7 @@ private:
      std::fstream lexArchivos;
      uint32_t numeroDirectorio;
      static Equinoccio *E;
+     Notificador notificador;
 
      bool esDirectorio(const std::string& nombre){
 	  struct stat sb;
@@ -301,6 +303,7 @@ public:
      static void indexar(const std::string& nombre);
      static void finIndexar();
      static bool huboCambios;
+     static int eliminarDirectorio(std::string arg_del_dir);
 
 };
 

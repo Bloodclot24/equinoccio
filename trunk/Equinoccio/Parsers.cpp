@@ -336,6 +336,9 @@ void Parsers::unirSegmentos2(uint32_t seg1, uint32_t seg2){
 
 void Parsers::reindexar(){
 
+     if(FileManager::getCantidadSegmentos()==1)
+	  return;
+
      std::fstream auxiliar("auxiliar.directorios", std::fstream::out);
      auxiliar.close();
      auxiliar.open("auxiliar.directorios", std::fstream::in | std::fstream::out);
@@ -410,5 +413,13 @@ void Parsers::reindexar(){
 	  }
      }while(auxiliar.good());
      Equinoccio::finIndexar();
+
+     remove("auxiliar.directorios");
+
+     for(uint32_t i=0;i<cantidad;i++){
+	  delete lexicosDir[i];
+	  delete indicesDir[i];
+	  delete bits[i];
+     }
 
 }

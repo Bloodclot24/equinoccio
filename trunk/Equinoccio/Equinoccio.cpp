@@ -99,17 +99,10 @@ int Equinoccio::magic(int argc, const char** argv){
 
 	}
 	if(arg_del_dir){
-	   std::cout << "Eliminar el directorio: " << arg_del_dir << std::endl;
-	   std::string pesado(arg_del_dir);
-	   pesado = parsearDirectorio(pesado);
-	   bool existe = existeDirectorio(pesado);
-	   std::cout<<"existe "<<existe<<std::endl;
-	   huboCambios= true;
-	   if (existe) {
-		   FileManager::borrarDirectorio(pesado);
-	   }else{
-		   return ERROR_ELIMINAR_INEXISTENTE;
-	   }
+		 int retorno=0;
+	     retorno = eliminarDirectorio(arg_del_dir);
+		 if(retorno != 0)
+			return retorno;
 	}
 	if(arg_search_string){
 	   std::cout << "Buscar la cadena: " << arg_search_string << std::endl;
@@ -131,7 +124,11 @@ int Equinoccio::magic(int argc, const char** argv){
 			   std::cout<<"Doc: "<<*it<<std::endl;
 		   }
 	   }
+
 	}
+
+	notificador.buscarModificaciones();
+	   
 
 	return ERROR_NO_ERROR;
 }
@@ -217,12 +214,28 @@ int Equinoccio::main(int argc, const char** argv){
 
 void Equinoccio::indexar(const std::string& nombre){
      if(E)
-	  E->agregarDirectorio(nombre);
+	  E->agregarDirectorio(E->parsearDirectorio(nombre));
 }
 
 void Equinoccio::finIndexar(){
      if(E)
 	  E->actualizarEstado();
+}
+
+int Equinoccio::eliminarDirectorio(std::string arg_del_dir){
+     if(E){
+	  std::cout << "Eliminar el directorio: " << arg_del_dir << std::endl;
+	  std::string pesado(arg_del_dir);
+	  pesado = E->parsearDirectorio(pesado);
+	  bool existe = E->existeDirectorio(pesado);
+	  huboCambios= true;
+	  if (existe) {
+	       FileManager::borrarDirectorio(pesado);
+	       return 0;
+	  }
+	  return ERROR_ELIMINAR_INEXISTENTE;
+     }
+     return 0;
 }
 
 Equinoccio *Equinoccio::E = NULL;
