@@ -10,6 +10,7 @@ Interfaz::Interfaz() {
 	fin = false;
 	consulta = "";
 	directorio = "";
+	err_code = ERROR_NO_ERROR;
 	try {
 		builder = Gtk::Builder::create_from_file(WINDOW_FILE);
 		main_window = 0;
@@ -100,6 +101,9 @@ void Interfaz::cargarMenu() {
 	menu_archivo->add(Gtk::Action::create("List", Gtk::Stock::DIRECTORY,
 				"_Listar Directorios", "Lista todos los directorios"),
 				sigc::mem_fun(*this, &Interfaz::on_button_list_clicked));
+	menu_archivo->add(Gtk::Action::create("Ridx", Gtk::Stock::REFRESH,
+				"_Reindexar", "Regenera el indice"),
+				sigc::mem_fun(*this, &Interfaz::on_button_reindex_clicked));
 	menu_ayuda->add(Gtk::Action::create("HelpMenu", "Ayuda"));
 	menu_ayuda->add(Gtk::Action::create("HelpAbout", Gtk::Stock::ABOUT,"A_cerca De", "Acerca de Equinoccio"),
 			sigc::mem_fun(*this, &Interfaz::on_menu_about));
@@ -122,6 +126,8 @@ void Interfaz::cargarMenu() {
 		"      <menuitem action='IdxRem'/>"
 		"      <separator/>"
 		"      <menuitem action='List'/>"
+		"      <separator/>"
+		"      <menuitem action='Ridx'/>"
 		"      <separator/>"
 		"      <menuitem action='FileQuit'/>"
 		"    </menu>"
@@ -170,6 +176,19 @@ void Interfaz::on_button_list_clicked() {
 		estado = E_LIST;
 		mostrarProgreso("Listando");
 		status_bar->push("Listando los Directorios Indexados");
+		button_buscar->set_sensitive(false);
+		entry_consulta->set_sensitive(false);
+		id_esperando = Glib::signal_timeout().connect(sigc::mem_fun(*this,
+								&Interfaz::esperarResultado), 300 );
+		this->execute();
+	}
+}
+
+void Interfaz::on_button_reindex_clicked() {
+	if (estado == E_NADA) {
+		estado = E_RIDX;
+		mostrarProgreso("Reindexando");
+		status_bar->push("Regenerando Indice");
 		button_buscar->set_sensitive(false);
 		entry_consulta->set_sensitive(false);
 		id_esperando = Glib::signal_timeout().connect(sigc::mem_fun(*this,
@@ -328,11 +347,24 @@ bool Interfaz::esperarResultado() {
 void Interfaz::finEspera() {
 	id_esperando.disconnect();
 	if(estado==E_INDEX) {
-		Glib::ustring text = "Directorio ";
-		text += directorio;
-		text += " indexado";
-		directorio = "";
-		status_bar->push(text);
+		if ( err_code == ERROR_NO_ERROR){
+			Glib::ustring text = "Directorio ";
+			text += directorio;
+			text += " indexado";
+			directorio = "";
+			status_bar->push(text);
+		}
+		else{
+			if(err_code == ERROR_AGREGAR_EXISTENTE){
+				Glib::ustring text = "El directorio ";
+				text += directorio;
+				text += " ya esta indexado";
+				directorio = "";
+				status_bar->push(text);
+			}else{
+				status_bar->push("Se produjo un error durante la ejecucion del programa");
+			}
+		}
 	}else {
 	if (estado==E_SEARCH) {
 		if (paths_resultado != NULL) {
@@ -370,11 +402,26 @@ void Interfaz::finEspera() {
 		liststore_busqueda->clear();
 	}else{
 	if (estado==E_REM){
-		status_bar->push("Directorio eliminado.");
-		liststore_dirs->clear();
-		liststore_busqueda->clear();
+		if(err_code == ERROR_NO_ERROR){
+			status_bar->push("Directorio eliminado.");
+			liststore_dirs->clear();
+			liststore_busqueda->clear();
+		}else{
+			if(err_code == ERROR_ELIMINAR_INEXISTENTE){
+				status_bar->push("El directorio no esta indexado.");
+			}else{
+				status_bar->push("Se produjo un error durante la ejecucion del programa");
+			}
+		}
+	}else{
+	if(estado==E_RIDX){
+		if(err_code == ERROR_NO_ERROR){
+			status_bar->push("Reindexacion Finalizada.");
+		}else{
+			status_bar->push("Fallo la reindexacion");
+		}
 	}
-	}}}}
+	}}}}}
 	detenerBarra();
 	fin = false;
 }

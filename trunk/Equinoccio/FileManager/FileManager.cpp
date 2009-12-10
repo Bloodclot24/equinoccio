@@ -38,7 +38,6 @@ void FileManager::cargarConfiguracion() {
      std::fstream config;
      config.open(PATH_CONFIG_FILE , std::fstream::in);
      if(config.good()) {
-    	 segmentos=0;
     	 config.read((char*)&segmentos, sizeof(segmentos));
          config.close();
      }

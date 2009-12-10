@@ -32,9 +32,7 @@ void Busqueda::buscar(std::string& consulta, std::string catalogo, std::list<std
 				size_t pos = 0;
 				size_t where = 0;
 				bool encontrado;
-				std::cout<<"Cat: "<<catalogos[i]<<std::endl;
 				for(uint32_t seg=0; seg<segmentos; seg++) {
-					std::cout<<"Seg: "<<seg<<std::endl;
 					punteros.clear();
 					punteros_match.clear();
 					do {
@@ -131,7 +129,6 @@ void Busqueda::buscar(std::string& consulta, std::string catalogo, std::list<std
 			}
 		}
 	}
-	std::cout<<"Fin busqueda"<<std::endl;
 }
 	
 bool Busqueda::buscarEnIndice(std::string consulta, std::string catalogo, uint32_t segmento) {
@@ -172,25 +169,20 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo, uint
 	std::string path = FileManager::obtenerPathBase(segmento);
 	path += catalogo;
 	path += ".idx";
-	std::cout<<path<<std::endl;
 	std::ifstream indice(path.c_str(), std::ios::in | std::ios::binary);
 	path = FileManager::obtenerPathBase(segmento);
 	path += catalogo;
 	path += EXT_NG_PUN;
-	std::cout<<path<<std::endl;
 	std::ifstream pun_ng(path.c_str(),  std::ios::in | std::ios::binary);
 	path = FileManager::obtenerPathBase(segmento);
 	path += catalogo;
 	path += ".lex";
-	std::cout<<path<<std::endl;
 	std::ifstream lexico (path.c_str(), std::ios::in | std::ios::binary);
 	path = FileManager::obtenerPathBase(segmento);
 	path += catalogo;
 	path += ".pun";
-	std::cout<<path<<std::endl;
 	std::ifstream pun_docs(path.c_str(), std::ios::in | std::ios::binary);
 	if (!indice.good() || !pun_ng.good() || !lexico.good() || !pun_docs.good()) {
-		std::cout << "error al abrir los archivos de ngramas"<<std::endl;
 		indice.close(); pun_ng.close();  lexico.close();  pun_docs.close();
 		return false;
 	}

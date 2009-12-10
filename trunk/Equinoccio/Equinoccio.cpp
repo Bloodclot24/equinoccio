@@ -75,6 +75,7 @@ int Equinoccio::magic(int argc, const char** argv){
 	   getDirIndexados();
 	   if(!silencio) {
 		   std::list<std::string>::iterator it;
+		   std::cout<<dir_indexados->size()<<" directorios indexados"<<std::endl;
 		   for (it=dir_indexados->begin();it != dir_indexados->end();it++)
 			   std::cout<<*it<<std::endl;
 	   }
@@ -106,7 +107,8 @@ int Equinoccio::magic(int argc, const char** argv){
 	   if (existe) {
 		   FileManager::borrarDirectorio(pesado);
 		   destruir();
-	   }
+	   }else
+		   return ERROR_ELIMINAR_INEXISTENTE;
 	}
 	if(arg_search_string){
 	   std::cout << "Buscar la cadena: " << arg_search_string << std::endl;
@@ -123,6 +125,7 @@ int Equinoccio::magic(int argc, const char** argv){
 	   buscador.buscar(busqueda, catalogo, path_result);
 	   if (!silencio) {
 		   std::list<std::string>::iterator it;
+		   std::cout<<path_result->size()<<" documentos encontrados"<<std::endl;
 		   for (it=path_result->begin();it != path_result->end();it++) {
 			   std::cout<<"Doc: "<<*it<<std::endl;
 		   }

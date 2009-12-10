@@ -16,6 +16,7 @@
 #define E_RALL 	3
 #define E_LIST	4
 #define E_SEARCH 5
+#define E_RIDX	6
 
 class Interfaz: public Thread {
 private:
@@ -49,6 +50,7 @@ private:
 	void on_button_remall_clicked();
 	void on_button_buscar_clicked();
 	void on_button_list_clicked();
+	void on_button_reindex_clicked();
 	bool mover();
 	void mostrarProgreso(Glib::ustring texto);
 	void detenerBarra();
@@ -102,6 +104,7 @@ private:
 	bool fin;
 	int estado;	//indica que se esta realizando. Si activo, es distinto de cero
 	bool error;
+	int err_code;
 	std::list<std::string> *paths_resultado;
 	std::list<std::string> *lista_dirs;
 
@@ -113,15 +116,15 @@ private:
 			const char* com_c[] = {"./Equinoccio", ARG_CAT, cat.c_str(), ARG_SEARCH, cons.c_str()};
 			Busqueda::rankeada = rankeada;
 			Equinoccio::silencio = true;
-			Equinoccio::main(5, com_c);
+			err_code = Equinoccio::main(5, com_c);
 			paths_resultado = Equinoccio::getPaths();
 		}else {
 		if (estado == E_INDEX) {
 			//agrego directorio
 			std::string dir = directorio;
 			const char* com_c[] = {"./Equinoccio", ARG_ADD, dir.c_str()};
-			Equinoccio::silencio = false;
-			Equinoccio::main(3,com_c);
+			Equinoccio::silencio = true;
+			err_code = Equinoccio::main(3,com_c);
 		}
 		else {
 		if (estado == E_LIST) {
@@ -129,17 +132,20 @@ private:
 			lista_dirs = Equinoccio::getDirIndexados();
 		}else{
 		if (estado ==  E_RALL) {
-			//Equinoccio::destruir();
 			FileManager::borrarIndice();
 		}else{
 		if (estado == E_REM) {
-			//Equinoccio::destruir();
 			std::string dir = directorio;
 			const char* com_c[] = {"./Equinoccio", ARG_DEL, dir.c_str()};
 			Equinoccio::silencio = false;
-			Equinoccio::main(3,com_c);
+			err_code = Equinoccio::main(3,com_c);
+		}else{
+		if(estado== E_RIDX){
+			const char* com_c[] = {"./Equinoccio", ARG_REINDEXAR};
+			Equinoccio::silencio = true;
+			Equinoccio::main(2,com_c);
 		}
-		}}}}
+		}}}}}
 		mx_fin.lock();
 		fin = true;
 		mx_fin.unlock();

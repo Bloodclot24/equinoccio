@@ -239,7 +239,6 @@ bool BusquedaRankeada::coseno(std::string &consulta, std::string catalogo, std::
      }while (where != std::string::npos);
      arch_peso.close();
      if (v_consulta.size()==0){
-    	 std::cout<<"* NO MATCH *"<<std::endl;
     	 arch_mc1.close(); arch_mc2.close(); arch_mc3.close();
     	 return false;
      }
