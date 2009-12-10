@@ -142,8 +142,12 @@ private:
 	       uint32_t num = 0;
 	       uint32_t pun = 0;
 	       for(int i = 0; i < (int)FileManager::getCantidadSegmentos(); i++){
-	    	   if(Buscador::buscarNroDirectorio(nombre,num,pun,i))
-					   return ERROR_AGREGAR_EXISTENTE;
+	    	   if(Buscador::buscarNroDirectorio(nombre,num,pun,i)){
+	    		   Bitmap bitmap(FileManager::obtenerPathBitmapDirs(i));
+	    		   std::cerr << "numero directorio: " << num << std::endl;
+	    		   if(!bitmap.getBit(num))
+	    			   return ERROR_AGREGAR_EXISTENTE;
+	    	   }
 	       }
 	       uint32_t dir=++numeroDirectorio;
 	       guardarDirectorio(directorio);
