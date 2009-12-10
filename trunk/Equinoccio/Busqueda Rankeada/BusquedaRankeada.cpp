@@ -210,8 +210,6 @@ bool BusquedaRankeada::coseno(std::string &consulta, std::string catalogo, std::
 	  return false;
      }
 
-     
-
      //busco los terminos de la consulta en el indice y armo el vector de la consulta
      uint32_t pos = 0;
      uint32_t where = 0, mul=0, extra;
@@ -245,8 +243,6 @@ bool BusquedaRankeada::coseno(std::string &consulta, std::string catalogo, std::
     	 arch_mc1.close(); arch_mc2.close(); arch_mc3.close();
     	 return false;
      }
-     //ordeno el vector consulta
-     //std::sort(v_consulta.begin(),v_consulta.end());
 
      arch_mc2.seekg(0,std::ios::end);
      const uint32_t eof =  arch_mc2.tellg()/ sizeof(uint32_t);

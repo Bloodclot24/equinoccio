@@ -190,7 +190,6 @@ bool Buscador::buscarNroDirectorio(const std::string &path, uint32_t &nro, uint3
 		dir_Idx.seekg(medio*sizeof(uint32_t));
 		dir_Idx.read((char*)&(pLexico),sizeof(uint32_t));
 		dir_Lex.seekg(pLexico,std::fstream::beg);
-		//archLex.get((char*)cadena,50,'\0');
 		ruta.clear();
 		std::getline(dir_Lex,ruta,'\0');
 
@@ -215,6 +214,8 @@ bool Buscador::buscarNroDirectorio(const std::string &path, uint32_t &nro, uint3
 	if((!encontrado) || (error)){
 		encontrado = false;
 	}
+	dir_Idx.close();
+	dir_Lex.close();
 	return encontrado;
 }
 

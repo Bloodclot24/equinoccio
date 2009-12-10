@@ -5,9 +5,7 @@
 #include "../Busqueda Binaria/Buscador.h"
 #include "../Notificador/Notificador.h"
 
-FileManager::FileManager() {
-
-}
+FileManager::FileManager() {}
 
 FileManager::~FileManager() {}
 
@@ -39,8 +37,8 @@ void FileManager::cargarConfiguracion() {
      
      std::fstream config;
      config.open(PATH_CONFIG_FILE , std::fstream::in);
-     
      if(config.good()) {
+    	 segmentos=0;
     	 config.read((char*)&segmentos, sizeof(segmentos));
          config.close();
      }
@@ -52,7 +50,6 @@ void FileManager::crearConfiguracion() {
      //Creo el archivo de configuracion
      std::fstream config;
      config.open(PATH_CONFIG_FILE , std::fstream::out);
-     
      if(config.is_open()){
     	 //Guardo la cantidad de segmentos
     	 config.write((const char*)&segmentos,sizeof(segmentos));
@@ -148,11 +145,11 @@ bool FileManager::borrarDirectorio(std::string path) {
 		if (Buscador::buscarNroDirectorio(path,nro,pun,segm)) {
 			//marco como borrados a todos los dirs hijos //checkear pun!=0
 			Bitmap b(obtenerPathBitmapDirs(segm));
-			std::cout<<"Seteo el bit: "<<nro<<std::endl;
 			b.setBit(nro,1);	//marco al directorio como borrado
 			//marco como borrados los directorios hijos
-			if (pun != 0){
-				uint32_t nro_hijo = nro+1;
+			uint32_t nro_hijo=nro;
+			if (pun != 0){	//tiene dirs hijos
+				nro_hijo++;
 				std::string path_hijo;
 				std::fstream dir_lex(obtenerPathLexDirs(segm).c_str(), std::ios::in);
 				dir_lex.seekg(pun);
@@ -160,7 +157,6 @@ bool FileManager::borrarDirectorio(std::string path) {
 				path_hijo.clear();
 				std::getline(dir_lex,path_hijo,'\0');
 				while (dir_lex.good() && path_hijo.compare(0,path.length()+1,path+"/")==0){
-					std::cout<<"HIJO"<<nro_hijo<<": "<<path_hijo<<std::endl;
 					b.setBit(nro_hijo,1);
 					nro_hijo++;
 					path_hijo.clear();
@@ -168,37 +164,34 @@ bool FileManager::borrarDirectorio(std::string path) {
 				}
 
 				dir_lex.close();
-
-				for(short i =0; i<4; i++){
-					bool esta=true;
-					std::cout<<"Borro archivos"<<std::endl;
-					//recorro para borrar todos los archivos hijos
-					std::fstream idx_arch((obtenerPathIdxArch(segm)+catalogos[i]).c_str(), std::ios::in);
-					if (idx_arch.good()) {
-						uint32_t doc=0;
-						if( nro > 0){
-							if(Buscador::buscarArchivodeDir(idx_arch,nro, doc)) {
-								idx_arch.seekg((doc*RegistroArchivo::size())+4);
-							}
-							else
-								esta=false;
+			}
+			for(short i =0; i<4; i++){
+				bool esta=true;
+				//recorro para borrar todos los archivos hijos
+				std::fstream idx_arch((obtenerPathIdxArch(segm)+catalogos[i]).c_str(), std::ios::in);
+				if (idx_arch.good()) {
+					uint32_t doc=0;
+					if( nro > 0){
+						if(Buscador::buscarArchivodeDir(idx_arch,nro, doc)) {
+							idx_arch.seekg((doc*RegistroArchivo::size())+4);
 						}
-						if (esta){
-							uint32_t dir_arch=0;
-							Bitmap b(obtenerPathBitmapArch(segm)+catalogos[i]);
+						else
+							esta=false;
+					}
+					if (esta){
+						uint32_t dir_arch=0;
+						Bitmap b(obtenerPathBitmapArch(segm)+catalogos[i]);
+						idx_arch.read((char*)&dir_arch, sizeof(uint32_t));
+						while (dir_arch <= nro_hijo && idx_arch.good()){
+							b.setBit(doc,1);
+							doc++;
+							idx_arch.seekg((doc*RegistroArchivo::size())+4);
 							idx_arch.read((char*)&dir_arch, sizeof(uint32_t));
-							while (dir_arch <= nro_hijo && idx_arch.good()){
-								b.setBit(doc,1);
-								std::cout<<"seteo bit "<<doc<<std::endl;
-								doc++;
-								idx_arch.seekg((doc*RegistroArchivo::size())+4);
-								idx_arch.read((char*)&dir_arch, sizeof(uint32_t));
-							}
 						}
 					}
-				}//for de catalogos
-			}
+				}
+			}//for de catalogos
 		}
-	}
+	}//for de segmentos
 	return true;
 }

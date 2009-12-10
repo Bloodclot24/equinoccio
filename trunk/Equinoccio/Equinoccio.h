@@ -144,7 +144,6 @@ private:
 	       for(int i = 0; i < (int)FileManager::getCantidadSegmentos(); i++){
 	    	   if(Buscador::buscarNroDirectorio(nombre,num,pun,i)){
 	    		   Bitmap bitmap(FileManager::obtenerPathBitmapDirs(i));
-	    		   std::cerr << "numero directorio: " << num << std::endl;
 	    		   if(!bitmap.getBit(num))
 	    			   return ERROR_AGREGAR_EXISTENTE;
 	    	   }
@@ -192,7 +191,6 @@ private:
 
 		bool encontrado= false;
 		bool estabaAbierto= false;
-		std::cout << "Segmentos: "<< FileManager::getCantidadSegmentos() << std::endl;
 
     	for(uint32_t seg= 0; seg<FileManager::getCantidadSegmentos() && !encontrado; seg++) {
 
@@ -237,7 +235,7 @@ private:
      int magic(int argc, const char** argv);
 
      Equinoccio(){
-    	 std::cout<<RegistroArchivo::size()<<std::endl;
+
     	 FileManager::cargarConfiguracion();
     	 FileManager::crearJerarquias();
     	 FileManager::crearAlertaFallo();

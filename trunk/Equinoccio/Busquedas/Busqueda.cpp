@@ -11,8 +11,7 @@ bool Busqueda::rankeada=true;
 
 Busqueda::Busqueda() {}
 
-Busqueda::~Busqueda() {
-}
+Busqueda::~Busqueda() {}
 
 void Busqueda::buscar(std::string& consulta, std::string catalogo, std::list<std::string>* paths) {
 	if (consulta.size() != 0) {
@@ -33,7 +32,9 @@ void Busqueda::buscar(std::string& consulta, std::string catalogo, std::list<std
 				size_t pos = 0;
 				size_t where = 0;
 				bool encontrado;
+				std::cout<<"Cat: "<<catalogos[i]<<std::endl;
 				for(uint32_t seg=0; seg<segmentos; seg++) {
+					std::cout<<"Seg: "<<seg<<std::endl;
 					punteros.clear();
 					punteros_match.clear();
 					do {
@@ -124,7 +125,9 @@ void Busqueda::buscar(std::string& consulta, std::string catalogo, std::list<std
 			//busco los path de los documentos match
 			while ((reg = arbol_segm.RemoverMayorIgual(comp_reg))) {
 				std::cout<<"Peso: "<<(1-reg->peso)<<std::endl;
-				paths->push_back(buscarPath(reg->nro,reg->cat,reg->segm));
+				std::string p = buscarPath(reg->nro,reg->cat,reg->segm);
+				if (!p.empty())
+					paths->push_back(p);
 				delete reg;
 			}
 		}
@@ -145,7 +148,6 @@ bool Busqueda::buscarEnIndice(std::string consulta, std::string catalogo, uint32
 				std::string nombre_pun =  FileManager::obtenerPathBase(segmento);
 				nombre_pun += catalogo;
 				nombre_pun += ".pun";
-				std::cout<<nombre_pun<<std::endl;
 				std::ifstream arch_punteros(nombre_pun.c_str(), std::ios::in | std::ios::binary);
 				if (arch_punteros.good()){
 					std::list<uint32_t>* puntDocs = new std::list<uint32_t>;
@@ -288,7 +290,7 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo, uint
 		offset_and.pop_front();
 	}
 
-	lexico.close(); //checkear error de lectura
+	lexico.close();
 	indice.close();
 
 	//eliminar falsos positivos
@@ -312,7 +314,7 @@ bool Busqueda::consultaNgramas(std::string& consulta, std::string catalogo, uint
 		punteros.push_back(punt);
 		return true;
 	}
-	return false;	//falta verificar que se libere todo
+	return false;
 }
 
 void Busqueda::andPunteros2(std::vector< std::list<uint32_t>* > &punteros, std::list<uint32_t> &punteros_and) {
@@ -395,7 +397,6 @@ void Busqueda::filtrarFalsosPositivos(std::list<std::string>& consulta, std::lis
 			if (it_str == consulta.end() && encontrado && pos==termino.size()) {
 				//salio porque encontro todos los subterminos, entonces agrego el registro a la lista
 				filtrada.push_back(reg);
-				std::cout<<"palabra match: "<<reg->termino<< " Frec: "<<reg->frec<<std::endl;
 			}
 			else
 				delete lista.front();
@@ -491,7 +492,7 @@ std::string Busqueda::buscarPath(uint32_t puntero,std::string catalogo, uint32_t
 					std::cout<<"error al abrir el lexico de directorios"<<std::endl;
 			}
 			else {
-				std::cout<<"error al abrir el indice de directorios"<<std::endl;
+				std::cout<<"error al abrir el indice de directorios"<< FileManager::obtenerPathIdxDirs(segmento).c_str()<<std::endl;
 			}
 		}
 		else {
@@ -503,4 +504,3 @@ std::string Busqueda::buscarPath(uint32_t puntero,std::string catalogo, uint32_t
 	}
 	return path;
 }
-

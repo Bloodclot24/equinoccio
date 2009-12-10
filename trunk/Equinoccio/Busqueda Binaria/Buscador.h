@@ -54,7 +54,7 @@ class Buscador
 		/**
 		 * Dado un nombre de directorio devuelve el numero.
 		 * @param nro guarda el numero de directorio
-		 *
+		 * @param pun guarda el puntero al lexico de directorios.
 		 * @return true si encuentra el directorio.
 		 */
 		static bool buscarNroDirectorio(const std::string &path, uint32_t &nro, uint32_t &pun, uint32_t segm);
@@ -62,7 +62,6 @@ class Buscador
 		/**
 		 * @param nro numero de directorio
 		 * @param pun numero de documento del primer archivo perteneciente al directorio
-		 *
 		 * @return false si no encontro archivos para ese directorio
 		 */
 		static bool buscarArchivodeDir(std::fstream &idx_arch, uint32_t nro, uint32_t &pun);

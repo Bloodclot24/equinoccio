@@ -129,9 +129,11 @@ private:
 			lista_dirs = Equinoccio::getDirIndexados();
 		}else{
 		if (estado ==  E_RALL) {
+			//Equinoccio::destruir();
 			FileManager::borrarIndice();
 		}else{
 		if (estado == E_REM) {
+			//Equinoccio::destruir();
 			std::string dir = directorio;
 			const char* com_c[] = {"./Equinoccio", ARG_DEL, dir.c_str()};
 			Equinoccio::silencio = false;

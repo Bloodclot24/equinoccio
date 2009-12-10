@@ -76,8 +76,6 @@ private:
 	 * @param punteros	 	contiene las listas de punteros a intersectar
 	 * @param punteros_and	lista resultante con el AND de los punteros
 	 * */
-	static void andPunteros(std::vector< std::list<uint32_t>* > &punteros, std::list<uint32_t> &punteros_and);
-
 	static void andPunteros2(std::vector< std::list<uint32_t>* > &punteros, std::list<uint32_t> &punteros_and);
 
 	/*
@@ -94,8 +92,6 @@ private:
 	 * se asume que las listas de punteros tienen elementos
 	 * @return 	puntero a una lista con los resultados. NULL en caso de error o de resultado vacio
 	 * */
-
-	std::list<uint32_t>* unionPunteros(std::vector< std::list<uint32_t>* > &punteros);
 	std::list<uint32_t>* unionPunteros2(std::vector< std::list<uint32_t>* > &punteros);
 
 public:
