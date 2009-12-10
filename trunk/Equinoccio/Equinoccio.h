@@ -190,11 +190,14 @@ private:
 
      bool existeDirectorio(const std::string& nombre){
 
-		bool encontrado = false;
+		bool encontrado= false;
+		bool estabaAbierto= false;
+		std::cout << "Segmentos: "<< FileManager::getCantidadSegmentos() << std::endl;
 
     	for(uint32_t seg= 0; seg<FileManager::getCantidadSegmentos() && !encontrado; seg++) {
 
 		  if(!idxDirectorios.is_open()){
+			  estabaAbierto= true;
 			   // Los abro sin truncar
 			   // (siempre indexo en el ultimo segmento)
 			   idxDirectorios.open(FileManager::obtenerPathIdxDirs(seg).c_str(), std::fstream::in | std::fstream::out);
@@ -213,6 +216,12 @@ private:
 			  }
 		  }
     	}
+
+    	if(!estabaAbierto) {
+			   idxDirectorios.close();
+			   lexDirectorios.close();
+    	}
+
 
 	  return encontrado;
      }
