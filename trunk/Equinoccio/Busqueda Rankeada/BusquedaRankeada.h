@@ -38,6 +38,18 @@ class BusquedaRankeada{
 
 	};
 
+	/**
+	 * Funcion encargada de armar la matriz de cosenos para el catalogo
+	 * que recibe como parametro, esta sera utilizada para las consultas
+	 * rankeadas.
+	 *
+	 * @param catalogo Es el catalogo que se esta indexando.
+	 * 		  documentos Es la cantidad de documentos totales.
+	 * 		  terminos Es la cantidad de terminos totales.
+	 * @return -1 en caso de que se produzca un error durante el
+	 * 			  procesamiento de los datos.
+	 * 			1 en caso de que el armado de la matriz sea exitoso.
+	 */
      int armarMatrizCoseno(std::string& catalogo, uint32_t documentos, uint32_t terminos);
      
      /**
