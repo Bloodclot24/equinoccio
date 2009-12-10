@@ -3,7 +3,7 @@
 #include <math.h>
 #include <stdlib.h>
 
-void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo, uint32_t documentos, uint32_t terminos){
+int BusquedaRankeada::armarMatrizCoseno(std::string& catalogo, uint32_t documentos, uint32_t terminos){
      std::string path;
 
      path = FileManager::obtenerPathBase(FileManager::getCantidadSegmentos());
@@ -15,7 +15,7 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo, uint32_t documen
 	  std::cerr << "Error al abrir el indice para la matriz de cosenos" << std::endl;
 	  std::cout << "Nombre: " << path << std::endl;
 	  //	#warning "ver como se va a manejar este error";
-	  return;
+	  return -1;
      }
      path.clear();
      
@@ -27,7 +27,7 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo, uint32_t documen
      if(!punteros.good()){
 	  std::cerr << "Error al abrir el archivo de punteros para la matriz de cosenos!!" << std::endl;
 	  //	#warning "ver como se va a manejar este error";
-	  return;
+	  return -1;
      }
      
      std::ofstream matriz;
@@ -41,14 +41,11 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo, uint32_t documen
      if(!matriz.good()){
 	  std::cerr << "Error crear  el archivo para la matriz de cosenos!!" << std::endl;
 	  //	#warning "ver como se va a manejar este error";
-	  return;
+	  return -1;
      }
-     //TODO voy a tener la cantidad de terminos y de documentos en el indice.
-     //Usar los metodos, obtenerCantidadTerminos y obtenerCantidadDocumentos
-     //de Parsers.h
+
      uint32_t cantTerminos = terminos;
      uint32_t cantidadDocumentos = documentos;
-     //****************************************************************
 
      uint32_t pTermino = 0;
      uint32_t frecGlobal = 0;
@@ -66,7 +63,7 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo, uint32_t documen
      if(!puntajes.good()){
 	  std::cerr << "Error al crear  el archivo de puntajes de terminos para la matriz de cosenos!!" << std::endl;
 	  //#warning "ver como se va a manejar este error";
-	  return;
+	  return -1;
      }
 	
      for(uint32_t i = 0; i < cantTerminos && indice.good() ; i++){
@@ -118,7 +115,7 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo, uint32_t documen
      if(!matrizTranspuesta.good()){
 	  std::cerr << "Error al abrir el archivo de la matriz de cosenos!!" << std::endl;
 	  //#warning "ver como se va a manejar este error";
-	  return;
+	  return -1;
      }
      uint32_t x = 0;
      uint32_t y = 0;
@@ -137,7 +134,7 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo, uint32_t documen
      if(!matCoseno1.good() || !matCoseno2.good() || !matCoseno3.good()){
 	  std::cerr << "Error al crear el archivo de la matriz de cosenos!!" << std::endl;
 	  //#warning "ver como se va a manejar este error";
-	  return;
+	  return -1;
      }
 
      uint32_t filaAnt = 0;
@@ -197,6 +194,8 @@ void BusquedaRankeada::armarMatrizCoseno(std::string& catalogo, uint32_t documen
      matCoseno1.close();
      matCoseno2.close();
      matCoseno3.close();
+
+     return 1;
 }
 
 

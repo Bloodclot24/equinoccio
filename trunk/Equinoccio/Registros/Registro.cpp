@@ -149,7 +149,7 @@ std::list<uint32_t> Registro::obtenerDocumentos(){
      std::list<Registro::Punteros>::iterator it;
      std::list<uint32_t> docs;
      for(it=punteros.begin();it!=punteros.end();it++){
-	  docs.push_back((*it).documento);
+    	 docs.push_back((*it).documento);
      }
      return docs;
 }

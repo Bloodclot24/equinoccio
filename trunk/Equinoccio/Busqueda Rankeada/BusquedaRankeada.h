@@ -13,10 +13,6 @@
 
 
 class BusquedaRankeada{
-	private:
-//			std::vector<double> vNoNulos;
-//			std::vector<uint32_t> vColumna;
-//			std::vector<uint32_t> vIndice;
 	public:
 
 	struct RegConsulta {
@@ -42,7 +38,7 @@ class BusquedaRankeada{
 
 	};
 
-     void armarMatrizCoseno(std::string& catalogo, uint32_t documentos, uint32_t terminos);
+     int armarMatrizCoseno(std::string& catalogo, uint32_t documentos, uint32_t terminos);
      
      /**
       * Recibe los terminos de la consulta y guarda en la lista
