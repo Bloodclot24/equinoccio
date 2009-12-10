@@ -73,7 +73,16 @@ int Equinoccio::magic(int argc, const char** argv){
 	   std::cout << "Agregar el directorio: " << arg_add_dir << std::endl;
 	   
 	   std::string pesado(arg_add_dir);
-	   agregarDirectorio(parsearDirectorio(pesado));
+	   int codigoError = agregarDirectorio(parsearDirectorio(pesado));
+	   if(codigoError == ERROR_EJECUCION){
+		   if(!silencio) std::cout << "Se produjo un error en tiempo de ejecucion del programa." << std::endl;
+		   return codigoError;
+	   }else{
+		   if(codigoError == ERROR_AGREGAR_EXISTENTE){
+			   if(!silencio) std::cout << "Se intento indexar el directorio: " << pesado << " y el mismo ya existia." << std::endl;
+			   return codigoError;
+		   }
+	   }
 	   parsers.armarIndices();
 
 	   BusquedaRankeada br;
@@ -81,7 +90,7 @@ int Equinoccio::magic(int argc, const char** argv){
 	   for(int i=0;i<4;i++){
 		std::string catalogo=catalogos[i];
 		if(br.armarMatrizCoseno(catalogo, parsers.obtenerCantidadDocumentos(catalogo), parsers.obtenerCantidadTerminos(catalogo)) < 0){
-			if(!silencio) std::cout << " Se produjo un error en tiempo de ejecucion del programa." << std::endl;
+			if(!silencio) std::cout << "Se produjo un error en tiempo de ejecucion del programa." << std::endl;
 			return ERROR_EJECUCION;
 		}
 	   }

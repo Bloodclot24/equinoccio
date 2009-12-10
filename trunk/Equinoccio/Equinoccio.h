@@ -126,12 +126,11 @@ private:
 	  return baseRaiz;
      }
 
-     void agregarDirectorio(const std::string& nombre){
+     int agregarDirectorio(const std::string& nombre){
 	  DIR* directory;
 	  struct dirent* entry;
 
 	  std::string directorio = nombre;
-
 	  if(!silencio)
 		  std::cout << "Directorio absouto: " << directorio << "\n";
 
@@ -139,7 +138,13 @@ private:
 
 	  if(esDirectorio(directorio)){
 	       if( (directory =opendir(directorio.c_str())) ==NULL)
-		    return;
+		    return ERROR_EJECUCION;
+	       uint32_t num = 0;
+	       uint32_t pun = 0;
+	       for(int i = 0; i < (int)FileManager::getCantidadSegmentos(); i++){
+	    	   if(Buscador::buscarNroDirectorio(nombre,num,pun,i))
+					   return ERROR_AGREGAR_EXISTENTE;
+	       }
 	       uint32_t dir=++numeroDirectorio;
 	       guardarDirectorio(directorio);
 	       while((entry=readdir(directory))!=NULL){
@@ -161,6 +166,7 @@ private:
 	       agregarDirectorio(subdir.front());
 	       subdir.pop_front();
 	  }
+	  return ERROR_NO_ERROR;
      }
 
      uint32_t guardarDirectorio(const std::string& nombre){
