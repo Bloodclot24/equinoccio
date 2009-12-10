@@ -111,6 +111,7 @@ int Equinoccio::magic(int argc, const char** argv){
 	   pesado = parsearDirectorio(pesado);
 	   bool existe = existeDirectorio(pesado);
 	   std::cout << "Existe directorio: " <<  existe<< std::endl;
+	   huboCambios= true;
 	   if (existe) {
 		   FileManager::borrarDirectorio(pesado);
 	   }
@@ -155,7 +156,12 @@ void Equinoccio::destruir(){
 
 std::list<std::string>* Equinoccio::getDirIndexados() {
 
+	std::cout << "huboCambios" << huboCambios << std::endl;
+
 	if(dir_indexados->empty() || huboCambios) {
+
+		std::cout << "entroo" << std::endl;
+
 		dir_indexados->clear();
 		std::string directorio, lexico_dir;
 		std::fstream archDirectorio, archLexicoDir;
@@ -194,7 +200,14 @@ std::list<std::string>* Equinoccio::getDirIndexados() {
 					while((c= archLexicoDir.get()) != 0)
 						directorio+= c;
 
-					dir_indexados->push_back(directorio);
+					//Verifico que el directorio este en el bitmap de directorios
+					//TODO: MIRAR cuando se elimine del todo directorios
+				    Bitmap bit(FileManager::obtenerPathBitmapDirs(seg));
+
+				    std::cout << "!bit.getBit(nro_dir): " << !bit.getBit(nro_dir) << std::endl;
+
+				    if(!bit.getBit(nro_dir))
+				    	dir_indexados->push_back(directorio);
 					nro_dir++;
 				}
 				//Cierro directorio

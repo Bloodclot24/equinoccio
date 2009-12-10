@@ -73,7 +73,6 @@ std::string FileManager::obtenerPathBase(uint32_t segmento){
 }
 
 std::string FileManager::obtenerPathBitmapDirs(uint32_t segmento){
-
      return obtenerPathBase(segmento)+DIR_BITMAP;
 }
 
