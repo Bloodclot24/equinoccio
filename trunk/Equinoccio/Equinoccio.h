@@ -179,25 +179,30 @@ private:
      }
 
      bool existeDirectorio(const std::string& nombre){
-	  if(!idxDirectorios.is_open()){
-	       // Los abro sin truncar
-	       // (siempre indexo en el ultimo segmento)
-	       idxDirectorios.open(FileManager::obtenerPathIdxDirs(FileManager::getCantidadSegmentos()).c_str(), std::fstream::in | std::fstream::out);
-	       lexDirectorios.open(FileManager::obtenerPathLexDirs(FileManager::getCantidadSegmentos()).c_str(), std::fstream::in | std::fstream::out);
-	  }
 
-	  lexDirectorios.seekg(0);
-	  idxDirectorios.seekg(0);
+		bool encontrado = false;
 
-	  std::string nombreLeido;
+    	for(uint32_t seg= 0; seg<FileManager::getCantidadSegmentos() && !encontrado; seg++) {
 
-	  bool encontrado = false;
+		  if(!idxDirectorios.is_open()){
+			   // Los abro sin truncar
+			   // (siempre indexo en el ultimo segmento)
+			   idxDirectorios.open(FileManager::obtenerPathIdxDirs(seg).c_str(), std::fstream::in | std::fstream::out);
+			   lexDirectorios.open(FileManager::obtenerPathLexDirs(seg).c_str(), std::fstream::in | std::fstream::out);
+		  }
 
-	  for(;!encontrado && !lexDirectorios.eof();std::getline(lexDirectorios, nombreLeido, '\0')){
-	       if(nombreLeido.compare(nombre)==0){
-		    encontrado = true;
-	       }
-	  }
+		  if(idxDirectorios.good() &&lexDirectorios.good()) {
+			  lexDirectorios.seekg(0);
+			  idxDirectorios.seekg(0);
+
+			  std::string nombreLeido;
+
+			  for(;!encontrado && !lexDirectorios.eof();std::getline(lexDirectorios, nombreLeido, '\0')){
+				   if(nombreLeido.compare(nombre)==0)
+					encontrado = true;
+			  }
+		  }
+    	}
 
 	  return encontrado;
      }
