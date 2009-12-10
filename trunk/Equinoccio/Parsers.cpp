@@ -337,6 +337,8 @@ void Parsers::unirSegmentos2(uint32_t seg1, uint32_t seg2){
 void Parsers::reindexar(){
 
      std::fstream auxiliar("auxiliar.directorios", std::fstream::out);
+     auxiliar.close();
+     auxiliar.open("auxiliar.directorios", std::fstream::in | std::fstream::out);
      std::vector<std::fstream*> lexicosDir;
      std::vector<std::fstream*> indicesDir;
 
@@ -394,4 +396,19 @@ void Parsers::reindexar(){
 	       }
 	  }
      }
+
+     FileManager::borrarIndice();
+     FileManager::crearJerarquias();
+
+     auxiliar.seekg(0);
+     std::string directorio;
+     do{
+	  std::getline(auxiliar, directorio, '\0');
+	  if(auxiliar.good()){
+	       std::cout << "------------->Agrego: " << directorio << "\n";
+	       Equinoccio::indexar(directorio);
+	  }
+     }while(auxiliar.good());
+     Equinoccio::finIndexar();
+
 }
