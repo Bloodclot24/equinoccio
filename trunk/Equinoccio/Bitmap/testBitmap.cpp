@@ -13,16 +13,20 @@ int main(int argc, char** argv){
      Bitmap mapa(argv[1]);
 
      std::cout << "Creando el mapa " << argv[1] << ".\n";
-
-     uint32_t max =0;
+//
+//     uint32_t max =0;
+//     for(int i=0; i<10; i++){
+//	  uint32_t j= rand()%50;
+//	  std::cout << "Poniendo en 1 el bit " << j << "\n";
+//	  mapa.setBit(j,1);
+//	  if(j>max)
+//	       max=j;
+//     }
+uint32_t max = 128;
      for(int i=0; i<10; i++){
-	  uint32_t j= rand()%50;
-	  std::cout << "Poniendo en 1 el bit " << j << "\n";
-	  mapa.setBit(j,1);
-	  if(j>max)
-	       max=j;
+	  std::cout << "Poniendo en 1 el bit " << i << "\n";
+	  mapa.setBit(i,1);
      }
-
      for(uint32_t i=0;i<=max;i++){
 	  std::cout << "Valor del bit " << i << ": "<< mapa.getBit(i) << "\n";
      }

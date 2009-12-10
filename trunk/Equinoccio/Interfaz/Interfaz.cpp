@@ -367,10 +367,12 @@ void Interfaz::finEspera() {
 	if (estado==E_RALL){
 		status_bar->push("Indice eliminado.");
 		liststore_dirs->clear();
+	}else{
+	if (estado==E_RALL){
+		status_bar->push("Directorio eliminado.");
+		liststore_dirs->clear();
 	}
-
-//rellenar
-	}}}
+	}}}}
 	detenerBarra();
 	fin = false;
 }

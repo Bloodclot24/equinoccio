@@ -137,6 +137,7 @@ void FileManager::borrarIndice() {
 	system((comando+PATH_TRES).c_str());
 	mkdir(PATH_TRES, PERMISO);
 	system((comando+PATH_CONFIG_FILE).c_str());
+	segmentos=0;
 }
 
 bool FileManager::borrarDirectorio(std::string path) {
@@ -169,37 +170,36 @@ bool FileManager::borrarDirectorio(std::string path) {
 
 				dir_lex.close();
 
-	for(short i =0; i<4; i++){
-		bool esta=true;
-		std::cout<<"Borro archivos"<<std::endl;
-		//recorro para borrar todos los archivos hijos
-		std::fstream idx_arch((obtenerPathIdxArch(segm)+catalogos[i]).c_str(), std::ios::in);
-		if (idx_arch.good()) {
-			uint32_t doc=0;
-			if( nro > 0){
-				if(Buscador::buscarArchivodeDir(idx_arch,nro, doc)) {
-					idx_arch.seekg((doc*RegistroArchivo::size())+4);
-				}
-				else
-					esta=false;
-			}
-			if (esta){
-				uint32_t dir_arch=0;
-				Bitmap b(obtenerPathBitmapArch(segm)+catalogos[i]);
-				idx_arch.read((char*)&dir_arch, sizeof(uint32_t));
-				while (dir_arch <= nro_hijo && idx_arch.good()){
-					b.setBit(doc,1);
-					std::cout<<"seteo bit "<<doc<<std::endl;
-					doc++;
-					idx_arch.seekg((doc*RegistroArchivo::size())+4);
-					idx_arch.read((char*)&dir_arch, sizeof(uint32_t));
-				}
+				for(short i =0; i<4; i++){
+					bool esta=true;
+					std::cout<<"Borro archivos"<<std::endl;
+					//recorro para borrar todos los archivos hijos
+					std::fstream idx_arch((obtenerPathIdxArch(segm)+catalogos[i]).c_str(), std::ios::in);
+					if (idx_arch.good()) {
+						uint32_t doc=0;
+						if( nro > 0){
+							if(Buscador::buscarArchivodeDir(idx_arch,nro, doc)) {
+								idx_arch.seekg((doc*RegistroArchivo::size())+4);
+							}
+							else
+								esta=false;
+						}
+						if (esta){
+							uint32_t dir_arch=0;
+							Bitmap b(obtenerPathBitmapArch(segm)+catalogos[i]);
+							idx_arch.read((char*)&dir_arch, sizeof(uint32_t));
+							while (dir_arch <= nro_hijo && idx_arch.good()){
+								b.setBit(doc,1);
+								std::cout<<"seteo bit "<<doc<<std::endl;
+								doc++;
+								idx_arch.seekg((doc*RegistroArchivo::size())+4);
+								idx_arch.read((char*)&dir_arch, sizeof(uint32_t));
+							}
+						}
+					}
+				}//for de catalogos
 			}
 		}
 	}
-}
-
-	}}
-
 	return true;
 }

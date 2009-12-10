@@ -224,6 +224,7 @@ private:
      int magic(int argc, const char** argv);
 
      Equinoccio(){
+    	 std::cout<<RegistroArchivo::size()<<std::endl;
     	 FileManager::cargarConfiguracion();
     	 FileManager::crearJerarquias();
     	 FileManager::crearAlertaFallo();

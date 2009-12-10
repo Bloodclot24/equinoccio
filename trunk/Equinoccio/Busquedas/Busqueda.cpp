@@ -45,13 +45,11 @@ void Busqueda::buscar(std::string& consulta, std::string catalogo, std::list<std
 
 					if (!encontrado) {
 						//una o mas palabras no matcheadas
-						std::cout<<" * NO MATCH SEGMENTO " << seg << " * " <<std::endl;
 						for (unsigned int i=0; i<punteros.size();i++)
 							delete punteros[i];
 					}
 					else {
-						 std::cout<<" * AND SEGMENTO " << seg << " * " <<std::endl;
-						 Busqueda::andPunteros2(this->punteros,this->punteros_match);
+						Busqueda::andPunteros2(this->punteros,this->punteros_match);
 
 						 //agregar los paths a la lista
 						 if (punteros_match.size() != 0) {
@@ -139,7 +137,6 @@ bool Busqueda::buscarEnIndice(std::string consulta, std::string catalogo, uint32
 	if ( consulta.find('*')==std::string::npos && consulta.find('?')==std::string::npos) {
 		//busqueda simple
 		Util::aMinusculas(consulta);
-		std::cout<<"Busqueda simple: \""<<consulta<<"\""<<std::endl;
 		if (consulta.size() != 0) {
 			RegistroIndice reg = Buscador::buscar(consulta, catalogo, segmento);
 
@@ -164,7 +161,6 @@ bool Busqueda::buscarEnIndice(std::string consulta, std::string catalogo, uint32
 	}
 	else {
 		//consulta con comodines
-		std::cout<<"busqueda con comodines: "<<consulta<<std::endl;
 		return consultaNgramas(consulta, catalogo, segmento);
 	}
 	return false;

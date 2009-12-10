@@ -35,7 +35,7 @@ void Bitmap::setBit(uint32_t bit, bool valor){
 	  if(archivo.good()){
 	       archivo.seekp(0,std::ios_base::end);
 	       uint32_t pos=archivo.tellp();
-	       while(pos++ < (bit/8)+((bit%8)>0?1:0))
+	       while(pos++ <= (bit/8)+((bit%8)>0?1:0))
 		    archivo.write(&byte, 1);
 	       archivo.seekg(bit/8);
 	       archivo.read(&byte, 1);
@@ -60,7 +60,7 @@ bool Bitmap::getBit(uint32_t bit){
 	  archivo.seekp(0,std::ios_base::end);
 	  uint32_t pos=archivo.tellp();
 	  
-	  while(pos++ < (bit/8)+((bit%8)>0?1:0))
+	  while(pos++ <= (bit/8)+((bit%8)>0?1:0))
 	       archivo.write(&byte, 1);
 	  
 	  archivo.seekg(bit/8);

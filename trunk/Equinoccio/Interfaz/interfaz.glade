@@ -191,12 +191,6 @@
                   </packing>
                 </child>
                 <child>
-                  <placeholder/>
-                </child>
-                <child>
-                  <placeholder/>
-                </child>
-                <child>
                   <object class="GtkFrame" id="frame4">
                     <property name="visible">True</property>
                     <property name="label_xalign">0</property>
@@ -232,6 +226,12 @@
                     <property name="x_options"></property>
                     <property name="y_options"></property>
                   </packing>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
                 </child>
               </object>
               <packing>
@@ -383,7 +383,7 @@ Veronica Bukaczewski</property>
   </object>
   <object class="GtkFileChooserDialog" id="filechooserdialog">
     <property name="border_width">5</property>
-    <property name="title" translatable="yes">Seleccion de Directorio a Agregar</property>
+    <property name="title" translatable="yes">Seleccion de Directorio</property>
     <property name="modal">True</property>
     <property name="window_position">center-always</property>
     <property name="icon">icono.png</property>
