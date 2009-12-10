@@ -83,6 +83,7 @@ int Equinoccio::magic(int argc, const char** argv){
 		if(br.armarMatrizCoseno(catalogo, parsers.obtenerCantidadDocumentos(catalogo), parsers.obtenerCantidadTerminos(catalogo)) < 0){
 			if(!silencio) std::cout << " Se produjo un error en tiempo de ejecucion del programa." << std::endl;
 			return ERROR_EJECUCION;
+		}
 	   }
 	   parsers.resetear();
 
