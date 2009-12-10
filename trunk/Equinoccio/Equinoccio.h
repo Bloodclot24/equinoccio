@@ -223,7 +223,7 @@ private:
 		bool estabaAbierto= false;
 
     	for(uint32_t seg= 0; seg<FileManager::getCantidadSegmentos() && !encontrado; seg++) {
-
+    		std::cout<<FileManager::getCantidadSegmentos()<<std::endl;
 		  if(!idxDirectorios.is_open()){
 			  estabaAbierto= true;
 			   // Los abro sin truncar
@@ -239,9 +239,12 @@ private:
 			  std::string nombreLeido;
 
 			  for(;!encontrado && !lexDirectorios.eof();std::getline(lexDirectorios, nombreLeido, '\0')){
+				  std::cout<<nombreLeido<<std::endl;
 				   if(nombreLeido.compare(nombre)==0)
 					encontrado = true;
 			  }
+			  idxDirectorios.close();
+			   lexDirectorios.close();
 		  }
     	}
 

@@ -308,6 +308,7 @@ bool Interfaz::mover() {
 void Interfaz::detenerBarra() {
 	id_activity.disconnect();
 	estado = E_NADA;
+	err_code= ERROR_NO_ERROR;
 	progress_bar->set_text(" ");
 	progress_bar->set_fraction(0);
 	progress_bar->hide();
@@ -402,24 +403,16 @@ void Interfaz::finEspera() {
 		liststore_busqueda->clear();
 	}else{
 	if (estado==E_REM){
-		if(err_code == ERROR_NO_ERROR){
+		if(err_code != ERROR_ELIMINAR_INEXISTENTE){
 			status_bar->push("Directorio eliminado.");
 			liststore_dirs->clear();
 			liststore_busqueda->clear();
 		}else{
-			if(err_code == ERROR_ELIMINAR_INEXISTENTE){
-				status_bar->push("El directorio no esta indexado.");
-			}else{
-				status_bar->push("Se produjo un error durante la ejecucion del programa");
-			}
+			status_bar->push("Se produjo un error durante la ejecucion del programa");
 		}
 	}else{
 	if(estado==E_RIDX){
-		if(err_code == ERROR_NO_ERROR){
-			status_bar->push("Reindexacion Finalizada.");
-		}else{
-			status_bar->push("Fallo la reindexacion");
-		}
+		status_bar->push("Reindexacion Finalizada.");
 	}
 	}}}}}
 	detenerBarra();

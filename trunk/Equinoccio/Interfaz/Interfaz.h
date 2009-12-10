@@ -133,12 +133,14 @@ private:
 		}else{
 		if (estado ==  E_RALL) {
 			FileManager::borrarIndice();
+			Equinoccio::destruir();
 		}else{
 		if (estado == E_REM) {
 			std::string dir = directorio;
 			const char* com_c[] = {"./Equinoccio", ARG_DEL, dir.c_str()};
-			Equinoccio::silencio = false;
+			Equinoccio::silencio = true;
 			err_code = Equinoccio::main(3,com_c);
+			Equinoccio::destruir();
 		}else{
 		if(estado== E_RIDX){
 			const char* com_c[] = {"./Equinoccio", ARG_REINDEXAR};
@@ -157,9 +159,6 @@ public:
 	~Interfaz();
 	void iniciar();
 	void agregarCatalogo(const std::string& catalogo,const std::string codigo);
-	void setResultado(std::list<std::string> *paths) {
-		paths_resultado = paths;
-	}
 };
 
 #endif /* INTERFAZ_H_ */

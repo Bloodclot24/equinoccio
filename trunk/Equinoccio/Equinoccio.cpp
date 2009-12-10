@@ -103,12 +103,13 @@ int Equinoccio::magic(int argc, const char** argv){
 	   std::string pesado(arg_del_dir);
 	   pesado = parsearDirectorio(pesado);
 	   bool existe = existeDirectorio(pesado);
+	   std::cout<<"existe "<<existe<<std::endl;
 	   huboCambios= true;
 	   if (existe) {
 		   FileManager::borrarDirectorio(pesado);
-		   destruir();
-	   }else
+	   }else{
 		   return ERROR_ELIMINAR_INEXISTENTE;
+	   }
 	}
 	if(arg_search_string){
 	   std::cout << "Buscar la cadena: " << arg_search_string << std::endl;
