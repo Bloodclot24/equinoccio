@@ -102,7 +102,6 @@ public:
 	       /* intento parsearlos coneste parser */
 	       encontrado = (*it)->parsear(nombreArchivo, documentos[cat]);
 	       if(encontrado){
-		    std::cout << "Documento: " << documentos[cat] << std::endl;
 		    /* si pudo, aumento la cantidad de documentos
 		     * parseados en ese catalogo */
 		    documentos[cat]++;
@@ -203,6 +202,7 @@ public:
       * @return 0
       */
      int armarIndices(){
+	  std::cout << "Armando los indices...\n";
 	  std::list<Parser*>::iterator it;
 	  // separo los parsers segun catalogo
 	  std::map<std::string, std::list<Parser*> > catalogos;
@@ -216,7 +216,6 @@ public:
 	  // por cada grupo de parsers
 	  std::map<std::string, std::list<Parser*> >::iterator it2;
 	  for(it2=catalogos.begin(); it2!= catalogos.end();it2++){
-	       std::cerr << "Catalogo: " << (*it2).first << "\n";
 	       std::list<Parser*> parsers;
 	       /* Obtengo el nombre del indice del catalogo */
 	       // primero el path (siempre indexo en el ultimo segmento)
@@ -248,7 +247,6 @@ public:
 		    // Siempre indexo en el ulimo segmento
 		    std::string nombreBase = FileManager::obtenerPathBase(FileManager::getCantidadSegmentos()) + p->getNombreBase();
 
-		    std::cerr << "Primero,Ultimo: " << primero << " " << ultimo << std::endl;
 		    // hasta parsear el ultimo...
 		    for(;primero<=ultimo;primero++){
 			 // armo el nombre de la particion
@@ -256,9 +254,7 @@ public:
 
 			 /* ordeno cada paricion y cuento cuantas
 			  * particiones resultan */
-			 std::cerr << "particion: " << particion <<" \n";
 			 generadas += Sorter<Registro>::Sort(particion,nombreIndice+".sorted", generadas,NUMERO_REGISTROS_SORT);
-			 std::cerr << " Particiones: " << particion << " generadas: " << generadas << std::endl;
 		    }
 	       }while(lista.size()>0); // repito hasta quedarme sin
 				       // parsers en esta catalogo
@@ -266,7 +262,6 @@ public:
 	       if(generadas > 0){ // si por lo menos se generó 1
 		    /* uno las particiones quedandome el
 		     * auxiliar ordenado */
-		    std::cerr << "ordenando: \n";
 		    merge<Registro>(nombreIndice+".sorted",0,generadas-1, nombreIndice);
 	       }
 	       // armo el nombre del indice final del catalogo
@@ -307,20 +302,16 @@ public:
      template <class t>
      std::string merge(const std::string& nombreBase, uint32_t primero, \
 		       uint32_t ultimo, const std::string& nombreSalida){
-	  std::cerr << "nombreBase: " << nombreBase << " primero: " << primero << " ultimo: " << ultimo << std::endl;
 	  std::vector<std::string> particiones;
 	  if(ultimo-primero <= NUMERO_PARTICIONES+1){
 	       for(;primero<=ultimo;primero++){
-		    std::cerr << "Merge final" << std::endl;
 		    std::string particion=nombreBase + Util::intToString(primero);
 		    particiones.push_back(particion);
 	       }
-	       std::cerr << "nombreSalida: " << nombreSalida << " particiones.size:" << particiones.size()<<"\n";
 	       Merger<t>::Merge(particiones,nombreSalida);
 	  }
 	  else{
 	       uint32_t cantidad=(ultimo-primero+1)/NUMERO_PARTICIONES;
-	       std::cerr << "merge parcial: "<< cantidad << std::endl;
 	       uint32_t i;
 	       for(i=0;i<cantidad;i++){
 		    merge<t>(nombreBase, primero+i*NUMERO_PARTICIONES, primero+(i+1)*NUMERO_PARTICIONES-1, nombreBase+"."+Util::intToString(i));
@@ -343,8 +334,8 @@ public:
       * @return Cantidad de terminos en el indice
       */
      uint32_t separarAuxiliar(const std::string& nombre, const std::string& nombreBase){
+	  std::cout << "Generando bigramas...\n";
 	  uint32_t terminos=0;
-	  std::cout << "Separando " << nombre << std::endl;
 	  // creo el archivo destino
 	  std::ifstream archivo(nombre.c_str());
 	  Registro *r;
@@ -428,7 +419,6 @@ public:
      }
 
      void separarNgramas(const std::string& nombre, const std::string& nombreBase){
-	  std::cout << "Separando Ngramas " << nombre << std::endl;
 	  // creo el archivo destino
 	  std::ifstream archivo(nombre.c_str());
 	  RegistroNGramas *rn;
@@ -498,7 +488,6 @@ public:
 	  std::map<std::string, unsigned long>::iterator it;
 	  // por cada catalogo
 	  for(it=documentos.begin();it!= documentos.end();it++){
-	       std::cout << "Catalogo: " << it->first << "\n";
 	       std::ifstream **indices = new std::ifstream*[2];
 	       std::ifstream **lexicos = new std::ifstream*[2];
 	       std::ifstream **punteros = new std::ifstream*[2];
@@ -558,7 +547,6 @@ public:
 
 	       for(itIdx=archivosTermSalida.begin(); itIdx!=archivosTermSalida.end(); itIdx++){
 
-		    std::cout << "Proceso: " << itIdx->first<< "\n"; 
 
 		    uint32_t pLexico=0;
 		    uint32_t pPunteros=0;

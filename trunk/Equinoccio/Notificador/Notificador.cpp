@@ -218,7 +218,7 @@ void Notificador::buscarModificaciones() {
 	} //for catalogos
 
 	//Los archivos que nos quedaron en el map registrosDisco son archivos nuevos
-	std::cout << "-------- Archivos Nuevos --------" << std::endl;
+	// std::cout << "-------- Archivos Nuevos --------" << std::endl;
 	if(!registrosDisco.empty()) {
 		std::map<ino_t,RegistroDisco>::iterator it;
 		for(it= registrosDisco.begin(); it != registrosDisco.end(); it++)
@@ -229,7 +229,7 @@ void Notificador::buscarModificaciones() {
 	//std::cout << "-----------------------------------" << std::endl;
 
 	//Los directorios modificados(agregados o eliminados)
-	std::cout << "++++++ Directorios Modificados ++++++" << std::endl;
+	// std::cout << "++++++ Directorios Modificados ++++++" << std::endl;
 	if(!directoriosModificados.empty()) {
 		//PRUEBA
 		std::map<std::string,bool>::iterator it;
@@ -242,7 +242,7 @@ void Notificador::buscarModificaciones() {
 		     }
 		}
 	}
-	std::cout << "++++++++++++++++++++++++++++++++++" << std::endl;
+	// std::cout << "++++++++++++++++++++++++++++++++++" << std::endl;
 }
 
 bool Notificador::cargarRegistrosDelDirectorio(uint32_t nro_dir, std::fstream &archDirectorio, std::fstream &archLexicoDir, std::map<ino_t,RegistroDisco> &registrosDisco, std::map<std::string,bool> &directoriosNuevos, std::string& nombreDir) {

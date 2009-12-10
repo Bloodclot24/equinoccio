@@ -81,7 +81,7 @@ int Equinoccio::magic(int argc, const char** argv){
 	   }
 	}
 	if(arg_add_dir){
-	   std::cout << "Agregar el directorio: " << arg_add_dir << std::endl;
+	   std::cout << "Agregando el directorio el directorio: " << arg_add_dir << std::endl;
 	   
 	   std::string pesado(arg_add_dir);
 	   int codigoError = agregarDirectorio(parsearDirectorio(pesado));

@@ -158,8 +158,8 @@ private:
 	       while((entry=readdir(directory))!=NULL){
 		    std::string nombreCompleto(directorio+'/'+entry->d_name);
 		    if(esArchivo(nombreCompleto)){
-		    	if(!silencio)
-		    		std::cout << "Agregar el archivo: " << nombreCompleto << "\n";
+		    	// if(!silencio)
+		    	// 	std::cout << "Agregar el archivo: " << nombreCompleto << "\n";
 		    	parsers.parsear(nombreCompleto, dir);
 		    }
 		    else if(esDirectorio(nombreCompleto) && strncmp(entry->d_name,".",1)!=0){
@@ -184,6 +184,7 @@ private:
 	   const char *catalogos[] = {"SRC", "SND", "IMG", "TEX"};
 	   for(int i=0;i<4;i++){
 		std::string catalogo=catalogos[i];
+		std::cout << "Armando matriz de cosenos...\n";
 		if(br.armarMatrizCoseno(catalogo, parsers.obtenerCantidadDocumentos(catalogo), parsers.obtenerCantidadTerminos(catalogo)) < 0){
 			if(!silencio) std::cout << "Se produjo un error en tiempo de ejecucion del programa." << std::endl;
 			return ERROR_EJECUCION;
@@ -196,7 +197,7 @@ private:
 	   lexDirectorios.close();
 	   numeroDirectorio = (uint32_t) -1;
 	   huboCambios= true;
-
+	   std::cout << "Listo\n";
 	   // if(FileManager::getCantidadSegmentos() == 6){
 	   // 	parsers.reindexar();
 	   // }
