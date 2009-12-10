@@ -165,22 +165,6 @@ std::string Registro::obtenerPunterosComprimidos(){
      
      std::string resultado;
 
-     // *******************************************************************
-     //    Devuelvo sin comprimir porque GAMMA no funciona del todo bien
-     // *******************************************************************
-     // recorro todos los punteros y los pongo en el string
-     for(it=punteros.begin(); it != punteros.end(); it++){
-         Registro::Punteros p;
-         p = *it;
-         resultado.append((char*)&(p.documento),4);
-         resultado.append((char*)&(p.frecuencia),4);
-         std::cout << "obtengo: " << p.documento << " " << p.frecuencia << std::endl;
-     }
-     std::cout << "Resultado: " << resultado << std::endl;
-     return resultado;
-     // ******************************************************************
-
-     
      // recorro todos los punteros
      for(it=punteros.begin(); it != punteros.end(); it++){
 	  Registro::Punteros p;
@@ -300,16 +284,6 @@ void Registro::obtenerPunterosEnLista(std::ifstream& archivo, uint32_t offset, u
 
 	archivo.seekg(offset);
 
-	for(uint32_t i=0;i<frec;i++){
-	     uint32_t p1;
-	     uint32_t p2;
-	     archivo.read((char*)&p1, sizeof(p1));
-	     archivo.read((char*)&p2, sizeof(p2));
-
-	     lista_punteros->push_back(p1);
-	}
-	return;
-
 	while(archivo.good() && frec > 0){
 	   if(bits==0){
 		archivo.read(&byte, 1);
@@ -345,20 +319,6 @@ void Registro::obtenerPunterosEnLista(std::ifstream& archivo, uint32_t offset, u
 	std::string aux;
 
 	archivo.seekg(offset);
-
-	for(uint32_t i=0;i<frec;i++){
-	     uint32_t p1;
-	     uint32_t p2;
-	     archivo.read((char*)&p1, sizeof(p1));
-	     archivo.read((char*)&p2, sizeof(p2));
-
-	     Registro::Punteros p;
-	     p.documento=p1;
-	     p.frecuencia=p2;
-
-	     lista_punteros->push_back(p);
-	}
-	return;
 
 
 	while(archivo.good() && frec > 0){

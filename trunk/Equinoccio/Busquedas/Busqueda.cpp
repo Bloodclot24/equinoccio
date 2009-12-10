@@ -73,6 +73,26 @@ void Busqueda::buscar(std::string& consulta, std::string catalogo, std::list<std
 			BusquedaRankeada::RegConsulta *res;
 			RegRank *reg;
 			RegRank comp_reg;
+
+			std::list<std::string> listaConsulta;
+
+			uint32_t posicion = 0;
+			uint32_t primero=0;
+
+			consulta+= " ";
+
+			for(posicion=consulta.find_first_of(" ",primero);posicion!=std::string::npos;posicion=consulta.find_first_of(" ",primero)){
+			     listaConsulta.push_back(consulta.substr(primero,posicion-primero));
+			     primero = posicion+1;
+			}
+
+			listaConsulta.sort();
+			consulta.clear();
+
+			std::list<std::string>::iterator it;
+			for(it=listaConsulta.begin();it != listaConsulta.end(); it++)
+			     consulta += (*it) + " ";
+			     
 			if (catalogo=="ALL"){
 				const char *catalogos[] = {"SRC", "SND", "IMG", "TEX"};
 				for (uint32_t i=0; i<4; i++){
