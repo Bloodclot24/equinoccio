@@ -114,6 +114,7 @@ int Equinoccio::magic(int argc, const char** argv){
 	   huboCambios= true;
 	   if (existe) {
 		   FileManager::borrarDirectorio(pesado);
+		   destruir();
 	   }
 	}
 	if(arg_search_string){
@@ -146,12 +147,14 @@ std::list<std::string>* Equinoccio::getPaths() {
 }
 
 void Equinoccio::destruir(){
-     if(E)
+     if(E){
 	  delete E;
+	  E = NULL;
+     }
      path_result->clear();
      dir_indexados->clear();
-     delete dir_indexados;
-     delete path_result;
+//     delete dir_indexados;
+//     delete path_result;
 }
 
 std::list<std::string>* Equinoccio::getDirIndexados() {
